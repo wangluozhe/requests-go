@@ -87,7 +87,7 @@ def get_supported_signature_algorithms(config):
 	supported_signature_algorithms = []
 	extensions = config["tls"]["extensions"]
 	for extension in extensions:
-		if "signature_algorithms" in extension["name"]:
+		if extension.get("signature_algorithms", False):
 			signature_algorithms = extension["signature_algorithms"]
 			for signature_algorithm in signature_algorithms:
 				supported_signature_algorithms.append(TLS1_3_Identifier[signature_algorithm])
@@ -234,11 +234,12 @@ def get_header_priority(config):
 	sent_frames = config["http2"]["sent_frames"]
 	for sent_frame in sent_frames:
 		if sent_frame["frame_type"] == "HEADERS":
-			priority = sent_frame["priority"]
-			header_priority = {
-				"weight": priority["weight"] - 1,
-				"streamDep": priority["depends_on"],
-				"exclusive": True if priority["exclusive"] else False
-			}
-			break
+			if sent_frame.get("priority", False):
+				priority = sent_frame["priority"]
+				header_priority = {
+					"weight": priority["weight"] - 1,
+					"streamDep": priority["depends_on"],
+					"exclusive": True if priority["exclusive"] else False
+				}
+				break
 	return header_priority

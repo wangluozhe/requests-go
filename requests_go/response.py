@@ -1,5 +1,5 @@
 from requests import Response
-from tls_client.response import Response as TLSResponse
+from .tls_client.response import Response as TLSResponse
 
 
 def build_response(tls_response: TLSResponse) -> Response:

@@ -116,9 +116,10 @@ class TLSAdapter(BaseAdapter):
 			"method": request.method,
 			"url": request.url,
 			"headers": dict(request.headers),
-			"insecure_skip_verify": verify,
-			"timeout_seconds": timeout,
-			"proxy": dict(proxies),
+			"verify": verify,
+			"timeout": timeout,
+			"proxies": dict(proxies),
+			"body": request.body,
 		}
 		if request.method != "GET":
 			content_type = request.headers.get("Content-Type", None)

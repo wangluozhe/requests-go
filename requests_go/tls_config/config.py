@@ -1,203 +1,69 @@
-import random
+from .extensions import TLSExtensions, HTTP2Extensions
 
 
-class TLSConfig(dict):
-	def __init__(self, name: str = "", config: dict = {}):
-		super(TLSConfig, self).__init__()
-		self._keys = [
-			"ja3_string",
-			"h2_settings",
-			"h2_settings_order",
-			"supported_signature_algorithms",
-			"supported_delegated_credentials_algorithms",
-			"supported_versions",
-			"key_share_curves",
-			"cert_compression_algo",
-			"additional_decode",
-			"pseudo_header_order",
-			"connection_flow",
-			"priority_frames",
-			"header_order",
-			"header_priority",
-			"random_tls_extension_order",
-			"force_http1",
-			"catch_panics",
-		]
-		self.name = name  # tls name
-		self.ja3_string = None  # tls ja3 value
-		self.h2_settings = None  # HTTP2 Header Frame Settings
-		self.h2_settings_order = None  # HTTP2 Header Frame Setting Order
-		self.supported_signature_algorithms = [
-			"ECDSAWithP256AndSHA256",
-			"PSSWithSHA256",
-			"PKCS1WithSHA256",
-			"ECDSAWithP384AndSHA384",
-			"PSSWithSHA384",
-			"PKCS1WithSHA384",
-			"PSSWithSHA512",
-			"PKCS1WithSHA512"
-		]  # Supported signature algorithms
-		self.supported_delegated_credentials_algorithms = None  # Supported Delegated Voucher Algorithms
-		self.supported_versions = [
-			"1.3",
-			"1.2"
-		]  # Supported versions
-		self.key_share_curves = [
-			"GREASE",
-			"X25519"
-		]  # Key Shared Curve
-		self.cert_compression_algo = "brotli"  # Certificate compression algorithm
-		self.additional_decode = None  # Additional decoding
-		self.pseudo_header_order = [
-			":method",
-			":path",
-			":authority",
-			":scheme"
-		]  # Pseudo header order
-		self.connection_flow = None  # Connection flow
-		self.priority_frames = None  # Priority frame
-		self.header_order = None  # Header order
-		self.header_priority = None  # Header Priority
-		self.random_tls_extension_order = False  # Randomize TLS extension order
-		self.force_http1 = False  # Force HTTP1
-		self.catch_panics = False  # Capture error
-		self.update(self.toJSON())
-		self._fromJSON(config)
+class TLSConfig:
+    def __init__(self):
+        super(TLSConfig, self).__init__()
+        self._keys = [
+            "ja3",
+            "pseudo_header_order",
+            "tls_extensions",
+            "http2_extensions",
+        ]
+        self.ja3: str = None  # tls ja3 value
+        # :method
+        # :authority
+        # :scheme
+        # :path
+        # Example:
+        # [
+        #     ":method",
+        #     ":authority",
+        #     ":scheme",
+        #     ":path"
+        # ]
+        self.pseudo_header_order: list[str] = None  # HTTP2 Pseudo header order
+        self.tls_extensions: TLSExtensions = TLSExtensions()  # tls extensions
+        self.http2_extensions: HTTP2Extensions = HTTP2Extensions()  # http2 extensions
 
-	def __str__(self):
-		return str(self.toJSON())
+    def __str__(self):
+        return str(self.toJSON())
 
-	def __iter__(self):
-		for key in self._keys:
-			yield key, getattr(self, key)
+    def __iter__(self):
+        for key in self._keys:
+            yield key, getattr(self, key)
 
-	def __setitem__(self, key, value):
-		setattr(self, key, value)
-		self.update({key: value})
+    def __setitem__(self, key, value):
+        setattr(self, key, value)
 
-	def __getitem__(self, item):
-		return getattr(self, item)
+    def __getitem__(self, item):
+        return getattr(self, item)
 
-	def __delitem__(self, key):
-		setattr(self, key, None)
-		self.update({key: None})
+    def __delitem__(self, key):
+        setattr(self, key, None)
 
-	def __delattr__(self, item):
-		setattr(self, item, None)
-		self.update({item: None})
+    def __delattr__(self, item):
+        setattr(self, item, None)
 
-	# JSON转类
-	def _fromJSON(self, config: dict):
-		for key, value in config.items():
-			if key in self._keys:
-				setattr(self, key, value)
-		self.update(config)
+    # JSON转类
+    def _fromJSON(self, config: dict):
+        for key, value in config.items():
+            if key in self._keys:
+                setattr(self, key, value)
 
-	# 类转JSON
-	def toJSON(self):
-		result = {}
-		for key in self._keys:
-			result[key] = getattr(self, key)
-		return result
-
-tls_config_list = []
-
-Chrome_92_CONFIG = {'ja3_string': '771,4865-4866-4867-49195-49199-49196-49200-52393-52392-49171-49172-156-157-47-53,0-23-65281-10-11-35-16-5-13-18-51-45-43-27-17513-21,29-23-24,0', 'h2_settings': {'HEADER_TABLE_SIZE': 65536, 'MAX_CONCURRENT_STREAMS': 1000, 'INITIAL_WINDOW_SIZE': 6291456, 'MAX_HEADER_LIST_SIZE': 262144}, 'h2_settings_order': ['HEADER_TABLE_SIZE', 'MAX_CONCURRENT_STREAMS', 'INITIAL_WINDOW_SIZE', 'MAX_HEADER_LIST_SIZE'], 'supported_signature_algorithms': ['ECDSAWithP256AndSHA256', 'PSSWithSHA256', 'PKCS1WithSHA256', 'ECDSAWithP384AndSHA384', 'PSSWithSHA384', 'PKCS1WithSHA384', 'PSSWithSHA512', 'PKCS1WithSHA512'], 'supported_delegated_credentials_algorithms': None, 'supported_versions': ['GREASE', '1.3', '1.2', '1.1', '1.0'], 'key_share_curves': ['GREASE', 'X25519'], 'cert_compression_algo': 'brotli', 'additional_decode': None, 'pseudo_header_order': [':method', ':authority', ':scheme', ':path'], 'connection_flow': 15663105, 'priority_frames': None, 'header_order': ['upgrade-insecure-requests', 'user-agent', 'accept', 'dnt', 'x-requested-with', 'sec-fetch-site', 'sec-fetch-mode', 'sec-fetch-user', 'sec-fetch-dest', 'accept-encoding', 'accept-language'], 'header_priority': {'weight': 255, 'streamDep': 0, 'exclusive': True}, 'random_tls_extension_order': False, 'force_http1': False, 'catch_panics': False}
-Chrome_92_CONFIG = TLSConfig("Chrome_92", Chrome_92_CONFIG)
-tls_config_list.append(Chrome_92_CONFIG)
-
-Chrome_103_CONFIG = {'ja3_string': '771,4865-4866-4867-49195-49199-49196-49200-52393-52392-49171-49172-156-157-47-53,0-23-65281-10-11-35-16-5-13-18-51-45-43-27-17513-21,29-23-24,0', 'h2_settings': {'HEADER_TABLE_SIZE': 65536, 'MAX_CONCURRENT_STREAMS': 1000, 'INITIAL_WINDOW_SIZE': 6291456, 'MAX_HEADER_LIST_SIZE': 262144}, 'h2_settings_order': ['HEADER_TABLE_SIZE', 'MAX_CONCURRENT_STREAMS', 'INITIAL_WINDOW_SIZE', 'MAX_HEADER_LIST_SIZE'], 'supported_signature_algorithms': ['ECDSAWithP256AndSHA256', 'PSSWithSHA256', 'PKCS1WithSHA256', 'ECDSAWithP384AndSHA384', 'PSSWithSHA384', 'PKCS1WithSHA384', 'PSSWithSHA512', 'PKCS1WithSHA512'], 'supported_delegated_credentials_algorithms': None, 'supported_versions': ['GREASE', '1.3', '1.2'], 'key_share_curves': ['GREASE', 'X25519'], 'cert_compression_algo': 'brotli', 'additional_decode': None, 'pseudo_header_order': [':method', ':authority', ':scheme', ':path'], 'connection_flow': 15663105, 'priority_frames': None, 'header_order': ['cache-control', 'sec-ch-ua', 'sec-ch-ua-mobile', 'sec-ch-ua-platform', 'upgrade-insecure-requests', 'user-agent', 'accept', 'sec-fetch-site', 'sec-fetch-mode', 'sec-fetch-user', 'sec-fetch-dest', 'accept-encoding', 'accept-language'], 'header_priority': {'weight': 255, 'streamDep': 0, 'exclusive': True}, 'random_tls_extension_order': False, 'force_http1': False, 'catch_panics': False}
-Chrome_103_CONFIG = TLSConfig("Chrome_103", Chrome_103_CONFIG)
-tls_config_list.append(Chrome_103_CONFIG)
-
-Chrome_104_CONFIG = {'ja3_string': '771,4865-4866-4867-49195-49199-49196-49200-52393-52392-49171-49172-156-157-47-53,0-23-65281-10-11-35-16-5-13-18-51-45-43-27-17513-21,29-23-24,0', 'h2_settings': {'HEADER_TABLE_SIZE': 65536, 'MAX_CONCURRENT_STREAMS': 1000, 'INITIAL_WINDOW_SIZE': 6291456, 'MAX_HEADER_LIST_SIZE': 262144}, 'h2_settings_order': ['HEADER_TABLE_SIZE', 'MAX_CONCURRENT_STREAMS', 'INITIAL_WINDOW_SIZE', 'MAX_HEADER_LIST_SIZE'], 'supported_signature_algorithms': ['ECDSAWithP256AndSHA256', 'PSSWithSHA256', 'PKCS1WithSHA256', 'ECDSAWithP384AndSHA384', 'PSSWithSHA384', 'PKCS1WithSHA384', 'PSSWithSHA512', 'PKCS1WithSHA512'], 'supported_delegated_credentials_algorithms': None, 'supported_versions': ['GREASE', '1.3', '1.2'], 'key_share_curves': ['GREASE', 'X25519'], 'cert_compression_algo': 'brotli', 'additional_decode': None, 'pseudo_header_order': [':method', ':authority', ':scheme', ':path'], 'connection_flow': 15663105, 'priority_frames': None, 'header_order': ['accept', 'accept-encoding', 'accept-language', 'cache-control', 'sec-ch-ua', 'sec-ch-ua-mobile', 'sec-ch-ua-platform', 'sec-fetch-dest', 'sec-fetch-mode', 'sec-fetch-site', 'sec-fetch-user', 'upgrade-insecure-requests', 'user-agent'], 'header_priority': {'weight': 255, 'streamDep': 0, 'exclusive': True}, 'random_tls_extension_order': False, 'force_http1': False, 'catch_panics': False}
-Chrome_104_CONFIG = TLSConfig("Chrome_104", Chrome_104_CONFIG)
-tls_config_list.append(Chrome_104_CONFIG)
-
-Chrome_105_CONFIG = {'ja3_string': '771,4865-4866-4867-49195-49199-49196-49200-52393-52392-49171-49172-156-157-47-53,0-23-65281-10-11-35-16-5-13-18-51-45-43-27-17513-21,29-23-24,0', 'h2_settings': {'HEADER_TABLE_SIZE': 65536, 'MAX_CONCURRENT_STREAMS': 1000, 'INITIAL_WINDOW_SIZE': 6291456, 'MAX_HEADER_LIST_SIZE': 262144}, 'h2_settings_order': ['HEADER_TABLE_SIZE', 'MAX_CONCURRENT_STREAMS', 'INITIAL_WINDOW_SIZE', 'MAX_HEADER_LIST_SIZE'], 'supported_signature_algorithms': ['ECDSAWithP256AndSHA256', 'PSSWithSHA256', 'PKCS1WithSHA256', 'ECDSAWithP384AndSHA384', 'PSSWithSHA384', 'PKCS1WithSHA384', 'PSSWithSHA512', 'PKCS1WithSHA512'], 'supported_delegated_credentials_algorithms': None, 'supported_versions': ['GREASE', '1.3', '1.2'], 'key_share_curves': ['GREASE', 'X25519'], 'cert_compression_algo': 'brotli', 'additional_decode': None, 'pseudo_header_order': [':method', ':authority', ':scheme', ':path'], 'connection_flow': 15663105, 'priority_frames': None, 'header_order': ['accept', 'accept-encoding', 'accept-language', 'cache-control', 'sec-ch-ua', 'sec-ch-ua-mobile', 'sec-ch-ua-platform', 'sec-fetch-dest', 'sec-fetch-mode', 'sec-fetch-site', 'sec-fetch-user', 'upgrade-insecure-requests', 'user-agent'], 'header_priority': {'weight': 255, 'streamDep': 0, 'exclusive': True}, 'random_tls_extension_order': False, 'force_http1': False, 'catch_panics': False}
-Chrome_105_CONFIG = TLSConfig("Chrome_105", Chrome_105_CONFIG)
-tls_config_list.append(Chrome_105_CONFIG)
-
-Chrome_106_CONFIG = {'ja3_string': '771,4865-4866-4867-49195-49199-49196-49200-52393-52392-49171-49172-156-157-47-53,0-23-65281-10-11-35-16-5-13-18-51-45-43-27-17513-21,29-23-24,0', 'h2_settings': {'HEADER_TABLE_SIZE': 65536, 'ENABLE_PUSH': 0, 'MAX_CONCURRENT_STREAMS': 1000, 'INITIAL_WINDOW_SIZE': 6291456, 'MAX_HEADER_LIST_SIZE': 262144}, 'h2_settings_order': ['HEADER_TABLE_SIZE', 'ENABLE_PUSH', 'MAX_CONCURRENT_STREAMS', 'INITIAL_WINDOW_SIZE', 'MAX_HEADER_LIST_SIZE'], 'supported_signature_algorithms': ['ECDSAWithP256AndSHA256', 'PSSWithSHA256', 'PKCS1WithSHA256', 'ECDSAWithP384AndSHA384', 'PSSWithSHA384', 'PKCS1WithSHA384', 'PSSWithSHA512', 'PKCS1WithSHA512'], 'supported_delegated_credentials_algorithms': None, 'supported_versions': ['GREASE', '1.3', '1.2'], 'key_share_curves': ['GREASE', 'X25519'], 'cert_compression_algo': 'brotli', 'additional_decode': None, 'pseudo_header_order': [':method', ':authority', ':scheme', ':path'], 'connection_flow': 15663105, 'priority_frames': None, 'header_order': ['accept', 'accept-encoding', 'accept-language', 'cache-control', 'sec-ch-ua', 'sec-ch-ua-mobile', 'sec-ch-ua-platform', 'sec-fetch-dest', 'sec-fetch-mode', 'sec-fetch-site', 'sec-fetch-user', 'upgrade-insecure-requests', 'user-agent'], 'header_priority': {'weight': 255, 'streamDep': 0, 'exclusive': True}, 'random_tls_extension_order': False, 'force_http1': False, 'catch_panics': False}
-Chrome_106_CONFIG = TLSConfig("Chrome_106", Chrome_106_CONFIG)
-tls_config_list.append(Chrome_106_CONFIG)
-
-Chrome_107_CONFIG = {'ja3_string': '771,4865-4866-4867-49195-49199-49196-49200-52393-52392-49171-49172-156-157-47-53,0-23-65281-10-11-35-16-5-13-18-51-45-43-27-17513-21,29-23-24,0', 'h2_settings': {'HEADER_TABLE_SIZE': 65536, 'ENABLE_PUSH': 0, 'MAX_CONCURRENT_STREAMS': 1000, 'INITIAL_WINDOW_SIZE': 6291456, 'MAX_HEADER_LIST_SIZE': 262144}, 'h2_settings_order': ['HEADER_TABLE_SIZE', 'ENABLE_PUSH', 'MAX_CONCURRENT_STREAMS', 'INITIAL_WINDOW_SIZE', 'MAX_HEADER_LIST_SIZE'], 'supported_signature_algorithms': ['ECDSAWithP256AndSHA256', 'PSSWithSHA256', 'PKCS1WithSHA256', 'ECDSAWithP384AndSHA384', 'PSSWithSHA384', 'PKCS1WithSHA384', 'PSSWithSHA512', 'PKCS1WithSHA512'], 'supported_delegated_credentials_algorithms': None, 'supported_versions': ['GREASE', '1.3', '1.2'], 'key_share_curves': ['GREASE', 'X25519'], 'cert_compression_algo': 'brotli', 'additional_decode': None, 'pseudo_header_order': [':method', ':authority', ':scheme', ':path'], 'connection_flow': 15663105, 'priority_frames': None, 'header_order': ['accept', 'accept-encoding', 'accept-language', 'cache-control', 'sec-ch-ua', 'sec-ch-ua-mobile', 'sec-ch-ua-platform', 'sec-fetch-dest', 'sec-fetch-mode', 'sec-fetch-site', 'sec-fetch-user', 'upgrade-insecure-requests', 'user-agent'], 'header_priority': {'weight': 255, 'streamDep': 0, 'exclusive': True}, 'random_tls_extension_order': False, 'force_http1': False, 'catch_panics': False}
-Chrome_107_CONFIG = TLSConfig("Chrome_107", Chrome_107_CONFIG)
-tls_config_list.append(Chrome_107_CONFIG)
-
-Chrome_108_CONFIG = {'ja3_string': '771,4865-4866-4866-4867-49195-49199-49196-49200-52393-52392-49171-49172-156-157-47-53,0-23-65281-10-11-35-16-5-13-18-51-45-43-27-17513-21,29-23-24,0', 'h2_settings': {'HEADER_TABLE_SIZE': 65536, 'ENABLE_PUSH': 0, 'MAX_CONCURRENT_STREAMS': 1000, 'INITIAL_WINDOW_SIZE': 6291456, 'MAX_HEADER_LIST_SIZE': 262144}, 'h2_settings_order': ['HEADER_TABLE_SIZE', 'ENABLE_PUSH', 'MAX_CONCURRENT_STREAMS', 'INITIAL_WINDOW_SIZE', 'MAX_HEADER_LIST_SIZE'], 'supported_signature_algorithms': ['ECDSAWithP256AndSHA256', 'PSSWithSHA256', 'PKCS1WithSHA256', 'ECDSAWithP384AndSHA384', 'PSSWithSHA384', 'PKCS1WithSHA384', 'PSSWithSHA512', 'PKCS1WithSHA512'], 'supported_delegated_credentials_algorithms': None, 'supported_versions': ['GREASE', '1.3', '1.2'], 'key_share_curves': ['GREASE', 'X25519'], 'cert_compression_algo': 'brotli', 'additional_decode': None, 'pseudo_header_order': [':method', ':authority', ':scheme', ':path'], 'connection_flow': 15663105, 'priority_frames': None, 'header_order': ['sec-ch-ua', 'sec-ch-ua-mobile', 'sec-ch-ua-platform', 'upgrade-insecure-requests', 'user-agent', 'accept', 'sec-fetch-site', 'sec-fetch-mode', 'sec-fetch-user', 'sec-fetch-dest', 'accept-encoding', 'accept-language'], 'header_priority': {'weight': 255, 'streamDep': 0, 'exclusive': True}, 'random_tls_extension_order': False, 'force_http1': False, 'catch_panics': False}
-Chrome_108_CONFIG = TLSConfig("Chrome_108", Chrome_108_CONFIG)
-tls_config_list.append(Chrome_108_CONFIG)
-
-Chrome_109_CONFIG = {'ja3_string': '771,4865-4866-4867-49195-49199-49196-49200-52393-52392-49171-49172-156-157-47-53,0-23-65281-10-11-35-16-5-13-18-51-45-43-27-17513-21,29-23-24,0', 'h2_settings': {'HEADER_TABLE_SIZE': 65536, 'ENABLE_PUSH': 0, 'MAX_CONCURRENT_STREAMS': 1000, 'INITIAL_WINDOW_SIZE': 6291456, 'MAX_HEADER_LIST_SIZE': 262144}, 'h2_settings_order': ['HEADER_TABLE_SIZE', 'ENABLE_PUSH', 'MAX_CONCURRENT_STREAMS', 'INITIAL_WINDOW_SIZE', 'MAX_HEADER_LIST_SIZE'], 'supported_signature_algorithms': ['ECDSAWithP256AndSHA256', 'PSSWithSHA256', 'PKCS1WithSHA256', 'ECDSAWithP384AndSHA384', 'PSSWithSHA384', 'PKCS1WithSHA384', 'PSSWithSHA512', 'PKCS1WithSHA512'], 'supported_delegated_credentials_algorithms': None, 'supported_versions': ['GREASE', '1.3', '1.2'], 'key_share_curves': ['GREASE', 'X25519'], 'cert_compression_algo': 'brotli', 'additional_decode': None, 'pseudo_header_order': [':method', ':authority', ':scheme', ':path'], 'connection_flow': 15663105, 'priority_frames': None, 'header_order': ['accept', 'accept-encoding', 'accept-language', 'cache-control', 'sec-ch-ua', 'sec-ch-ua-mobile', 'sec-ch-ua-platform', 'sec-fetch-dest', 'sec-fetch-mode', 'sec-fetch-site', 'sec-fetch-user', 'upgrade-insecure-requests', 'user-agent'], 'header_priority': {'weight': 255, 'streamDep': 0, 'exclusive': True}, 'random_tls_extension_order': False, 'force_http1': False, 'catch_panics': False}
-Chrome_109_CONFIG = TLSConfig("Chrome_109", Chrome_109_CONFIG)
-tls_config_list.append(Chrome_109_CONFIG)
-
-Chrome_110_CONFIG = {'ja3_string': '771,4865-4866-4867-49195-49199-49196-49200-52393-52392-49171-49172-156-157-47-53,23-27-18-51-17513-0-16-35-11-5-65281-43-13-45-10-21,29-23-24,0', 'h2_settings': {'HEADER_TABLE_SIZE': 65536, 'ENABLE_PUSH': 0, 'MAX_CONCURRENT_STREAMS': 1000, 'INITIAL_WINDOW_SIZE': 6291456, 'MAX_HEADER_LIST_SIZE': 262144}, 'h2_settings_order': ['HEADER_TABLE_SIZE', 'ENABLE_PUSH', 'MAX_CONCURRENT_STREAMS', 'INITIAL_WINDOW_SIZE', 'MAX_HEADER_LIST_SIZE'], 'supported_signature_algorithms': ['ECDSAWithP256AndSHA256', 'PSSWithSHA256', 'PKCS1WithSHA256', 'ECDSAWithP384AndSHA384', 'PSSWithSHA384', 'PKCS1WithSHA384', 'PSSWithSHA512', 'PKCS1WithSHA512'], 'supported_delegated_credentials_algorithms': None, 'supported_versions': ['GREASE', '1.3', '1.2'], 'key_share_curves': ['GREASE', 'X25519'], 'cert_compression_algo': 'brotli', 'additional_decode': None, 'pseudo_header_order': [':method', ':authority', ':scheme', ':path'], 'connection_flow': 15663105, 'priority_frames': None, 'header_order': ['accept', 'accept-encoding', 'accept-language', 'cache-control', 'sec-ch-ua', 'sec-ch-ua-mobile', 'sec-ch-ua-platform', 'sec-fetch-dest', 'sec-fetch-mode', 'sec-fetch-site', 'sec-fetch-user', 'upgrade-insecure-requests', 'user-agent'], 'header_priority': {'weight': 255, 'streamDep': 0, 'exclusive': True}, 'random_tls_extension_order': False, 'force_http1': False, 'catch_panics': False}
-Chrome_110_CONFIG = TLSConfig("Chrome_110", Chrome_110_CONFIG)
-tls_config_list.append(Chrome_110_CONFIG)
-
-Chrome_111_CONFIG = {'ja3_string': '771,4865-4866-4867-49195-49199-49196-49200-52393-52392-49171-49172-156-157-47-53,0-51-45-16-10-65281-5-11-35-23-43-27-13-18-17513-21,29-23-24,0', 'h2_settings': {'HEADER_TABLE_SIZE': 65536, 'ENABLE_PUSH': 0, 'MAX_CONCURRENT_STREAMS': 1000, 'INITIAL_WINDOW_SIZE': 6291456, 'MAX_HEADER_LIST_SIZE': 262144}, 'h2_settings_order': ['HEADER_TABLE_SIZE', 'ENABLE_PUSH', 'MAX_CONCURRENT_STREAMS', 'INITIAL_WINDOW_SIZE', 'MAX_HEADER_LIST_SIZE'], 'supported_signature_algorithms': ['ECDSAWithP256AndSHA256', 'PSSWithSHA256', 'PKCS1WithSHA256', 'ECDSAWithP384AndSHA384', 'PSSWithSHA384', 'PKCS1WithSHA384', 'PSSWithSHA512', 'PKCS1WithSHA512'], 'supported_delegated_credentials_algorithms': None, 'supported_versions': ['GREASE', '1.3', '1.2'], 'key_share_curves': ['GREASE', 'X25519'], 'cert_compression_algo': 'brotli', 'additional_decode': None, 'pseudo_header_order': [':method', ':authority', ':scheme', ':path'], 'connection_flow': 15663105, 'priority_frames': None, 'header_order': ['sec-ch-ua', 'sec-ch-ua-mobile', 'sec-ch-ua-platform', 'upgrade-insecure-requests', 'user-agent', 'accept', 'sec-fetch-site', 'sec-fetch-mode', 'sec-fetch-user', 'sec-fetch-dest', 'accept-encoding', 'accept-language'], 'header_priority': {'weight': 255, 'streamDep': 0, 'exclusive': True}, 'random_tls_extension_order': False, 'force_http1': False, 'catch_panics': False}
-Chrome_111_CONFIG = TLSConfig("Chrome_111", Chrome_111_CONFIG)
-tls_config_list.append(Chrome_111_CONFIG)
-
-Android_Chrome_86_CONFIG = {'ja3_string': '771,4865-4866-4867-49195-49199-49196-49200-52393-52392-49171-49172-156-157-47-53,0-23-65281-10-11-35-16-5-13-18-51-45-43-27-21,29-23-24-257,0', 'h2_settings': {'HEADER_TABLE_SIZE': 65536, 'MAX_CONCURRENT_STREAMS': 1000, 'INITIAL_WINDOW_SIZE': 6291456, 'MAX_HEADER_LIST_SIZE': 262144}, 'h2_settings_order': ['HEADER_TABLE_SIZE', 'MAX_CONCURRENT_STREAMS', 'INITIAL_WINDOW_SIZE', 'MAX_HEADER_LIST_SIZE'], 'supported_signature_algorithms': ['ECDSAWithP256AndSHA256', 'PSSWithSHA256', 'PKCS1WithSHA256', 'ECDSAWithP384AndSHA384', 'PSSWithSHA384', 'PKCS1WithSHA384', 'PSSWithSHA512', 'PKCS1WithSHA512'], 'supported_delegated_credentials_algorithms': None, 'supported_versions': ['1.3', '1.2', '1.1', '1.0'], 'key_share_curves': ['X25519'], 'cert_compression_algo': 'brotli', 'additional_decode': None, 'pseudo_header_order': [':method', ':authority', ':scheme', ':path'], 'connection_flow': 15663105, 'priority_frames': None, 'header_order': ['upgrade-insecure-requests', 'user-agent', 'accept', 'sec-fetch-site', 'sec-fetch-mode', 'sec-fetch-dest', 'accept-encoding', 'accept-language'], 'header_priority': {'weight': 255, 'streamDep': 0, 'exclusive': True}, 'random_tls_extension_order': False, 'force_http1': False, 'catch_panics': False}
-Android_Chrome_86_CONFIG = TLSConfig("Android_Chrome_86", Android_Chrome_86_CONFIG)
-tls_config_list.append(Android_Chrome_86_CONFIG)
-
-Firefox_102_CONFIG = {'ja3_string': '771,4865-4867-4866-49195-49199-52393-52392-49196-49200-49162-49161-49171-49172-156-157-47-53,0-23-65281-10-11-35-16-5-34-51-43-13-45-28-21,29-23-24-25-256-257,0', 'h2_settings': {'HEADER_TABLE_SIZE': 65536, 'INITIAL_WINDOW_SIZE': 131072, 'MAX_FRAME_SIZE': 16384}, 'h2_settings_order': ['HEADER_TABLE_SIZE', 'INITIAL_WINDOW_SIZE', 'MAX_FRAME_SIZE'], 'supported_signature_algorithms': ['ECDSAWithP256AndSHA256', 'ECDSAWithP384AndSHA384', 'ECDSAWithP521AndSHA512', 'PSSWithSHA256', 'PSSWithSHA384', 'PSSWithSHA512', 'PKCS1WithSHA256', 'PKCS1WithSHA384', 'PKCS1WithSHA512', 'ECDSAWithSHA1', 'PKCS1WithSHA1'], 'supported_delegated_credentials_algorithms': None, 'supported_versions': ['1.3', '1.2'], 'key_share_curves': ['X25519', 'P256'], 'cert_compression_algo': None, 'additional_decode': None, 'pseudo_header_order': [':method', ':path', ':authority', ':scheme'], 'connection_flow': 12517377, 'priority_frames': [{'streamID': 3, 'priorityParam': {'weight': 200, 'streamDep': 0, 'exclusive': False}}, {'streamID': 5, 'priorityParam': {'weight': 100, 'streamDep': 0, 'exclusive': False}}, {'streamID': 7, 'priorityParam': {'weight': 0, 'streamDep': 0, 'exclusive': False}}, {'streamID': 9, 'priorityParam': {'weight': 0, 'streamDep': 7, 'exclusive': False}}, {'streamID': 11, 'priorityParam': {'weight': 0, 'streamDep': 3, 'exclusive': False}}, {'streamID': 13, 'priorityParam': {'weight': 240, 'streamDep': 0, 'exclusive': False}}], 'header_order': ['accept', 'accept-encoding', 'accept-language', 'cache-control', 'sec-ch-ua', 'sec-ch-ua-mobile', 'sec-ch-ua-platform', 'sec-fetch-dest', 'sec-fetch-mode', 'sec-fetch-site', 'sec-fetch-user', 'upgrade-insecure-requests', 'user-agent'], 'header_priority': {'weight': 41, 'streamDep': 13, 'exclusive': False}, 'random_tls_extension_order': False, 'force_http1': False, 'catch_panics': False}
-Firefox_102_CONFIG = TLSConfig("Firefox_102", Firefox_102_CONFIG)
-tls_config_list.append(Firefox_102_CONFIG)
-
-Firefox_104_CONFIG = {'ja3_string': '771,4865-4867-4866-49195-49199-52393-52392-49196-49200-49162-49161-49171-49172-156-157-47-53,0-23-65281-10-11-35-16-5-34-51-43-13-45-28-21,29-23-24-25-256-257,0', 'h2_settings': {'HEADER_TABLE_SIZE': 65536, 'INITIAL_WINDOW_SIZE': 131072, 'MAX_FRAME_SIZE': 16384}, 'h2_settings_order': ['HEADER_TABLE_SIZE', 'INITIAL_WINDOW_SIZE', 'MAX_FRAME_SIZE'], 'supported_signature_algorithms': ['ECDSAWithP256AndSHA256', 'ECDSAWithP384AndSHA384', 'ECDSAWithP521AndSHA512', 'PSSWithSHA256', 'PSSWithSHA384', 'PSSWithSHA512', 'PKCS1WithSHA256', 'PKCS1WithSHA384', 'PKCS1WithSHA512', 'ECDSAWithSHA1', 'PKCS1WithSHA1'], 'supported_delegated_credentials_algorithms': None, 'supported_versions': ['1.3', '1.2'], 'key_share_curves': ['X25519', 'P256'], 'cert_compression_algo': None, 'additional_decode': None, 'pseudo_header_order': [':method', ':path', ':authority', ':scheme'], 'connection_flow': 12517377, 'priority_frames': [{'streamID': 3, 'priorityParam': {'weight': 200, 'streamDep': 0, 'exclusive': False}}, {'streamID': 5, 'priorityParam': {'weight': 100, 'streamDep': 0, 'exclusive': False}}, {'streamID': 7, 'priorityParam': {'weight': 0, 'streamDep': 0, 'exclusive': False}}, {'streamID': 9, 'priorityParam': {'weight': 0, 'streamDep': 7, 'exclusive': False}}, {'streamID': 11, 'priorityParam': {'weight': 0, 'streamDep': 3, 'exclusive': False}}, {'streamID': 13, 'priorityParam': {'weight': 240, 'streamDep': 0, 'exclusive': False}}], 'header_order': ['accept', 'accept-encoding', 'accept-language', 'cache-control', 'sec-ch-ua', 'sec-ch-ua-mobile', 'sec-ch-ua-platform', 'sec-fetch-dest', 'sec-fetch-mode', 'sec-fetch-site', 'sec-fetch-user', 'upgrade-insecure-requests', 'user-agent'], 'header_priority': {'weight': 41, 'streamDep': 13, 'exclusive': False}, 'random_tls_extension_order': False, 'force_http1': False, 'catch_panics': False}
-Firefox_104_CONFIG = TLSConfig("Firefox_104", Firefox_104_CONFIG)
-tls_config_list.append(Firefox_104_CONFIG)
-
-Firefox_105_CONFIG = {'ja3_string': '771,4865-4867-4866-49195-49199-52393-52392-49196-49200-49162-49161-49171-49172-156-157-47-53,0-23-65281-10-11-35-16-5-34-51-43-13-45-28-21,29-23-24-25-256-257,0', 'h2_settings': {'HEADER_TABLE_SIZE': 65536, 'INITIAL_WINDOW_SIZE': 131072, 'MAX_FRAME_SIZE': 16384}, 'h2_settings_order': ['HEADER_TABLE_SIZE', 'INITIAL_WINDOW_SIZE', 'MAX_FRAME_SIZE'], 'supported_signature_algorithms': ['ECDSAWithP256AndSHA256', 'ECDSAWithP384AndSHA384', 'ECDSAWithP521AndSHA512', 'PSSWithSHA256', 'PSSWithSHA384', 'PSSWithSHA512', 'PKCS1WithSHA256', 'PKCS1WithSHA384', 'PKCS1WithSHA512', 'ECDSAWithSHA1', 'PKCS1WithSHA1'], 'supported_delegated_credentials_algorithms': None, 'supported_versions': ['1.3', '1.2'], 'key_share_curves': ['X25519', 'P256'], 'cert_compression_algo': None, 'additional_decode': None, 'pseudo_header_order': [':method', ':path', ':authority', ':scheme'], 'connection_flow': 12517377, 'priority_frames': [{'streamID': 3, 'priorityParam': {'weight': 200, 'streamDep': 0, 'exclusive': False}}, {'streamID': 5, 'priorityParam': {'weight': 100, 'streamDep': 0, 'exclusive': False}}, {'streamID': 7, 'priorityParam': {'weight': 0, 'streamDep': 0, 'exclusive': False}}, {'streamID': 9, 'priorityParam': {'weight': 0, 'streamDep': 7, 'exclusive': False}}, {'streamID': 11, 'priorityParam': {'weight': 0, 'streamDep': 3, 'exclusive': False}}, {'streamID': 13, 'priorityParam': {'weight': 240, 'streamDep': 0, 'exclusive': False}}], 'header_order': ['user-agent', 'accept', 'accept-language', 'accept-encoding', 'upgrade-insecure-requests', 'sec-fetch-dest', 'sec-fetch-mode', 'sec-fetch-site', 'sec-fetch-user', 'te'], 'header_priority': {'weight': 41, 'streamDep': 13, 'exclusive': False}, 'random_tls_extension_order': False, 'force_http1': False, 'catch_panics': False}
-Firefox_105_CONFIG = TLSConfig("Firefox_105", Firefox_105_CONFIG)
-tls_config_list.append(Firefox_105_CONFIG)
-
-Firefox_106_CONFIG = {'ja3_string': '771,4865-4867-4866-49195-49199-52393-52392-49196-49200-49162-49161-49171-49172-156-157-47-53,0-23-65281-10-11-35-16-5-34-51-43-13-45-28-21,29-23-24-25-256-257,0', 'h2_settings': {'HEADER_TABLE_SIZE': 65536, 'INITIAL_WINDOW_SIZE': 131072, 'MAX_FRAME_SIZE': 16384}, 'h2_settings_order': ['HEADER_TABLE_SIZE', 'INITIAL_WINDOW_SIZE', 'MAX_FRAME_SIZE'], 'supported_signature_algorithms': ['ECDSAWithP256AndSHA256', 'ECDSAWithP384AndSHA384', 'ECDSAWithP521AndSHA512', 'PSSWithSHA256', 'PSSWithSHA384', 'PSSWithSHA512', 'PKCS1WithSHA256', 'PKCS1WithSHA384', 'PKCS1WithSHA512', 'ECDSAWithSHA1', 'PKCS1WithSHA1'], 'supported_delegated_credentials_algorithms': None, 'supported_versions': ['1.3', '1.2'], 'key_share_curves': ['X25519', 'P256'], 'cert_compression_algo': None, 'additional_decode': None, 'pseudo_header_order': [':method', ':path', ':authority', ':scheme'], 'connection_flow': 12517377, 'priority_frames': [{'streamID': 3, 'priorityParam': {'weight': 200, 'streamDep': 0, 'exclusive': False}}, {'streamID': 5, 'priorityParam': {'weight': 100, 'streamDep': 0, 'exclusive': False}}, {'streamID': 7, 'priorityParam': {'weight': 0, 'streamDep': 0, 'exclusive': False}}, {'streamID': 9, 'priorityParam': {'weight': 0, 'streamDep': 7, 'exclusive': False}}, {'streamID': 11, 'priorityParam': {'weight': 0, 'streamDep': 3, 'exclusive': False}}, {'streamID': 13, 'priorityParam': {'weight': 240, 'streamDep': 0, 'exclusive': False}}], 'header_order': ['accept', 'accept-encoding', 'accept-language', 'cache-control', 'sec-ch-ua', 'sec-ch-ua-mobile', 'sec-ch-ua-platform', 'sec-fetch-dest', 'sec-fetch-mode', 'sec-fetch-site', 'sec-fetch-user', 'upgrade-insecure-requests', 'user-agent'], 'header_priority': {'weight': 41, 'streamDep': 13, 'exclusive': False}, 'random_tls_extension_order': False, 'force_http1': False, 'catch_panics': False}
-Firefox_106_CONFIG = TLSConfig("Firefox_106", Firefox_106_CONFIG)
-tls_config_list.append(Firefox_106_CONFIG)
-
-Firefox_108_CONFIG = {'ja3_string': '771,4865-4867-4866-49195-49199-52393-52392-49196-49200-49162-49161-49171-49172-156-157-47-53,0-23-65281-10-11-35-16-5-34-51-43-13-45-28-21,29-23-24-25-256-257,0', 'h2_settings': {'HEADER_TABLE_SIZE': 65536, 'INITIAL_WINDOW_SIZE': 131072, 'MAX_FRAME_SIZE': 16384}, 'h2_settings_order': ['HEADER_TABLE_SIZE', 'INITIAL_WINDOW_SIZE', 'MAX_FRAME_SIZE'], 'supported_signature_algorithms': ['ECDSAWithP256AndSHA256', 'ECDSAWithP384AndSHA384', 'ECDSAWithP521AndSHA512', 'PSSWithSHA256', 'PSSWithSHA384', 'PSSWithSHA512', 'PKCS1WithSHA256', 'PKCS1WithSHA384', 'PKCS1WithSHA512', 'ECDSAWithSHA1', 'PKCS1WithSHA1'], 'supported_delegated_credentials_algorithms': None, 'supported_versions': ['1.3', '1.2'], 'key_share_curves': ['X25519', 'P256'], 'cert_compression_algo': None, 'additional_decode': None, 'pseudo_header_order': [':method', ':path', ':authority', ':scheme'], 'connection_flow': 12517377, 'priority_frames': [{'streamID': 3, 'priorityParam': {'weight': 200, 'streamDep': 0, 'exclusive': False}}, {'streamID': 5, 'priorityParam': {'weight': 100, 'streamDep': 0, 'exclusive': False}}, {'streamID': 7, 'priorityParam': {'weight': 0, 'streamDep': 0, 'exclusive': False}}, {'streamID': 9, 'priorityParam': {'weight': 0, 'streamDep': 7, 'exclusive': False}}, {'streamID': 11, 'priorityParam': {'weight': 0, 'streamDep': 3, 'exclusive': False}}, {'streamID': 13, 'priorityParam': {'weight': 240, 'streamDep': 0, 'exclusive': False}}], 'header_order': ['accept', 'accept-encoding', 'accept-language', 'cache-control', 'sec-ch-ua', 'sec-ch-ua-mobile', 'sec-ch-ua-platform', 'sec-fetch-dest', 'sec-fetch-mode', 'sec-fetch-site', 'sec-fetch-user', 'upgrade-insecure-requests', 'user-agent'], 'header_priority': {'weight': 41, 'streamDep': 13, 'exclusive': False}, 'random_tls_extension_order': False, 'force_http1': False, 'catch_panics': False}
-Firefox_108_CONFIG = TLSConfig("Firefox_108", Firefox_108_CONFIG)
-tls_config_list.append(Firefox_108_CONFIG)
-
-Firefox_110_CONFIG = {'ja3_string': '771,4865-4867-4866-49195-49199-52393-52392-49196-49200-49162-49161-49171-49172-156-157-47-53,0-23-65281-10-11-16-5-34-51-43-13-28-21,29-23-24-25-256-257,0', 'h2_settings': {'HEADER_TABLE_SIZE': 65536, 'INITIAL_WINDOW_SIZE': 131072, 'MAX_FRAME_SIZE': 16384}, 'h2_settings_order': ['HEADER_TABLE_SIZE', 'INITIAL_WINDOW_SIZE', 'MAX_FRAME_SIZE'], 'supported_signature_algorithms': ['ECDSAWithP256AndSHA256', 'ECDSAWithP384AndSHA384', 'ECDSAWithP521AndSHA512', 'PSSWithSHA256', 'PSSWithSHA384', 'PSSWithSHA512', 'PKCS1WithSHA256', 'PKCS1WithSHA384', 'PKCS1WithSHA512', 'ECDSAWithSHA1', 'PKCS1WithSHA1'], 'supported_delegated_credentials_algorithms': None, 'supported_versions': ['1.3', '1.2'], 'key_share_curves': ['X25519', 'P256'], 'cert_compression_algo': None, 'additional_decode': None, 'pseudo_header_order': [':method', ':path', ':authority', ':scheme'], 'connection_flow': 12517377, 'priority_frames': [{'streamID': 3, 'priorityParam': {'weight': 200, 'streamDep': 0, 'exclusive': False}}, {'streamID': 5, 'priorityParam': {'weight': 100, 'streamDep': 0, 'exclusive': False}}, {'streamID': 7, 'priorityParam': {'weight': 0, 'streamDep': 0, 'exclusive': False}}, {'streamID': 9, 'priorityParam': {'weight': 0, 'streamDep': 7, 'exclusive': False}}, {'streamID': 11, 'priorityParam': {'weight': 0, 'streamDep': 3, 'exclusive': False}}, {'streamID': 13, 'priorityParam': {'weight': 240, 'streamDep': 0, 'exclusive': False}}], 'header_order': ['accept', 'accept-encoding', 'accept-language', 'cache-control', 'sec-ch-ua', 'sec-ch-ua-mobile', 'sec-ch-ua-platform', 'sec-fetch-dest', 'sec-fetch-mode', 'sec-fetch-site', 'sec-fetch-user', 'upgrade-insecure-requests', 'user-agent'], 'header_priority': {'weight': 41, 'streamDep': 13, 'exclusive': False}, 'random_tls_extension_order': False, 'force_http1': False, 'catch_panics': False}
-Firefox_110_CONFIG = TLSConfig("Firefox_110", Firefox_110_CONFIG)
-tls_config_list.append(Firefox_110_CONFIG)
-
-QQBrowser_11_4_CONFIG = {'ja3_string': '771,4865-4866-4867-49195-49199-49196-49200-52393-52392-49171-49172-156-157-47-53,0-23-65281-10-11-35-16-5-13-18-51-45-43-27-17513-21,29-23-24,0', 'h2_settings': {'HEADER_TABLE_SIZE': 65536, 'MAX_CONCURRENT_STREAMS': 1000, 'INITIAL_WINDOW_SIZE': 6291456, 'MAX_HEADER_LIST_SIZE': 262144}, 'h2_settings_order': ['HEADER_TABLE_SIZE', 'MAX_CONCURRENT_STREAMS', 'INITIAL_WINDOW_SIZE', 'MAX_HEADER_LIST_SIZE'], 'supported_signature_algorithms': ['ECDSAWithP256AndSHA256', 'PSSWithSHA256', 'PKCS1WithSHA256', 'ECDSAWithP384AndSHA384', 'PSSWithSHA384', 'PKCS1WithSHA384', 'PSSWithSHA512', 'PKCS1WithSHA512'], 'supported_delegated_credentials_algorithms': None, 'supported_versions': ['GREASE', '1.3', '1.2', '1.1', '1.0'], 'key_share_curves': ['GREASE', 'X25519'], 'cert_compression_algo': 'brotli', 'additional_decode': None, 'pseudo_header_order': [':method', ':authority', ':scheme', ':path'], 'connection_flow': 15663105, 'priority_frames': None, 'header_order': ['sec-ch-ua', 'sec-ch-ua-mobile', 'sec-ch-ua-platform', 'upgrade-insecure-requests', 'user-agent', 'accept', 'sec-fetch-site', 'sec-fetch-mode', 'sec-fetch-user', 'sec-fetch-dest', 'accept-encoding', 'accept-language'], 'header_priority': {'weight': 255, 'streamDep': 0, 'exclusive': True}, 'random_tls_extension_order': False, 'force_http1': False, 'catch_panics': False}
-QQBrowser_11_4_CONFIG = TLSConfig("QQBrowser_11_4", QQBrowser_11_4_CONFIG)
-tls_config_list.append(QQBrowser_11_4_CONFIG)
-
-Safari15_6_1_CONFIG = {'ja3_string': '771,4865-4866-4867-49196-49195-52393-49200-49199-52392-49162-49161-49172-49171-157-156-53-47-49160-49170-10,0-23-65281-10-11-16-5-13-18-51-45-43-27-21,29-23-24-25,0', 'h2_settings': {'INITIAL_WINDOW_SIZE': 4194304, 'MAX_CONCURRENT_STREAMS': 100}, 'h2_settings_order': ['INITIAL_WINDOW_SIZE', 'MAX_CONCURRENT_STREAMS'], 'supported_signature_algorithms': ['ECDSAWithP256AndSHA256', 'PSSWithSHA256', 'PKCS1WithSHA256', 'ECDSAWithP384AndSHA384', 'ECDSAWithSHA1', 'PSSWithSHA384', 'PSSWithSHA384', 'PKCS1WithSHA384', 'PSSWithSHA512', 'PKCS1WithSHA512', 'PKCS1WithSHA1'], 'supported_delegated_credentials_algorithms': None, 'supported_versions': ['GREASE', '1.3', '1.2', '1.1', '1.0'], 'key_share_curves': ['GREASE', 'X25519'], 'cert_compression_algo': 'zlib', 'additional_decode': None, 'pseudo_header_order': [':method', ':scheme', ':path', ':authority'], 'connection_flow': 10485760, 'priority_frames': None, 'header_order': ['accept', 'accept-encoding', 'accept-language', 'cache-control', 'sec-ch-ua', 'sec-ch-ua-mobile', 'sec-ch-ua-platform', 'sec-fetch-dest', 'sec-fetch-mode', 'sec-fetch-site', 'sec-fetch-user', 'upgrade-insecure-requests', 'user-agent'], 'header_priority': {'weight': 255, 'streamDep': 0, 'exclusive': True}, 'random_tls_extension_order': False, 'force_http1': False, 'catch_panics': False}
-Safari15_6_1_CONFIG = TLSConfig("Safari15_6_1", Safari15_6_1_CONFIG)
-tls_config_list.append(Safari15_6_1_CONFIG)
-
-Safari16_0_CONFIG = {'ja3_string': '771,4865-4866-4867-49196-49195-52393-49200-49199-52392-49162-49161-49172-49171-157-156-53-47-49160-49170-10,0-23-65281-10-11-16-5-13-18-51-45-43-27-21,29-23-24-25,0', 'h2_settings': {'INITIAL_WINDOW_SIZE': 4194304, 'MAX_CONCURRENT_STREAMS': 100}, 'h2_settings_order': ['INITIAL_WINDOW_SIZE', 'MAX_CONCURRENT_STREAMS'], 'supported_signature_algorithms': ['ECDSAWithP256AndSHA256', 'PSSWithSHA256', 'PKCS1WithSHA256', 'ECDSAWithP384AndSHA384', 'ECDSAWithSHA1', 'PSSWithSHA384', 'PSSWithSHA384', 'PKCS1WithSHA384', 'PSSWithSHA512', 'PKCS1WithSHA512', 'PKCS1WithSHA1'], 'supported_delegated_credentials_algorithms': None, 'supported_versions': ['GREASE', '1.3', '1.2', '1.1', '1.0'], 'key_share_curves': ['GREASE', 'X25519'], 'cert_compression_algo': 'zlib', 'additional_decode': None, 'pseudo_header_order': [':method', ':scheme', ':path', ':authority'], 'connection_flow': 10485760, 'priority_frames': None, 'header_order': ['accept', 'accept-encoding', 'accept-language', 'cache-control', 'sec-ch-ua', 'sec-ch-ua-mobile', 'sec-ch-ua-platform', 'sec-fetch-dest', 'sec-fetch-mode', 'sec-fetch-site', 'sec-fetch-user', 'upgrade-insecure-requests', 'user-agent'], 'header_priority': {'weight': 255, 'streamDep': 0, 'exclusive': True}, 'random_tls_extension_order': False, 'force_http1': False, 'catch_panics': False}
-Safari16_0_CONFIG = TLSConfig("Safari16_0", Safari16_0_CONFIG)
-tls_config_list.append(Safari16_0_CONFIG)
-
-Safari16_3_CONFIG = {'ja3_string': '771,4865-4866-4867-49196-49195-52393-49200-49199-52392-49162-49161-49172-49171-157-156-53-47-49160-49170-10,0-23-65281-10-11-16-5-13-18-51-45-43-27-21,29-23-24-25,0', 'h2_settings': {'INITIAL_WINDOW_SIZE': 4194304, 'MAX_CONCURRENT_STREAMS': 100}, 'h2_settings_order': ['INITIAL_WINDOW_SIZE', 'MAX_CONCURRENT_STREAMS'], 'supported_signature_algorithms': ['ECDSAWithP256AndSHA256', 'PSSWithSHA256', 'PKCS1WithSHA256', 'ECDSAWithP384AndSHA384', 'ECDSAWithSHA1', 'PSSWithSHA384', 'PSSWithSHA384', 'PKCS1WithSHA384', 'PSSWithSHA512', 'PKCS1WithSHA512', 'PKCS1WithSHA1'], 'supported_delegated_credentials_algorithms': None, 'supported_versions': ['GREASE', '1.3', '1.2', '1.1', '1.0'], 'key_share_curves': ['GREASE', 'X25519'], 'cert_compression_algo': 'zlib', 'additional_decode': None, 'pseudo_header_order': [':method', ':scheme', ':path', ':authority'], 'connection_flow': 10485760, 'priority_frames': None, 'header_order': ['user-agent', 'accept', 'accept-language', 'accept-encoding'], 'header_priority': {'weight': 254, 'streamDep': 0, 'exclusive': False}, 'random_tls_extension_order': False, 'force_http1': False, 'catch_panics': False}
-Safari16_3_CONFIG = TLSConfig("Safari16_3", Safari16_3_CONFIG)
-tls_config_list.append(Safari16_3_CONFIG)
-
-IOS_Safari_15_5_CONFIG = {'ja3_string': '771,4865-4866-4867-49196-49195-52393-49200-49199-52392-49162-49161-49172-49171-157-156-53-47-49160-49170-10,0-23-65281-10-11-16-5-13-18-51-45-43-27-21,29-23-24-25,0', 'h2_settings': {'INITIAL_WINDOW_SIZE': 2097152, 'MAX_CONCURRENT_STREAMS': 100}, 'h2_settings_order': ['INITIAL_WINDOW_SIZE', 'MAX_CONCURRENT_STREAMS'], 'supported_signature_algorithms': ['ECDSAWithP256AndSHA256', 'PSSWithSHA256', 'PKCS1WithSHA256', 'ECDSAWithP384AndSHA384', 'ECDSAWithSHA1', 'PSSWithSHA384', 'PSSWithSHA384', 'PKCS1WithSHA384', 'PSSWithSHA512', 'PKCS1WithSHA512', 'PKCS1WithSHA1'], 'supported_delegated_credentials_algorithms': None, 'supported_versions': ['GREASE', '1.3', '1.2', '1.1', '1.0'], 'key_share_curves': ['GREASE', 'X25519'], 'cert_compression_algo': 'zlib', 'additional_decode': None, 'pseudo_header_order': [':method', ':scheme', ':path', ':authority'], 'connection_flow': 10485760, 'priority_frames': None, 'header_order': ['accept', 'accept-encoding', 'accept-language', 'cache-control', 'sec-ch-ua', 'sec-ch-ua-mobile', 'sec-ch-ua-platform', 'sec-fetch-dest', 'sec-fetch-mode', 'sec-fetch-site', 'sec-fetch-user', 'upgrade-insecure-requests', 'user-agent'], 'header_priority': {'weight': 255, 'streamDep': 0, 'exclusive': True}, 'random_tls_extension_order': False, 'force_http1': False, 'catch_panics': False}
-IOS_Safari_15_5_CONFIG = TLSConfig("IOS_Safari_15_5", IOS_Safari_15_5_CONFIG)
-tls_config_list.append(IOS_Safari_15_5_CONFIG)
-
-IOS_Safari_15_6_CONFIG = {'ja3_string': '771,4865-4866-4867-49196-49195-52393-49200-49199-52392-49162-49161-49172-49171-157-156-53-47-49160-49170-10,0-23-65281-10-11-16-5-13-18-51-45-43-27-21,29-23-24-25,0', 'h2_settings': {'INITIAL_WINDOW_SIZE': 2097152, 'MAX_CONCURRENT_STREAMS': 100}, 'h2_settings_order': ['INITIAL_WINDOW_SIZE', 'MAX_CONCURRENT_STREAMS'], 'supported_signature_algorithms': ['ECDSAWithP256AndSHA256', 'PSSWithSHA256', 'PKCS1WithSHA256', 'ECDSAWithP384AndSHA384', 'ECDSAWithSHA1', 'PSSWithSHA384', 'PSSWithSHA384', 'PKCS1WithSHA384', 'PSSWithSHA512', 'PKCS1WithSHA512', 'PKCS1WithSHA1'], 'supported_delegated_credentials_algorithms': None, 'supported_versions': ['GREASE', '1.3', '1.2', '1.1', '1.0'], 'key_share_curves': ['GREASE', 'X25519'], 'cert_compression_algo': 'zlib', 'additional_decode': None, 'pseudo_header_order': [':method', ':scheme', ':path', ':authority'], 'connection_flow': 10485760, 'priority_frames': None, 'header_order': ['accept', 'accept-encoding', 'accept-language', 'cache-control', 'sec-ch-ua', 'sec-ch-ua-mobile', 'sec-ch-ua-platform', 'sec-fetch-dest', 'sec-fetch-mode', 'sec-fetch-site', 'sec-fetch-user', 'upgrade-insecure-requests', 'user-agent'], 'header_priority': {'weight': 255, 'streamDep': 0, 'exclusive': True}, 'random_tls_extension_order': False, 'force_http1': False, 'catch_panics': False}
-IOS_Safari_15_6_CONFIG = TLSConfig("IOS_Safari_15_6", IOS_Safari_15_6_CONFIG)
-tls_config_list.append(IOS_Safari_15_6_CONFIG)
-
-IOS_Safari_16_0_CONFIG = {'ja3_string': '771,4865-4866-4867-49196-49195-52393-49200-49199-52392-49162-49161-49172-49171-157-156-53-47-49160-49170-10,0-23-65281-10-11-16-5-13-18-51-45-43-27-21,29-23-24-25,0', 'h2_settings': {'INITIAL_WINDOW_SIZE': 2097152, 'MAX_CONCURRENT_STREAMS': 100}, 'h2_settings_order': ['INITIAL_WINDOW_SIZE', 'MAX_CONCURRENT_STREAMS'], 'supported_signature_algorithms': ['ECDSAWithP256AndSHA256', 'PSSWithSHA256', 'PKCS1WithSHA256', 'ECDSAWithP384AndSHA384', 'ECDSAWithSHA1', 'PSSWithSHA384', 'PSSWithSHA384', 'PKCS1WithSHA384', 'PSSWithSHA512', 'PKCS1WithSHA512', 'PKCS1WithSHA1'], 'supported_delegated_credentials_algorithms': None, 'supported_versions': ['GREASE', '1.3', '1.2', '1.1', '1.0'], 'key_share_curves': ['GREASE', 'X25519'], 'cert_compression_algo': 'zlib', 'additional_decode': None, 'pseudo_header_order': [':method', ':scheme', ':path', ':authority'], 'connection_flow': 10485760, 'priority_frames': None, 'header_order': ['accept', 'accept-encoding', 'accept-language', 'cache-control', 'sec-ch-ua', 'sec-ch-ua-mobile', 'sec-ch-ua-platform', 'sec-fetch-dest', 'sec-fetch-mode', 'sec-fetch-site', 'sec-fetch-user', 'upgrade-insecure-requests', 'user-agent'], 'header_priority': {'weight': 255, 'streamDep': 0, 'exclusive': True}, 'random_tls_extension_order': False, 'force_http1': False, 'catch_panics': False}
-IOS_Safari_16_0_CONFIG = TLSConfig("IOS_Safari_16_0", IOS_Safari_16_0_CONFIG)
-tls_config_list.append(IOS_Safari_16_0_CONFIG)
-
-def random_tls_config() -> TLSConfig:
-	tls_conf = random.choice(tls_config_list)
-	return tls_conf
+    # 类转JSON
+    def toJSON(self):
+        result = {}
+        for key in self._keys:
+            go_keys = key.split("_")
+            go_key = ""
+            for k in go_keys:
+                if k == "tls" or k == "http2":
+                    go_key += k.upper()
+                else:
+                    go_key += k.title()
+            if key in ["tls_extensions", "http2_extensions"]:
+                result[go_key] = getattr(self, key).toJSON()
+            else:
+                result[go_key] = getattr(self, key)
+        return result
