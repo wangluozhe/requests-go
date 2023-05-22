@@ -39,6 +39,5 @@ setup(
     install_requires=[
         "requests==2.28.2",
         "six==1.16.0",
-        "tls-client==0.2"
     ]
 )

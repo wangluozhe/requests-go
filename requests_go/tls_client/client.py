@@ -21,3 +21,6 @@ library = ctypes.cdll.LoadLibrary(f'{root_dir}/dependencies/requests-go{file_ext
 request = library.request
 request.argtypes = [ctypes.c_char_p]
 request.restype = ctypes.c_char_p
+
+freeMemory = library.freeMemory
+request.argtypes = [ctypes.c_char_p]

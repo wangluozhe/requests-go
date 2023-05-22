@@ -23,8 +23,10 @@ class TLSConfig:
         #     ":path"
         # ]
         self.pseudo_header_order: list[str] = None  # HTTP2 Pseudo header order
+        self.headers_order: list[str] = None  # http headers order
         self.tls_extensions: TLSExtensions = TLSExtensions()  # tls extensions
         self.http2_extensions: HTTP2Extensions = HTTP2Extensions()  # http2 extensions
+        self.force_http1: bool = False  # force http1 request
 
     def __str__(self):
         return str(self.toJSON())
@@ -58,7 +60,7 @@ class TLSConfig:
             go_keys = key.split("_")
             go_key = ""
             for k in go_keys:
-                if k == "tls" or k == "http2":
+                if k == "tls" or k == "http2" or k == "http1":
                     go_key += k.upper()
                 else:
                     go_key += k.title()
