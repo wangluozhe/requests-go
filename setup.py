@@ -1,7 +1,14 @@
 #!/usr/bin/env python
 from setuptools import setup, find_packages
 from codecs import open
+import glob
 import os
+
+data_files = []
+directories = glob.glob('requests_go/tls_client/dependencies/')
+for directory in directories:
+    files = glob.glob(directory+'*')
+    data_files.append(('requests_go/tls_client/dependencies', files))
 
 about = {}
 here = os.path.abspath(os.path.dirname(__file__))
