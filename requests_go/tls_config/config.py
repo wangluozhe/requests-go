@@ -7,6 +7,7 @@ class TLSConfig:
         self._keys = [
             "ja3",
             "pseudo_header_order",
+            "headers_order",
             "tls_extensions",
             "http2_extensions",
         ]
