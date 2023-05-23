@@ -51,3 +51,7 @@ tls.http2_extensions.settings_order = [
 ]
 tls.http2_extensions.connection_flow = 15663105
 response = requests_go.get(url=url, headers=headers, tls_config=tls)
+print(response.url)
+print(response.text)
+print(response.headers)
+print(response.cookies)

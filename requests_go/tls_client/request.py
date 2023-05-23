@@ -3,7 +3,7 @@ from json import dumps, loads
 from .client import request, freeMemory
 from .response import build_response
 from ..tls_config import TLSConfig
-
+from .exceptions import TLSClientExeption
 
 class Session:
     def __init__(self, tls_config: TLSConfig = None):
@@ -44,7 +44,15 @@ class Session:
         if allow_redirects:
             request_params["AllowRedirects"] = allow_redirects
         if proxies:
-            request_params["Proxies"] = proxies
+            if type(proxies) == dict:
+                if proxies.get("https", ""):
+                    request_params["Proxies"] = proxies["https"]
+                elif proxies.get("http", ""):
+                    request_params["Proxies"] = proxies["http"]
+                else:
+                    raise TLSClientExeption('Proxies必须为{"http": "代理IP", "https": "代理IP"}')
+            else:
+                request_params["Proxies"] = proxies
         if verify:
             request_params["Verify"] = verify
         if body:
@@ -53,15 +61,20 @@ class Session:
             request_params["Data"] = data
         elif json:
             request_params["Json"] = json
+        if force_http1:
+            request_params["ForceHTTP1"] = force_http1
         if pseudo_header_order:
             request_params["PseudoHeaderOrder"] = pseudo_header_order
         if tls_extensions:
             request_params["TLSExtensions"] = dumps(tls_extensions, separators=(",", ":"))
         if http2_extensions:
             request_params["HTTP2Extensions"] = dumps(http2_extensions, separators=(",", ":"))
-        if force_http1:
-            request_params["ForceHTTP1"] = force_http1
         rs = request(dumps(request_params).encode("utf-8")).decode("utf-8")
-        json_data = loads(rs)
-        freeMemory(json_data["id"].encode("utf-8"))
-        return build_response(json_data)
+        try:
+            res = loads(rs)
+            if res.get("err", ""):
+                raise TLSClientExeption(res["err"])
+            freeMemory(res["id"].encode("utf-8"))
+            return build_response(res)
+        except Exception as e:
+            raise TLSClientExeption("requests_go error:", rs)

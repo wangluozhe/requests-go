@@ -4,7 +4,6 @@ from .structures import CaseInsensitiveDict
 from typing import Union
 import json
 
-from .exceptions import TLSClientExeption
 
 class Response:
     """object, which contains the response to an HTTP request."""
@@ -55,8 +54,6 @@ class Response:
 
 
 def build_response(res: Union[dict, list]) -> Response:
-    if res.get("err", ""):
-        raise TLSClientExeption(res["err"])
     """Builds a Response object """
     response = Response()
     # Add target / url

@@ -6,12 +6,15 @@ class TLSConfig:
         super(TLSConfig, self).__init__()
         self._keys = [
             "ja3",
-            "pseudo_header_order",
             "headers_order",
+            "force_http1",
+            "pseudo_header_order",
             "tls_extensions",
             "http2_extensions",
         ]
         self.ja3: str = None  # tls ja3 value
+        self.headers_order: list[str] = None  # http headers order
+        self.force_http1: bool = False  # force http1 request
         # :method
         # :authority
         # :scheme
@@ -24,10 +27,8 @@ class TLSConfig:
         #     ":path"
         # ]
         self.pseudo_header_order: list[str] = None  # HTTP2 Pseudo header order
-        self.headers_order: list[str] = None  # http headers order
         self.tls_extensions: TLSExtensions = TLSExtensions()  # tls extensions
         self.http2_extensions: HTTP2Extensions = HTTP2Extensions()  # http2 extensions
-        self.force_http1: bool = False  # force http1 request
 
     def __str__(self):
         return str(self.toJSON())
