@@ -1,4 +1,4 @@
-from .extensions import TLSExtensions, HTTP2Extensions
+from .extensions import TLSExtensions, HTTP2Settings
 
 
 class TLSConfig:
@@ -10,7 +10,7 @@ class TLSConfig:
             "force_http1",
             "pseudo_header_order",
             "tls_extensions",
-            "http2_extensions",
+            "http2_settings",
         ]
         self.ja3: str = None  # tls ja3 value
         self.headers_order: list[str] = None  # http headers order
@@ -28,7 +28,7 @@ class TLSConfig:
         # ]
         self.pseudo_header_order: list[str] = None  # HTTP2 Pseudo header order
         self.tls_extensions: TLSExtensions = TLSExtensions()  # tls extensions
-        self.http2_extensions: HTTP2Extensions = HTTP2Extensions()  # http2 extensions
+        self.http2_settings: HTTP2Settings = HTTP2Settings()  # http2 extensions
 
     def __str__(self):
         return str(self.toJSON())
@@ -66,7 +66,7 @@ class TLSConfig:
                     go_key += k.upper()
                 else:
                     go_key += k.title()
-            if key in ["tls_extensions", "http2_extensions"]:
+            if key in ["tls_extensions", "http2_settings"]:
                 result[go_key] = getattr(self, key).toJSON()
             else:
                 result[go_key] = getattr(self, key)

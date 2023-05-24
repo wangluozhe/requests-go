@@ -11,18 +11,18 @@ class Session:
         self.tls_config = tls_config
 
     def request(self, method, url, params=None, data=None, headers=None, headers_order=None, cookies=None, timeout=None, allow_redirects=True,
-                proxies=None, verify=None, json=None, body=None, ja3=None, pseudo_header_order=None, tls_extensions=None, http2_extensions=None, force_http1=False):
-        if self.tls_config["Ja3"]:
+                proxies=None, verify=None, json=None, body=None, ja3=None, pseudo_header_order=None, tls_extensions=None, http2_settings=None, force_http1=False):
+        if self.tls_config.get("Ja3", None):
             ja3 = self.tls_config["Ja3"]
-        if self.tls_config["PseudoHeaderOrder"]:
+        if self.tls_config.get("PseudoHeaderOrder", None):
             pseudo_header_order = self.tls_config["PseudoHeaderOrder"]
-        if self.tls_config["TLSExtensions"]:
+        if self.tls_config.get("TLSExtensions", None):
             tls_extensions = self.tls_config["TLSExtensions"]
-        if self.tls_config["HTTP2Extensions"]:
-            http2_extensions = self.tls_config["HTTP2Extensions"]
-        if self.tls_config["HeadersOrder"]:
+        if self.tls_config.get("HTTP2Settings", None):
+            http2_settings = self.tls_config["HTTP2Settings"]
+        if self.tls_config.get("HeadersOrder", None):
             headers_order = self.tls_config["HeadersOrder"]
-        if self.tls_config["ForceHTTP1"]:
+        if self.tls_config.get("ForceHTTP1", None):
             force_http1 = self.tls_config["ForceHTTP1"]
         if not method and not url and ja3:
             raise Exception("method and url and ja3 must exist")
@@ -67,8 +67,8 @@ class Session:
             request_params["PseudoHeaderOrder"] = pseudo_header_order
         if tls_extensions:
             request_params["TLSExtensions"] = dumps(tls_extensions, separators=(",", ":"))
-        if http2_extensions:
-            request_params["HTTP2Extensions"] = dumps(http2_extensions, separators=(",", ":"))
+        if http2_settings:
+            request_params["HTTP2Settings"] = dumps(http2_settings, separators=(",", ":"))
         rs = request(dumps(request_params).encode("utf-8")).decode("utf-8")
         try:
             res = loads(rs)

@@ -35,21 +35,21 @@ tls.tls_extensions.key_share_curves = [
     "GREASE",
     "X25519"
 ]
-tls.http2_extensions.settings = {
+tls.http2_settings.settings = {
     "HEADER_TABLE_SIZE": 65536,
     "ENABLE_PUSH": 0,
     "MAX_CONCURRENT_STREAMS": 1000,
     "INITIAL_WINDOW_SIZE": 6291456,
     "MAX_HEADER_LIST_SIZE": 262144
 }
-tls.http2_extensions.settings_order = [
+tls.http2_settings.settings_order = [
     "HEADER_TABLE_SIZE",
     "ENABLE_PUSH",
     "MAX_CONCURRENT_STREAMS",
     "INITIAL_WINDOW_SIZE",
     "MAX_HEADER_LIST_SIZE"
 ]
-tls.http2_extensions.connection_flow = 15663105
+tls.http2_settings.connection_flow = 15663105
 response = requests_go.get(url=url, headers=headers, tls_config=tls)
 print(response.url)
 print(response.text)

@@ -294,9 +294,9 @@ class TLSExtensions:
         return result
 
 
-class HTTP2Extensions:
+class HTTP2Settings:
     def __init__(self):
-        super(HTTP2Extensions, self).__init__()
+        super(HTTP2Settings, self).__init__()
         self._keys = [
             "settings",
             "settings_order",

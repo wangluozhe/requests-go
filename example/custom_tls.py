@@ -254,19 +254,14 @@ tc = {
 		]
 	}
 }   # tc is browser access https://tls.peet.ws/api/all json result
-proxies = {
-	"http": "http://127.0.0.1:8888",
-	"https": "http://127.0.0.1:8888",
-}
 tls_conf = tls_config.to_tls_config(tc)
-tls_conf.additional_decode = None
 response = requests.get(url, tls_config=tls_conf)
 print(response.text)
 
 # or
 
 tc = {
-	"ja3_string": "771,4865-4866-4867-49195-49199-49196-49200-52393-52392-49171-49172-156-157-47-53,0-23-65281-10-11-35-16-5-13-18-51-45-43-27-17513-21,29-23-24,0",
+	"Ja3": "771,4865-4866-4867-49195-49199-49196-49200-52393-52392-49171-49172-156-157-47-53,0-23-65281-10-11-35-16-5-13-18-51-45-43-27-17513-21,29-23-24,0",
 }
 response = requests.get(url, tls_config=tc)  # default tls_config is dict class the convert TLSConfig class
 # response = requests.get(url, tls_config=tls_config.TLSConfig(config=tc))  # default tls_config is dict class the convert TLSConfig class
