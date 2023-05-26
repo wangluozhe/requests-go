@@ -155,7 +155,12 @@ class TLSExtensions:
         #     "0x402",
         #     "0x302",
         # ]
-        self.supported_delegated_credentials_algorithms: list[str] = None  # Supported Delegated Voucher Algorithms
+        self.supported_delegated_credentials_algorithms: list[str] = [
+            "ECDSAWithP256AndSHA256",
+            "ECDSAWithP384AndSHA384",
+            "ECDSAWithP521AndSHA512",
+            "ECDSAWithSHA1",
+        ]  # Supported Delegated Voucher Algorithms
         # GREASE
         # 1.3
         # 1.2
@@ -177,7 +182,9 @@ class TLSExtensions:
         # [
         #     "PskModeDHE",
         # ]
-        self.psk_key_exchange_modes: list[str] = None  # PSK Key Exchange Modes
+        self.psk_key_exchange_modes: list[str] = [
+            "PskModeDHE"
+        ]  # PSK Key Exchange Modes
         # PKCS1WithSHA256
         # PKCS1WithSHA384
         # PKCS1WithSHA512
@@ -240,7 +247,19 @@ class TLSExtensions:
         #     "0x402",
         #     "0x302",
         # ]
-        self.signature_algorithms_cert: list[str] = None  # Signature Algorithms Cert
+        self.signature_algorithms_cert: list[str] = [
+            "ECDSAWithP256AndSHA256",
+            "ECDSAWithP384AndSHA384",
+            "ECDSAWithP521AndSHA512",
+            "PSSWithSHA256",
+            "PSSWithSHA384",
+            "PSSWithSHA512",
+            "PKCS1WithSHA256",
+            "PKCS1WithSHA384",
+            "PKCS1WithSHA512",
+            "ECDSAWithSHA1",
+            "PKCS1WithSHA1",
+        ]  # Signature Algorithms Cert
         # GREASE
         # P256
         # P384
@@ -317,7 +336,12 @@ class HTTP2Settings:
         #     "INITIAL_WINDOW_SIZE": 6291456,
         #     "MAX_HEADER_LIST_SIZE": 262144
         # }
-        self.settings: dict[str, int] = None  # HTTP2 Header Frame Settings
+        self.settings: dict[str, int] = {
+            "HEADER_TABLE_SIZE": 65536,
+            "MAX_CONCURRENT_STREAMS": 1000,
+            "INITIAL_WINDOW_SIZE": 6291456,
+            "MAX_HEADER_LIST_SIZE": 262144
+        }  # HTTP2 Header Frame Settings
         # HEADER_TABLE_SIZE
         # ENABLE_PUSH
         # MAX_CONCURRENT_STREAMS
@@ -331,8 +355,13 @@ class HTTP2Settings:
         #     "INITIAL_WINDOW_SIZE",
         #     "MAX_HEADER_LIST_SIZE",
         # ]
-        self.settings_order: list[str] = None  # HTTP2 Header Frame Setting Order
-        self.connection_flow: int = None  # HTTP2 Window Update increment
+        self.settings_order: list[str] = [
+            "HEADER_TABLE_SIZE",
+            "MAX_CONCURRENT_STREAMS",
+            "INITIAL_WINDOW_SIZE",
+            "MAX_HEADER_LIST_SIZE"
+        ]  # HTTP2 Header Frame Setting Order
+        self.connection_flow: int = 15663105  # HTTP2 Window Update increment
         # Header Priority
         # Example:
         # {
@@ -340,7 +369,11 @@ class HTTP2Settings:
         #   "exclusive": true,
         #   "weight": 1
         # }
-        self.header_priority: dict[str, any] = None  # HTTP2 Header Priority
+        self.header_priority: dict[str, any] = {
+            "streamDep": 0,
+            "exclusive": True,
+            "weight": 256
+        }  # HTTP2 Header Priority
         # Example:
         # [
         #   {

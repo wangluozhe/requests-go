@@ -56,7 +56,12 @@ class Session:
         if verify:
             request_params["Verify"] = verify
         if body:
-            request_params["Body"] = body
+            if type(body) == str:
+                request_params["Body"] = body
+            elif type(body) == bytes:
+                request_params["Body"] = body.decode()
+            else:
+                raise TLSClientExeption("Body data is not a string or bytes class.")
         elif data:
             request_params["Data"] = data
         elif json:

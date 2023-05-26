@@ -26,7 +26,12 @@ class TLSConfig:
         #     ":scheme",
         #     ":path"
         # ]
-        self.pseudo_header_order: list[str] = None  # HTTP2 Pseudo header order
+        self.pseudo_header_order: list[str] = [
+            ":method",
+            ":authority",
+            ":scheme",
+            ":path"
+        ]  # HTTP2 Pseudo header order
         self.tls_extensions: TLSExtensions = TLSExtensions()  # tls extensions
         self.http2_settings: HTTP2Settings = HTTP2Settings()  # http2 extensions
 
