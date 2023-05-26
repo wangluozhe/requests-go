@@ -47,25 +47,32 @@ tls.tls_extensions.key_share_curves = [
     "GREASE",
     "X25519"
 ]
-tls.http2_extensions.settings = {
+tls.http2_settings.settings = {
     "HEADER_TABLE_SIZE": 65536,
     "ENABLE_PUSH": 0,
     "MAX_CONCURRENT_STREAMS": 1000,
     "INITIAL_WINDOW_SIZE": 6291456,
     "MAX_HEADER_LIST_SIZE": 262144
 }
-tls.http2_extensions.settings_order = [
+tls.http2_settings.settings_order = [
     "HEADER_TABLE_SIZE",
     "ENABLE_PUSH",
     "MAX_CONCURRENT_STREAMS",
     "INITIAL_WINDOW_SIZE",
     "MAX_HEADER_LIST_SIZE"
 ]
-tls.http2_extensions.connection_flow = 15663105
+tls.http2_settings.connection_flow = 15663105
 response = requests_go.get(url=url, headers=headers, tls_config=tls)
-
+print(response.url)
+print(response.text)
+print(response.headers)
+print(response.cookies)
 
 ```
+
+## 常见错误
+1. `单独设置ja3报404错误`的解决方法：默认使用http2，必须搭配pseudo_header_order伪标题顺序去使用，否则会访问失败404，或force_http1强制使用http1（0.3版本会更新）。
+2. `挂上VPN后报EOF错误`的解决方法：默认requests-go跟requests一样会去读取系统环境变量中的代理，默认代理会使用https协议，需手动修改proxies的代理为http协议即可。
 
 `兼容requests:`
 
