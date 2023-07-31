@@ -149,18 +149,7 @@ from logging import NullHandler
 
 from requests import packages, utils
 from .api import delete, get, head, options, patch, post, put, request
-from requests.exceptions import (
-    ConnectionError,
-    ConnectTimeout,
-    FileModeWarning,
-    HTTPError,
-    JSONDecodeError,
-    ReadTimeout,
-    RequestException,
-    Timeout,
-    TooManyRedirects,
-    URLRequired,
-)
+from requests.exceptions import *
 from requests.models import PreparedRequest, Request, Response
 from .sessions import Session, session
 from requests.status_codes import codes

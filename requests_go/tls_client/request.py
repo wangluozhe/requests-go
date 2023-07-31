@@ -10,7 +10,7 @@ class Session:
         super(Session, self).__init__()
         self.tls_config = tls_config
 
-    def request(self, method, url, params=None, data=None, headers=None, headers_order=None, cookies=None, timeout=None, allow_redirects=True,
+    def request(self, method, url, params=None, data=None, headers=None, headers_order=None, cookies=None, timeout=None, allow_redirects=False,
                 proxies=None, verify=None, json=None, body=None, ja3=None, pseudo_header_order=None, tls_extensions=None, http2_settings=None, force_http1=False):
         if self.tls_config.get("Ja3", None):
             ja3 = self.tls_config["Ja3"]
@@ -41,8 +41,7 @@ class Session:
             request_params["Cookies"] = cookies
         if timeout:
             request_params["Timeout"] = timeout
-        if allow_redirects:
-            request_params["AllowRedirects"] = allow_redirects
+        request_params["AllowRedirects"] = allow_redirects
         if proxies:
             if type(proxies) == dict:
                 if proxies.get("https", ""):

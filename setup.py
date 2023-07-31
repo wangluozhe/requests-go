@@ -24,6 +24,9 @@ setup(
     author=about["__author__"],
     description=about["__description__"],
     license=about["__license__"],
+    author_email=about["__author_email__"],
+    url=about["__url__"],
+    python_requires=">=3.7",
     long_description=readme,
     long_description_content_type="text/markdown",
     packages=find_packages(),
@@ -44,7 +47,7 @@ setup(
         "Topic :: Software Development :: Libraries",
     ],
     install_requires=[
-        "requests==2.28.2",
-        "six==1.16.0",
+        "requests>=2.28.2",
+        "six>=1.16.0",
     ]
 )

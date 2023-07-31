@@ -1,8 +1,13 @@
-from requests.cookies import RequestsCookieJar
-from .structures import CaseInsensitiveDict
-
-from typing import Union
 import json
+import time
+from typing import Union
+from datetime import datetime
+from urllib.parse import urlparse
+from http.client import responses
+
+from requests.cookies import RequestsCookieJar
+
+from .structures import CaseInsensitiveDict
 
 
 class Response:
@@ -52,6 +57,12 @@ class Response:
         self._content_consumed = True
         return self._content
 
+    @property
+    def reason(self):
+        if self.status_code:
+            return responses.get(self.status_code)
+        return ""
+
 
 def build_response(res: Union[dict, list]) -> Response:
     """Builds a Response object """
@@ -70,19 +81,20 @@ def build_response(res: Union[dict, list]) -> Response:
                 response_headers[header_key] = header_value
     response.headers = response_headers
     # Add cookies
+    parsed_url = urlparse(response.url)
     if res["cookies"]:
         for cookies in res["cookies"]:
             name = cookies["Name"]
             value = cookies["Value"]
             path = cookies["Path"]
-            domain = cookies["Domain"]
-            expires = cookies["MaxAge"]
+            domain = cookies["Domain"] if cookies["Domain"] else parsed_url.hostname
+            expires = int(time.time()) + (datetime.strptime(cookies["Expires"], "%Y-%m-%dT%H:%M:%SZ") - datetime.now()).seconds
             secure = cookies["Secure"]
             http_only = cookies["HttpOnly"]
             rest = {
                 "HttpOnly": http_only
             }
-            response.cookies.set(name=name, value=value, path=path, domain=domain, expires=expires, secure=secure, rest=rest)
+            response.cookies.set(name=name, value=value, path=path, domain=domain, expires=expires, secure=secure, rest=rest, port=None)
     # Add response body
     response.text = res["content"]
     # Add response content (bytes)

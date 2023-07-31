@@ -8,7 +8,7 @@ from requests.models import DEFAULT_REDIRECT_LIMIT
 from requests.cookies import cookiejar_from_dict
 from requests.adapters import HTTPAdapter
 
-from .tls_config.adapter import TLSAdapter
+from .adapters import TLSAdapter
 from .tls_config.config import TLSConfig
 
 
@@ -108,7 +108,7 @@ class Session(requests.Session):
         # Default connection adapters.
         self.adapters = OrderedDict()
         if self._tls_config.ja3:
-            self.mount("https://", TLSAdapter(self.tls_config))
+            self.mount("https://", TLSAdapter(tls_config=self.tls_config))
         else:
             self.mount("https://", HTTPAdapter())
         self.mount("http://", HTTPAdapter())
@@ -121,7 +121,7 @@ class Session(requests.Session):
     def tls_config(self, value):
         if type(value) == dict or isinstance(value, TLSConfig):
             self._tls_config = value
-            self.mount("https://", TLSAdapter(self.tls_config))
+            self.mount("https://", TLSAdapter(tls_config=self.tls_config))
             return
         raise Exception("tls_config must is TLSConfig class or dict class")
 
@@ -198,7 +198,7 @@ class Session(requests.Session):
                 _tls_config = tls_config
             else:
                 raise Exception("tls_config must be of type dict or TLSConfig.")
-            self.mount("https://", TLSAdapter(_tls_config))
+            self.mount("https://", TLSAdapter(tls_config=_tls_config))
         # Create the Request.
         req = Request(
             method=method.upper(),
@@ -228,6 +228,7 @@ class Session(requests.Session):
         send_kwargs.update(settings)
 
         resp = self.send(prep, **send_kwargs)
+        self.cookies.update(resp.cookies)   # session更新cookies
 
         return resp
 

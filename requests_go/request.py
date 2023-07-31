@@ -1,5 +1,4 @@
 from .tls_client import Session
-from .response import build_response
 
 
 class TLSRequest:
@@ -24,5 +23,4 @@ class TLSRequest:
 
 	def send(self, options: dict = {}):
 		response = self._session.request(**options)
-		tls_response = build_response(response)
-		return tls_response
+		return response
