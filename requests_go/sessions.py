@@ -125,10 +125,6 @@ class Session(requests.Session):
             return
         raise Exception("tls_config must is TLSConfig class or dict class")
 
-    @tls_config.getter
-    def tls_config(self):
-        return self._tls_config
-
     def request(
             self,
             method,

@@ -1,3 +1,5 @@
+import uuid
+
 from .extensions import TLSExtensions, HTTP2Settings
 
 
@@ -5,6 +7,7 @@ class TLSConfig:
     def __init__(self):
         super(TLSConfig, self).__init__()
         self._keys = [
+            "id",
             "ja3",
             "headers_order",
             "force_http1",
@@ -12,6 +15,7 @@ class TLSConfig:
             "tls_extensions",
             "http2_settings",
         ]
+        self.id: str = str(uuid.uuid4())    # session id, Used to maintain session
         self.ja3: str = None  # tls ja3 value
         self.headers_order: list[str] = None  # http headers order
         self.force_http1: bool = False  # force http1 request

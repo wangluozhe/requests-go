@@ -5,13 +5,16 @@ from .response import build_response
 from ..tls_config import TLSConfig
 from .exceptions import TLSClientExeption
 
+
 class Session:
     def __init__(self, tls_config: TLSConfig = None):
         super(Session, self).__init__()
         self.tls_config = tls_config
 
     def request(self, method, url, params=None, data=None, headers=None, headers_order=None, cookies=None, timeout=None, allow_redirects=False,
-                proxies=None, verify=None, json=None, body=None, ja3=None, pseudo_header_order=None, tls_extensions=None, http2_settings=None, force_http1=False):
+                proxies=None, verify=None, json=None, body=None, ja3=None, pseudo_header_order=None, tls_extensions=None, http2_settings=None,
+                force_http1=False):
+        id = self.tls_config.get("Id", "")
         if self.tls_config.get("Ja3", None):
             ja3 = self.tls_config["Ja3"]
         if self.tls_config.get("PseudoHeaderOrder", None):
@@ -27,6 +30,7 @@ class Session:
         if not method and not url and ja3:
             raise Exception("method and url and ja3 must exist")
         request_params = {
+            "Id": id,
             "Method": method,
             "Url": url,
             "Ja3": ja3,
