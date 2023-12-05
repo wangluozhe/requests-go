@@ -121,7 +121,6 @@ class Session(requests.Session):
     def tls_config(self, value):
         if type(value) == dict or isinstance(value, TLSConfig):
             self._tls_config = value
-            self.mount("https://", TLSAdapter(tls_config=self.tls_config))
             return
         raise Exception("tls_config must is TLSConfig class or dict class")
 
@@ -195,6 +194,10 @@ class Session(requests.Session):
             else:
                 raise Exception("tls_config must be of type dict or TLSConfig.")
             self.mount("https://", TLSAdapter(tls_config=_tls_config))
+        elif url.startswith("https://") and self.tls_config:
+            self.mount("https://", TLSAdapter(tls_config=self.tls_config))
+        else:
+            self.mount("https://", HTTPAdapter())
         # Create the Request.
         req = Request(
             method=method.upper(),
