@@ -1,3 +1,4 @@
+import collections
 from json import dumps, loads
 
 from .client import request, freeMemory
@@ -38,6 +39,11 @@ class Session:
         if params:
             request_params["Params"] = params
         if headers:
+            if type(headers) == collections.OrderedDict:
+                headers = dict(headers)
+            for key, value in headers.items():
+                if key.lower() == "content-length":
+                    headers.pop(key)
             request_params["Headers"] = headers
         if headers_order:
             request_params["HeadersOrder"] = headers_order
@@ -47,13 +53,13 @@ class Session:
             request_params["Timeout"] = timeout
         request_params["AllowRedirects"] = allow_redirects
         if proxies:
+            if type(proxies) == collections.OrderedDict:
+                proxies = dict(proxies)
             if type(proxies) == dict:
-                if proxies.get("https", ""):
+                if proxies.get("https", "") and url.startswith("https:"):
                     request_params["Proxies"] = proxies["https"]
-                elif proxies.get("http", ""):
+                elif proxies.get("http", "") and url.startswith("http:"):
                     request_params["Proxies"] = proxies["http"]
-                else:
-                    raise TLSClientExeption('Proxies必须为{"http": "代理IP", "https": "代理IP"}')
             else:
                 request_params["Proxies"] = proxies
         if verify:
