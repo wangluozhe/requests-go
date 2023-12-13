@@ -41,7 +41,8 @@ class Session:
         if headers:
             if type(headers) == collections.OrderedDict:
                 headers = dict(headers)
-            for key, value in headers.items():
+            headers_tmp = loads(dumps(headers))
+            for key, value in headers_tmp.items():
                 if key.lower() == "content-length":
                     headers.pop(key)
             request_params["Headers"] = headers
