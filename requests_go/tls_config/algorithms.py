@@ -22,7 +22,7 @@ CHARLES_SIGNATURE_ALGORITHMS_TO_TLS1_3_Identifier = {
 
 
 # charles的signature_algorithms转换为TLS1.3的signature_algorithms
-def charles_to_tls_signature_algorithms(charles_signature_algorithms: str) -> list[str]:
+def charles_to_tls_signature_algorithms(charles_signature_algorithms: str) -> list:
     signature_algorithm_list = []
     charles_signature_algorithms = charles_signature_algorithms.strip()
     for signature_algorithm in charles_signature_algorithms.split("\n"):

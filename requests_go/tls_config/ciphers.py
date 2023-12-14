@@ -679,7 +679,7 @@ def cipher_suite_to_decimal(cipher_suite: str) -> int:
 
 
 # CipherSuite列表转十进制列表
-def cipher_suites_to_decimals(cipher_suites: list or str, split_str: str = "\n") -> list[int]:
+def cipher_suites_to_decimals(cipher_suites: list or str, split_str: str = "\n") -> list:
     if type(cipher_suites) == str:
         cipher_suites = cipher_suites.strip()
         cipher_suites = cipher_suites.split(split_str)
@@ -703,7 +703,7 @@ def decimal_to_cipher_suite(decimal: int) -> str:
 
 
 # 十进制列表转CipherSuite列表
-def decimals_to_cipher_suites(decimals: list or str, split_str: str = "-") -> list[str]:
+def decimals_to_cipher_suites(decimals: list or str, split_str: str = "-") -> list:
     if type(decimals) == str:
         decimals = decimals.strip()
         decimals = decimals.split(split_str)
