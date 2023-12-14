@@ -11,6 +11,7 @@ class TLSConfig:
             "id",
             "ja3",
             "headers_order",
+            "un_changed_header_key",
             "force_http1",
             "pseudo_header_order",
             "tls_extensions",
@@ -19,6 +20,7 @@ class TLSConfig:
         self.id: str = str(uuid.uuid4())  # session id, Used to maintain session
         self._ja3: str or JA3Random = None  # tls ja3 value
         self.headers_order: list[str] = None  # http headers order
+        self.un_changed_header_key: list[str] = None  # http un changed header key
         self.force_http1: bool = False  # force http1 request
         # :method
         # :authority

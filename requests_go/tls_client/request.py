@@ -12,7 +12,7 @@ class Session:
         super(Session, self).__init__()
         self.tls_config = tls_config
 
-    def request(self, method, url, params=None, data=None, headers=None, headers_order=None, cookies=None, timeout=None, allow_redirects=False,
+    def request(self, method, url, params=None, data=None, headers=None, headers_order=None, un_changed_header_key=None, cookies=None, timeout=None, allow_redirects=False,
                 proxies=None, verify=None, json=None, body=None, ja3=None, pseudo_header_order=None, tls_extensions=None, http2_settings=None,
                 force_http1=False):
         id = self.tls_config.get("Id", "")
@@ -26,6 +26,8 @@ class Session:
             http2_settings = self.tls_config["HTTP2Settings"]
         if self.tls_config.get("HeadersOrder", None):
             headers_order = self.tls_config["HeadersOrder"]
+        if self.tls_config.get("UnChangedHeaderKey", None):
+            un_changed_header_key = self.tls_config["UnChangedHeaderKey"]
         if self.tls_config.get("ForceHTTP1", None):
             force_http1 = self.tls_config["ForceHTTP1"]
         if not method and not url and ja3:
@@ -48,6 +50,8 @@ class Session:
             request_params["Headers"] = headers
         if headers_order:
             request_params["HeadersOrder"] = headers_order
+        if headers_order:
+            request_params["UnChangedHeaderKey"] = un_changed_header_key
         if cookies:
             request_params["Cookies"] = cookies
         if timeout:
