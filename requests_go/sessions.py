@@ -1,3 +1,4 @@
+import asyncio
 from collections import OrderedDict
 
 import requests
@@ -227,9 +228,155 @@ class Session(requests.Session):
         send_kwargs.update(settings)
 
         resp = self.send(prep, **send_kwargs)
-        self.cookies.update(resp.cookies)   # session更新cookies
+        self.cookies.update(resp.cookies)  # session更新cookies
 
         return resp
+
+
+class AsyncSession(Session):
+    """A Requests async session.
+
+    Provides cookie persistence, connection-pooling, and configuration.
+
+    Basic Usage::
+
+      >>> import requests
+      >>> s = requests.AsyncSession()
+      >>> s.get('https://httpbin.org/get')
+      <Response [200]>
+
+    Or as a context manager::
+
+      >>> with requests.AsyncSession() as s:
+      ...     s.get('https://httpbin.org/get')
+      <Response [200]>
+    """
+
+    async def get(self, url, **kwargs):
+        r"""Sends a GET request. Returns :class:`Response` object.
+
+        :param url: URL for the new :class:`Request` object.
+        :param \*\*kwargs: Optional arguments that ``request`` takes.
+        :rtype: requests.Response
+        """
+
+        kwargs.setdefault("allow_redirects", True)
+        return await self.async_request("GET", url, **kwargs)
+
+    async def options(self, url, **kwargs):
+        r"""Sends a OPTIONS request. Returns :class:`Response` object.
+
+        :param url: URL for the new :class:`Request` object.
+        :param \*\*kwargs: Optional arguments that ``request`` takes.
+        :rtype: requests.Response
+        """
+
+        kwargs.setdefault("allow_redirects", True)
+        return await self.async_request("OPTIONS", url, **kwargs)
+
+    async def head(self, url, **kwargs):
+        r"""Sends a HEAD request. Returns :class:`Response` object.
+
+        :param url: URL for the new :class:`Request` object.
+        :param \*\*kwargs: Optional arguments that ``request`` takes.
+        :rtype: requests.Response
+        """
+
+        kwargs.setdefault("allow_redirects", False)
+        return await self.async_request("HEAD", url, **kwargs)
+
+    async def post(self, url, data=None, json=None, **kwargs):
+        r"""Sends a POST request. Returns :class:`Response` object.
+
+        :param url: URL for the new :class:`Request` object.
+        :param data: (optional) Dictionary, list of tuples, bytes, or file-like
+            object to send in the body of the :class:`Request`.
+        :param json: (optional) json to send in the body of the :class:`Request`.
+        :param \*\*kwargs: Optional arguments that ``request`` takes.
+        :rtype: requests.Response
+        """
+
+        return await self.async_request("POST", url, data=data, json=json, **kwargs)
+
+    async def put(self, url, data=None, **kwargs):
+        r"""Sends a PUT request. Returns :class:`Response` object.
+
+        :param url: URL for the new :class:`Request` object.
+        :param data: (optional) Dictionary, list of tuples, bytes, or file-like
+            object to send in the body of the :class:`Request`.
+        :param \*\*kwargs: Optional arguments that ``request`` takes.
+        :rtype: requests.Response
+        """
+
+        return await self.async_request("PUT", url, data=data, **kwargs)
+
+    async def patch(self, url, data=None, **kwargs):
+        r"""Sends a PATCH request. Returns :class:`Response` object.
+
+        :param url: URL for the new :class:`Request` object.
+        :param data: (optional) Dictionary, list of tuples, bytes, or file-like
+            object to send in the body of the :class:`Request`.
+        :param \*\*kwargs: Optional arguments that ``request`` takes.
+        :rtype: requests.Response
+        """
+
+        return await self.async_request("PATCH", url, data=data, **kwargs)
+
+    async def delete(self, url, **kwargs):
+        r"""Sends a DELETE request. Returns :class:`Response` object.
+
+        :param url: URL for the new :class:`Request` object.
+        :param \*\*kwargs: Optional arguments that ``request`` takes.
+        :rtype: requests.Response
+        """
+
+        return await self.async_request("DELETE", url, **kwargs)
+
+    def loop_request(self, arguments):
+        return self.request(**arguments)
+
+    async def async_request(
+        self,
+        method,
+        url,
+        params=None,
+        data=None,
+        headers=None,
+        cookies=None,
+        files=None,
+        auth=None,
+        timeout=None,
+        allow_redirects=True,
+        proxies=None,
+        hooks=None,
+        stream=None,
+        verify=None,
+        cert=None,
+        json=None,
+        tls_config=None,
+    ):
+        kwargs = {
+            "method": method,
+            "url": url,
+            "params": params,
+            "data": data,
+            "headers": headers,
+            "cookies": cookies,
+            "files": files,
+            "auth": auth,
+            "timeout": timeout,
+            "allow_redirects": allow_redirects,
+            "proxies": proxies,
+            "hooks": hooks,
+            "stream": stream,
+            "verify": verify,
+            "cert": cert,
+            "json": json,
+            "tls_config": tls_config,
+        }
+        loop = asyncio.get_event_loop()
+        response = await loop.run_in_executor(None, self.loop_request, kwargs)
+        return response
 
 
 def session():
@@ -245,3 +392,18 @@ def session():
     :rtype: Session
     """
     return Session()
+
+
+def async_session():
+    """
+    Returns a :class:`AsyncSession` for context-management.
+
+    .. deprecated:: 1.0.0
+
+        This method has been deprecated since version 1.0.0 and is only kept for
+        backwards compatibility. New code should use :class:`~requests.sessions.AsyncSession`
+        to create a session. This may be removed at a future date.
+
+    :rtype: AsyncSession
+    """
+    return AsyncSession()

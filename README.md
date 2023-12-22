@@ -114,6 +114,38 @@ print(response.text)
 `注意：不能自行设置content-length，否则会出现未知错误！`
 
 
+### 异步使用
+
+`requests-go`支持异步调用，异步调用需要加上`async_`，如`requests_go.async_get`，其他同理。
+
+注意：`Session`变成了`AsyncSession`，`AsyncSession`中的`request`是同步方法，如想使用异步则使用`async_request`，其他`get`、`post`、`put`等还是异步方法。
+
+```python
+import asyncio
+
+import requests_go
+
+
+async def session_main():
+    session = requests_go.async_session()
+    response = await session.get(url="https://www.baidu.com")
+    print("session_main:", response.text)
+
+
+async def api_main():
+    response = await requests_go.async_get(url="https://www.baidu.com")
+    print("api_main:", response.text)
+
+
+async def run():
+    await asyncio.gather(session_main(), api_main())
+
+
+if __name__ == '__main__':
+    asyncio.run(run())
+```
+
+
 ### ciphers使用
 `ciphers`可以帮助你还原`ja3`中的`CipherSuites`部分和`charles`中的`CipherSuites`部分，可以快速的查找到自己所需的`CipherSuite`。
 

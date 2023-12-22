@@ -1,9 +1,11 @@
-#                                 _             _   _
-#  _ __ ___  __ _ _   _  ___  ___| |_ ___      | |_| |___
-# | '__/ _ \/ _` | | | |/ _ \/ __| __/ __|_____| __| / __|
-# | | |  __/ (_| | |_| |  __/\__ \ |_\__ \_____| |_| \__ \
-# |_|  \___|\__, |\__,_|\___||___/\__|___/      \__|_|___/
-#              |_|
+#                                 _
+#                                | |
+#  _ __ ___  __ _ _   _  ___  ___| |_ ___ ______ __ _  ___
+# | '__/ _ \/ _` | | | |/ _ \/ __| __/ __|______/ _` |/ _ \
+# | | |  __/ (_| | |_| |  __/\__ \ |_\__ \     | (_| | (_) |
+# |_|  \___|\__, |\__,_|\___||___/\__|___/      \__, |\___/
+#              | |                               __/ |
+#              |_|                              |___/
 
 
 """
@@ -69,10 +71,10 @@ def check_compatibility(urllib3_version, chardet_version, charset_normalizer_ver
     # Check urllib3 for compatibility.
     major, minor, patch = urllib3_version  # noqa: F811
     major, minor, patch = int(major), int(minor), int(patch)
-    # urllib3 >= 1.21.1, <= 1.26
-    assert major == 1
-    assert minor >= 21
-    assert minor <= 26
+    # urllib3 >= 1.21.1
+    assert major >= 1
+    if major == 1:
+        assert minor >= 21
 
     # Check charset_normalizer for compatibility.
     if chardet_version:
@@ -83,8 +85,8 @@ def check_compatibility(urllib3_version, chardet_version, charset_normalizer_ver
     elif charset_normalizer_version:
         major, minor, patch = charset_normalizer_version.split(".")[:3]
         major, minor, patch = int(major), int(minor), int(patch)
-        # charset_normalizer >= 2.0.0 < 3.0.0
-        assert (2, 0, 0) <= (major, minor, patch) < (3, 0, 0)
+        # charset_normalizer >= 2.0.0 < 4.0.0
+        assert (2, 0, 0) <= (major, minor, patch) < (4, 0, 0)
     else:
         raise Exception("You need either charset_normalizer or chardet installed")
 
@@ -148,10 +150,10 @@ import logging
 from logging import NullHandler
 
 from requests import packages, utils
-from .api import delete, get, head, options, patch, post, put, request
+from .api import delete, get, head, options, patch, post, put, request, async_delete, async_get, async_head, async_options, async_patch, async_post, async_put, async_request
 from requests.exceptions import *
 from requests.models import PreparedRequest, Request, Response
-from .sessions import Session, session
+from .sessions import Session, session, AsyncSession, async_session
 from requests.status_codes import codes
 
 logging.getLogger(__name__).addHandler(NullHandler())
