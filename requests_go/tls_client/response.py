@@ -1,5 +1,6 @@
 import json
 import time
+import base64
 from typing import Union
 from datetime import datetime
 from urllib.parse import urlparse
@@ -95,8 +96,6 @@ def build_response(res: Union[dict, list]) -> Response:
                 "HttpOnly": http_only
             }
             response.cookies.set(name=name, value=value, path=path, domain=domain, expires=expires, secure=secure, rest=rest, port=None)
-    # Add response body
-    response.text = res["content"]
     # Add response content (bytes)
-    response._content = res["content"].encode()
+    response._content = base64.b64decode(res["content"])
     return response
