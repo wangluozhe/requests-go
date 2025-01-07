@@ -75,11 +75,8 @@ def build_response(res: Union[dict, list]) -> Response:
     # Add headers
     response_headers = {}
     if res["headers"]:
-        for header_key, header_value in res["headers"].items():
-            if len(header_value) == 1:
-                response_headers[header_key] = header_value[0]
-            else:
-                response_headers[header_key] = header_value
+        for header_key, header_values in res["headers"].items():
+            response_headers[header_key] = ",".join(header_values)
     response.headers = response_headers
     # Add cookies
     parsed_url = urlparse(response.url)
