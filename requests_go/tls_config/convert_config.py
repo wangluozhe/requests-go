@@ -201,7 +201,14 @@ def get_key_share_curves(config):
                 key = key.split("(", 1)[0]
                 key = key.strip()
                 key = key.replace("-", "")
-                key_share_curves.append(key)
+                if key in ["GREASE", "P256", "P384", "P521", "X25519"]:
+                    key_share_curves.append(key)
+                else:
+                    key = list(shared_key.keys())[0].split("(")[-1].rstrip(")")
+                    if "0x" in key:
+                        key_share_curves.append(str(int(key, 16)))
+                    else:
+                        key_share_curves.append(key)
     if key_share_curves:
         return key_share_curves
     return None
