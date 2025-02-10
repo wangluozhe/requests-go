@@ -296,20 +296,17 @@ class TLSExtensions:
         setattr(self, item, None)
 
     # JSON转类
-    def _fromJSON(self, config: dict):
+    def fromJSON(self, config: dict):
         for key, value in config.items():
             if key in self._keys:
                 setattr(self, key, value)
+        return self
 
     # 类转JSON
     def toJSON(self):
         result = {}
         for key in self._keys:
-            go_keys = key.split("_")
-            go_key = ""
-            for k in go_keys:
-                go_key += k.title()
-            result[go_key] = getattr(self, key)
+            result[key] = getattr(self, key)
         return result
 
 
@@ -415,18 +412,15 @@ class HTTP2Settings:
         setattr(self, item, None)
 
     # JSON转类
-    def _fromJSON(self, config: dict):
+    def fromJSON(self, config: dict):
         for key, value in config.items():
             if key in self._keys:
                 setattr(self, key, value)
+        return self
 
     # 类转JSON
     def toJSON(self):
         result = {}
         for key in self._keys:
-            go_keys = key.split("_")
-            go_key = ""
-            for k in go_keys:
-                go_key += k.title()
-            result[go_key] = getattr(self, key)
+            result[key] = getattr(self, key)
         return result
