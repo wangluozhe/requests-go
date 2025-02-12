@@ -309,6 +309,17 @@ class TLSExtensions:
             result[key] = getattr(self, key)
         return result
 
+    # 类转JSON
+    def toMap(self):
+        result = {}
+        for key in self._keys:
+            go_keys = key.split("_")
+            go_key = ""
+            for k in go_keys:
+                go_key += k.title()
+            result[go_key] = getattr(self, key)
+        return result
+
 
 class HTTP2Settings:
     def __init__(self):
@@ -423,4 +434,15 @@ class HTTP2Settings:
         result = {}
         for key in self._keys:
             result[key] = getattr(self, key)
+        return result
+
+    # 类转JSON
+    def toMap(self):
+        result = {}
+        for key in self._keys:
+            go_keys = key.split("_")
+            go_key = ""
+            for k in go_keys:
+                go_key += k.title()
+            result[go_key] = getattr(self, key)
         return result

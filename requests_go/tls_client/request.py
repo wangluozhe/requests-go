@@ -90,9 +90,9 @@ class Session:
         if pseudo_header_order:
             request_params["PseudoHeaderOrder"] = pseudo_header_order
         if tls_extensions:
-            request_params["TLSExtensions"] = dumps(tls_extensions, separators=(",", ":"))
+            request_params["TLSExtensions"] = dumps(tls_extensions.toMap(), separators=(",", ":"))
         if http2_settings:
-            request_params["HTTP2Settings"] = dumps(http2_settings, separators=(",", ":"))
+            request_params["HTTP2Settings"] = dumps(http2_settings.toMap(), separators=(",", ":"))
         rs = request(dumps(request_params).encode("utf-8")).decode("utf-8")
         try:
             res = loads(rs)

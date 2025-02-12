@@ -189,7 +189,7 @@ class Session(requests.Session):
         """
         if url.startswith("https://") and tls_config:
             if type(tls_config) == dict:
-                _tls_config = tls_config
+                _tls_config = TLSConfig().fromJSON(tls_config)
             elif isinstance(tls_config, TLSConfig):
                 _tls_config = tls_config
             else:
