@@ -188,14 +188,14 @@ class Session(requests.Session):
         :rtype: requests.Response
         """
         if url.startswith("https://") and tls_config:
-            if type(tls_config) == dict:
+            if type(tls_config) == dict and tls_config.get("ja3"):
                 _tls_config = TLSConfig().fromJSON(tls_config)
-            elif isinstance(tls_config, TLSConfig):
+            elif isinstance(tls_config, TLSConfig) and str(tls_config.ja3) != "None":
                 _tls_config = tls_config
             else:
                 raise Exception("tls_config must be of type dict or TLSConfig.")
             self.mount("https://", TLSAdapter(tls_config=_tls_config))
-        elif url.startswith("https://") and self.tls_config:
+        elif url.startswith("https://") and str(self.tls_config.ja3) != "None":
             self.mount("https://", TLSAdapter(tls_config=self.tls_config))
         else:
             self.mount("https://", HTTPAdapter())

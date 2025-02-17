@@ -7,7 +7,7 @@ from .extensions import TLSExtensions, HTTP2Settings
 class TLSConfig:
     def __init__(self):
         super(TLSConfig, self).__init__()
-        self._keys = [
+        self.__keys = [
             "id",
             "ja3",
             "random_ja3",
@@ -19,8 +19,8 @@ class TLSConfig:
             "http2_settings",
         ]
         self.id: str = str(uuid.uuid4())  # session id, Used to maintain session
-        self._ja3: str or JA3Random = None  # tls ja3 value
-        self._random_ja3: bool = False  # ja3 is it random
+        self.__ja3: JA3 = None  # tls ja3 value
+        self.__random_ja3: bool = False  # ja3 is it random
         self.headers_order: list[str] = None  # http headers order
         self.un_changed_header_key: list[str] = None  # http un changed header key
         self.force_http1: bool = False  # force http1 request
@@ -48,7 +48,7 @@ class TLSConfig:
         return str(self.toJSON())
 
     def __iter__(self):
-        for key in self._keys:
+        for key in self.__keys:
             yield key, getattr(self, key)
 
     def __setitem__(self, key, value):
@@ -63,34 +63,48 @@ class TLSConfig:
     def __delattr__(self, item):
         setattr(self, item, None)
 
+    def __eq__(self, other):
+        if type(self) is not type(other):
+            raise TypeError("Cannot compare {} to {}".format(type(self), type(other)))
+        if self.ja3 != other.ja3:
+            return False
+        if self.pseudo_header_order != other.pseudo_header_order:
+            return False
+        if self.tls_extensions != other.tls_extensions:
+            return False
+        if self.http2_settings != other.http2_settings:
+            return False
+        return True
+
     def get(self, key, default=None):
         return getattr(self, key, default)
 
     @property
     def ja3(self):
-        return str(self._ja3)
+        return self.__ja3
 
     @ja3.setter
     def ja3(self, ja3):
-        if type(ja3) in [str, JA3Random]:
-            if type(ja3) is JA3Random:
-                self._random_ja3 = True
-            self._ja3 = ja3
+        if type(ja3) in [str, JA3]:
+            if type(ja3) == str:
+                self.__ja3 = JA3(ja3, random=self.random_ja3)
+            else:
+                self.__ja3 = ja3
         else:
             raise TypeError("Only str and JA3Random types can be defined")
 
     @property
     def random_ja3(self):
-        return self._random_ja3
+        return self.__random_ja3
 
     @random_ja3.setter
     def random_ja3(self, random_ja3):
         if type(random_ja3) is bool:
-            if random_ja3:
-                self._ja3 = JA3Random(str(self._ja3))
-            self._random_ja3 = random_ja3
+            if self.__ja3:
+                self.__ja3.random = random_ja3
+            self.__random_ja3 = random_ja3
         else:
-            raise TypeError("Only str and JA3Random types can be defined")
+            raise TypeError("Only bool type can be defined")
 
     # JSON转类
     def fromJSON(self, config: dict):
@@ -101,35 +115,21 @@ class TLSConfig:
                 setattr(self, key, TLSExtensions().fromJSON(value))
             elif key == "http2_settings":
                 setattr(self, key, HTTP2Settings().fromJSON(value))
-            elif key in self._keys:
+            elif key in self.__keys:
                 setattr(self, key, value)
         return self
 
     # 类转JSON
     def toJSON(self):
         result = {}
-        for key in self._keys:
+        for key in self.__keys:
             if key in ["tls_extensions", "http2_settings"]:
                 result[key] = getattr(self, key).toJSON()
+            elif key == "ja3":
+                result[key] = str(getattr(self, key))
             else:
                 result[key] = getattr(self, key)
         return result
-
-    @staticmethod
-    def ja3_equal(ja1, ja2):
-        ja1s = ja1.split(",")
-        ja2s = ja2.split(",")
-        for i, (ja1i, ja2i) in enumerate(zip(ja1s, ja2s)):
-            if i == 2:
-                ja1i_list = ja1i.split("-")
-                ja2i_list = ja2i.split("-")
-                ja1i_list.sort()
-                ja2i_list.sort()
-                if ja1i_list != ja2i_list:
-                    return False
-            elif ja1i != ja2i:
-                return False
-        return True
 
 
 # 随机化ja3指纹
@@ -151,13 +151,46 @@ def random_ja3(ja3: str):
     return ",".join([ssl_version, ciphers, extensions, curves, orders])
 
 
-# 随机化ja3指纹
-class JA3Random:
-    def __init__(self, ja3: str):
-        self._ja3 = ja3
+# JA3指纹
+class JA3:
+    def __init__(self, ja3: str, random: bool = False):
+        self.__ja3 = ja3
+        self.__random = random
 
     def __str__(self):
-        return random_ja3(self._ja3)
+        if self.__random:
+            return random_ja3(self.__ja3)
+        return self.__ja3
+
+    def __eq__(self, other):
+        if type(self) is not type(other):
+            raise TypeError("Cannot compare {} to {}".format(type(self), type(other)))
+        if self.random != other.random:
+            return False
+        ja1s = str(self).split(",")
+        ja2s = str(other).split(",")
+        for i, (ja1i, ja2i) in enumerate(zip(ja1s, ja2s)):
+            if i == 2 and self.__random:
+                ja1i_list = ja1i.split("-")
+                ja2i_list = ja2i.split("-")
+                ja1i_list.sort()
+                ja2i_list.sort()
+                if ja1i_list != ja2i_list:
+                    return False
+            elif ja1i != ja2i:
+                return False
+        return True
+
+    @property
+    def random(self):
+        return self.__random
+
+    @random.setter
+    def random(self, random):
+        if type(random) is bool:
+            self.__random = random
+        else:
+            raise TypeError("Only bool type can be defined")
 
 
 TLS_CHROME_131_LATEST = TLSConfig()

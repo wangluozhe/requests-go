@@ -1,7 +1,7 @@
 class TLSExtensions:
     def __init__(self):
         super(TLSExtensions, self).__init__()
-        self._keys = [
+        self.__keys = [
             "supported_signature_algorithms",
             "cert_compression_algo",
             "record_size_limit",
@@ -280,7 +280,7 @@ class TLSExtensions:
         return str(self.toJSON())
 
     def __iter__(self):
-        for key in self._keys:
+        for key in self.__keys:
             yield key, getattr(self, key)
 
     def __setitem__(self, key, value):
@@ -295,24 +295,45 @@ class TLSExtensions:
     def __delattr__(self, item):
         setattr(self, item, None)
 
+    def __eq__(self, other):
+        if self.supported_signature_algorithms != other.supported_signature_algorithms:
+            return False
+        if self.cert_compression_algo != other.cert_compression_algo:
+            return False
+        if self.record_size_limit != other.record_size_limit:
+            return False
+        if self.supported_delegated_credentials_algorithms != other.supported_delegated_credentials_algorithms:
+            return False
+        if self.supported_versions != other.supported_versions:
+            return False
+        if self.psk_key_exchange_modes != other.psk_key_exchange_modes:
+            return False
+        if self.signature_algorithms_cert != other.signature_algorithms_cert:
+            return False
+        if self.key_share_curves != other.key_share_curves:
+            return False
+        if self.not_used_grease != other.not_used_grease:
+            return False
+        return True
+
     # JSON转类
     def fromJSON(self, config: dict):
         for key, value in config.items():
-            if key in self._keys:
+            if key in self.__keys:
                 setattr(self, key, value)
         return self
 
     # 类转JSON
     def toJSON(self):
         result = {}
-        for key in self._keys:
+        for key in self.__keys:
             result[key] = getattr(self, key)
         return result
 
     # 类转JSON
     def toMap(self):
         result = {}
-        for key in self._keys:
+        for key in self.__keys:
             go_keys = key.split("_")
             go_key = ""
             for k in go_keys:
@@ -324,7 +345,7 @@ class TLSExtensions:
 class HTTP2Settings:
     def __init__(self):
         super(HTTP2Settings, self).__init__()
-        self._keys = [
+        self.__keys = [
             "settings",
             "settings_order",
             "connection_flow",
@@ -407,7 +428,7 @@ class HTTP2Settings:
         return str(self.toJSON())
 
     def __iter__(self):
-        for key in self._keys:
+        for key in self.__keys:
             yield key, getattr(self, key)
 
     def __setitem__(self, key, value):
@@ -422,24 +443,37 @@ class HTTP2Settings:
     def __delattr__(self, item):
         setattr(self, item, None)
 
+    def __eq__(self, other):
+        if self.settings != other.settings:
+            return False
+        if self.settings_order != other.settings_order:
+            return False
+        if self.connection_flow != other.connection_flow:
+            return False
+        if self.header_priority != other.header_priority:
+            return False
+        if self.priority_frames != other.priority_frames:
+            return False
+        return True
+
     # JSON转类
     def fromJSON(self, config: dict):
         for key, value in config.items():
-            if key in self._keys:
+            if key in self.__keys:
                 setattr(self, key, value)
         return self
 
     # 类转JSON
     def toJSON(self):
         result = {}
-        for key in self._keys:
+        for key in self.__keys:
             result[key] = getattr(self, key)
         return result
 
     # 类转JSON
     def toMap(self):
         result = {}
-        for key in self._keys:
+        for key in self.__keys:
             go_keys = key.split("_")
             go_key = ""
             for k in go_keys:

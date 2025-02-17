@@ -17,6 +17,8 @@ else:
 
 root_dir = os.path.abspath(os.path.dirname(__file__))
 library = ctypes.cdll.LoadLibrary(f'{root_dir}/dependencies/requests-go{file_ext}')
+if os.environ.get("REQUESTGO_DEPPATH"):
+    library = ctypes.cdll.LoadLibrary(os.environ.get("REQUESTGO_DEPPATH"))
 
 request = library.request
 request.argtypes = [ctypes.c_char_p]

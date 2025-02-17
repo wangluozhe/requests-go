@@ -17,7 +17,7 @@ class Session:
                 http2_settings=None, force_http1=False):
         id = self.tls_config.get("id", "")
         if self.tls_config.get("ja3", None):
-            ja3 = self.tls_config["ja3"]
+            ja3 = str(self.tls_config["ja3"])
         if self.tls_config.get("pseudo_header_order", None):
             pseudo_header_order = self.tls_config["pseudo_header_order"]
         if self.tls_config.get("tls_extensions", None):
