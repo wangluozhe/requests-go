@@ -8,7 +8,32 @@ and maintain connections.
 
 import os.path
 import socket  # noqa: F401
+from urllib.parse import urlparse
 
+from requests.adapters import BaseAdapter
+from requests.exceptions import (
+    ConnectionError,
+    ConnectTimeout,
+    InvalidHeader,
+    InvalidProxyURL,
+    InvalidSchema,
+    InvalidURL,
+    ProxyError,
+    ReadTimeout,
+    RetryError,
+    SSLError,
+)
+from requests.models import Response
+from requests.structures import CaseInsensitiveDict
+from requests.utils import (
+    DEFAULT_CA_BUNDLE_PATH,
+    extract_zipped_paths,
+    get_auth_from_url,
+    get_encoding_from_headers,
+    prepend_scheme_if_needed,
+    select_proxy,
+    urldefragauth,
+)
 from urllib3.exceptions import ClosedPoolError, ConnectTimeoutError
 from urllib3.exceptions import HTTPError as _HTTPError
 from urllib3.exceptions import InvalidHeader as _InvalidHeader
@@ -25,35 +50,10 @@ from urllib3.poolmanager import PoolManager, proxy_from_url
 from urllib3.util import parse_url
 from urllib3.util.retry import Retry
 
-from .tls_config import TLSConfig
 from .auth import basestring, _basic_auth_str
-from .tls_client.exceptions import TLSClientExeption
 from .pool import TLSHandlerPool
-from urllib.parse import urlparse
-from requests.exceptions import (
-    ConnectionError,
-    ConnectTimeout,
-    InvalidHeader,
-    InvalidProxyURL,
-    InvalidSchema,
-    InvalidURL,
-    ProxyError,
-    ReadTimeout,
-    RetryError,
-    SSLError,
-)
-from requests.models import Response
-from requests.adapters import BaseAdapter
-from requests.structures import CaseInsensitiveDict
-from requests.utils import (
-    DEFAULT_CA_BUNDLE_PATH,
-    extract_zipped_paths,
-    get_auth_from_url,
-    get_encoding_from_headers,
-    prepend_scheme_if_needed,
-    select_proxy,
-    urldefragauth,
-)
+from .tls_client.exceptions import TLSClientExeption
+from .tls_config import TLSConfig
 
 try:
     from urllib3.contrib.socks import SOCKSProxyManager
@@ -61,7 +61,6 @@ except ImportError:
 
     def SOCKSProxyManager(*args, **kwargs):
         raise InvalidSchema("Missing dependencies for SOCKS support.")
-
 
 DEFAULT_POOLBLOCK = False
 DEFAULT_POOLSIZE = 10
@@ -108,12 +107,12 @@ class TLSAdapter(BaseAdapter):
     ]
 
     def __init__(
-        self,
-        pool_connections=DEFAULT_POOLSIZE,
-        pool_maxsize=DEFAULT_POOLSIZE,
-        max_retries=DEFAULT_RETRIES,
-        pool_block=DEFAULT_POOLBLOCK,
-        tls_config: TLSConfig = None,
+            self,
+            pool_connections=DEFAULT_POOLSIZE,
+            pool_maxsize=DEFAULT_POOLSIZE,
+            max_retries=DEFAULT_RETRIES,
+            pool_block=DEFAULT_POOLBLOCK,
+            tls_config: TLSConfig = None,
     ):
         if max_retries == DEFAULT_RETRIES:
             self.max_retries = Retry(0, read=False)
@@ -152,7 +151,7 @@ class TLSAdapter(BaseAdapter):
         return TLSHandlerPool(**kwargs)
 
     def init_poolmanager(
-        self, connections, maxsize, block=DEFAULT_POOLBLOCK, **pool_kwargs
+            self, connections, maxsize, block=DEFAULT_POOLBLOCK, **pool_kwargs
     ):
         """Initializes a urllib3 PoolManager.
 
@@ -301,6 +300,8 @@ class TLSAdapter(BaseAdapter):
 
         # Make headers case-insensitive.
         response.headers = CaseInsensitiveDict(getattr(resp, "headers", {}))
+        if isinstance(response.headers.get('Content-Type'), list):
+            response.headers['Content-Type'] = ','.join(response.headers.get('Content-Type'))
 
         # Set encoding.
         response.encoding = get_encoding_from_headers(response.headers)
@@ -426,7 +427,7 @@ class TLSAdapter(BaseAdapter):
         return headers
 
     def send(
-        self, request, stream=False, timeout=None, verify=True, cert=None, proxies=None
+            self, request, stream=False, timeout=None, verify=True, cert=None, proxies=None
     ):
         """Sends PreparedRequest object. Returns Response object.
 
