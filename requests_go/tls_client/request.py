@@ -1,3 +1,4 @@
+import base64
 import collections
 from json import dumps, loads
 
@@ -6,6 +7,13 @@ from .response import build_response
 from ..tls_config import TLSConfig
 from .exceptions import TLSClientExeption
 
+# 将body内容转换为Base64编码
+def body_to_base64(body: str or bytes) -> str:
+    if type(body) not in [str, bytes]:
+        raise TLSClientExeption("Body data is not a string or bytes class.")
+    if type(body) is str:
+        body = body.encode('utf-8')
+    return base64.b64encode(body).decode('utf-8')
 
 class Session:
     def __init__(self, tls_config: TLSConfig = None):
@@ -75,12 +83,7 @@ class Session:
         if cert:
             request_params["Cert"] = cert
         if body:
-            if type(body) == str:
-                request_params["Body"] = body
-            elif type(body) == bytes:
-                request_params["Body"] = body.decode()
-            else:
-                raise TLSClientExeption("Body data is not a string or bytes class.")
+            request_params["Body"] = body_to_base64(body)
         elif data:
             request_params["Data"] = data
         elif json:

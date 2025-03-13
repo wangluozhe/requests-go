@@ -11,6 +11,7 @@ class TLSExtensions:
             "signature_algorithms_cert",
             "key_share_curves",
             "not_used_grease",
+            "client_hello_hex_stream",
         ]
         # PKCS1WithSHA256
         # PKCS1WithSHA384
@@ -275,6 +276,7 @@ class TLSExtensions:
             "X25519"
         ]  # Key Shared Curve
         self.not_used_grease: bool = False  # not Used Grease
+        self.client_hello_hex_stream = ""  # ClientHello hex code
 
     def __str__(self):
         return str(self.toJSON())
