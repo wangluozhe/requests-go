@@ -1,13 +1,12 @@
 import requests_go
 
-url = "https://gospider2.gospiderb.asia:8998/"
+url = "https://tls.peet.ws/api/all"
 headers = {
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
     "Accept-Encoding": "gzip, deflate, br",
     "Accept-Language": "zh-CN,zh;q=0.9",
     "Cache-Control": "no-cache",
     "Connection": "keep-alive",
-    "Host": "gospider2.gospiderb.asia:8998",
     "Pragma": "no-cache",
     "sec-ch-ua": "\".Not/A)Brand\";v=\"99\", \"Google Chrome\";v=\"103\", \"Chromium\";v=\"103\"",
     "sec-ch-ua-mobile": "?0",

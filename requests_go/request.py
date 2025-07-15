@@ -1,14 +1,13 @@
 from .tls_client import Session
+from .tls_config import TLSConfig
 
 
 class TLSRequest:
 	def __init__(self, tls_config=None):
 		if tls_config:
 			self._tls_config = tls_config
-		# else:
-		# 	self._tls_config = random_tls_config()
-		if type(self._tls_config) != dict:
-			self._tls_config = self._tls_config.toJSON()
+		if type(self._tls_config) == dict:
+			self._tls_config = TLSConfig().fromJSON(self._tls_config)
 		self._session = self._new_tls()
 
 	def _new_tls(self) -> Session:

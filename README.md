@@ -222,7 +222,7 @@ config = {
     ...
 }
 tls_config = requests_go.tls_config.to_tls_config(config)
-tls_config.ja3 = requests_go.tls_config.JA3Random(tls_config.ja3)
+tls_config.random_ja3 = True
 for i in range(10):
     print(tls_config.ja3)
 
