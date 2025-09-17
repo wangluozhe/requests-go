@@ -2,6 +2,10 @@
 **requests-go**是一个支持tls指纹修改（如ja3）和http2的http请求库，本项目基于[requests](https://github.com/psf/requests)和[requests(go版)](https://github.com/wangluozhe/requests)，使用[requests](https://github.com/psf/requests)做为上层请求参数处理库，[requests(go版)](https://github.com/wangluozhe/requests)作为底层进行网络请求。
 
 
+## 加入微信群聊
+如果你想跟更多志同道合的人一起学习，那么加入群聊来吧！(备注：加群)
+![微信群聊](./wechat.jpg)
+
 
 ### 使用requests-go
 

@@ -132,7 +132,10 @@ def get_record_size_limit(config):
     extensions = config["tls"]["extensions"]
     for extension in extensions:
         if "record_size_limit" in extension["name"]:
-            record_size_limit = int(extension["data"])
+            if extension["data"].isdecimal():
+                record_size_limit = int(extension["data"])
+            else:
+                record_size_limit = int(extension["data"], 16)
     return record_size_limit
 
 

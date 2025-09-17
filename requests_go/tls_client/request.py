@@ -22,10 +22,12 @@ class Session:
 
     def request(self, method, url, params=None, data=None, headers=None, headers_order=None, un_changed_header_key=None, cookies=None, timeout=None,
                 allow_redirects=False, proxies=None, verify=None, cert=None, json=None, body=None, ja3=None, pseudo_header_order=None, tls_extensions=None,
-                http2_settings=None, force_http1=False):
+                http2_settings=None, force_http1=False, random_ja3=False):
         id = self.tls_config.get("id", "")
         if self.tls_config.get("ja3", None):
             ja3 = str(self.tls_config["ja3"])
+        if self.tls_config.get("random_ja3", None):
+            random_ja3 = self.tls_config["random_ja3"]
         if self.tls_config.get("pseudo_header_order", None):
             pseudo_header_order = self.tls_config["pseudo_header_order"]
         if self.tls_config.get("tls_extensions", None):
@@ -45,6 +47,7 @@ class Session:
             "Method": method,
             "Url": url,
             "Ja3": ja3,
+            "RandomJA3": random_ja3
         }
         if params:
             request_params["Params"] = params
@@ -76,6 +79,8 @@ class Session:
                     request_params["Proxies"] = proxies["https"]
                 elif proxies.get("http", "") and url.startswith("http:"):
                     request_params["Proxies"] = proxies["http"]
+                elif proxies.get("all", ""):
+                    request_params["Proxies"] = proxies["all"]
             else:
                 request_params["Proxies"] = proxies
         if verify:
