@@ -38,7 +38,7 @@ class Session:
             un_changed_header_key = self.tls_config["un_changed_header_key"]
         if self.tls_config.get("force_http1", None):
             force_http1 = self.tls_config["force_http1"]
-        if not method and not url and ja3:
+        if not (method and url and ja3):
             raise Exception("method and url and ja3 must exist")
         request_params = {
             "Id": id,
