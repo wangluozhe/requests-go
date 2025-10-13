@@ -1,5 +1,25 @@
-# requests-go
-**requests-go**是一个支持tls指纹修改（如ja3）和http2的http请求库，本项目基于[requests](https://github.com/psf/requests)和[requests(go版)](https://github.com/wangluozhe/requests)，使用[requests](https://github.com/psf/requests)做为上层请求参数处理库，[requests(go版)](https://github.com/wangluozhe/requests)作为底层进行网络请求。
+# Requests-Go: 终极HTTP请求库
+
+**Requests-Go** 是一个为现代网络爬虫和自动化任务而生的、功能强大的Python HTTP客户端库。它巧妙地结合了Python `requests`库的易用性与Go语言底层网络栈的高性能和高可定制性，专门用于解决TLS指纹（如JA3/JA4）识别、HTTP/2自定义以及绕过高级机器人检测等难题。
+
+
+## 核心特性
+
+  - **动态TLS指纹模拟**: 内置多种主流浏览器（Chrome, Firefox, Safari, Edge）的TLS指纹配置，只需一行代码即可切换。
+  - **JA3指纹随机化**: 模拟现代浏览器行为，自动随机化JA3指纹中的扩展（Extensions）部分，使每个请求都独一无二。
+  - **HTTP/2 精准控制**: 完全掌控HTTP/2的`HEADERS`帧、`SETTINGS`帧、窗口更新（`WINDOW_UPDATE`）和优先级（`PRIORITY`）设置。
+  - **JA4指纹支持**: 能够配置JA4所需的TLS和HTTP特性，以应对最前沿的指纹识别技术。
+  - **异步支持**: 提供完整的异步接口 (`async`/`await`)，适用于高性能的并发场景。
+  - **无缝兼容 `requests`**: API设计与业界标准的`requests`库保持一致，迁移成本极低。
+
+
+## 安装
+
+通过pip轻松安装：
+
+```bash
+pip install requests-go
+```
 
 
 ## 加入微信群聊
@@ -7,29 +27,44 @@
 ![微信群聊](./wechat.jpg)
 
 
-### 使用requests-go
+## 快速上手
 
-**requests-go**使用方法跟requests一模一样，与之唯一不同的就是多了一个tls_config参数，此参数是用于修改tls指纹信息的。
+`requests-go`的使用体验与`requests`几乎完全相同。
 
-`custom_tls:`
+```python
+import requests_go as requests
+
+# 将包重命名为requests即可享受与原生requests一致的编码体验
+response = requests.get('https://httpbin.org/get', tls_config=requests.tls_config.TLS_CHROME_LATEST)
+print(response.json())
+```
+
+仅仅是这样简单的替换，您的HTTP请求就已经拥有了Go语言的TLS指纹，这能帮助您轻松绕过许多仅针对Python默认指纹的防火墙。
+
+
+## 核心概念：`tls_config`
+
+`requests-go`所有高级功能的关键在于`tls_config`参数。这是一个`TLSConfig`对象，它允许你精细地调整TLS握手和HTTP/2通信的每一个细节。
+
+你可以通过`requests_go.get()`、`requests_go.post()`或`Session`对象的方法传入此参数。
 
 ```python
 import requests_go
+from requests_go import tls_config
 
-url = "https://tls.peet.ws/api/all"
-headers = {
-    "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36"
-}
-tls = requests_go.tls_config.TLSConfig()
-tls.ja3 = "771,4865-4866-4867-49195-49199-49196-49200-52393-52392-49171-49172-156-157-47-53,16-18-5-27-0-13-11-43-45-35-51-23-10-65281-17513-21,29-23-24,0"
-tls.pseudo_header_order = [
+# 创建一个默认的TLS配置，默认没有ja3，需自己填写
+conf = tls_config.TLSConfig()
+
+# 自定义TLS配置，后续有讲解
+conf.ja3 = "771,4865-4866-4867-49195-49199-49196-49200-52393-52392-49171-49172-156-157-47-53,16-18-5-27-0-13-11-43-45-35-51-23-10-65281-17513-21,29-23-24,0"
+conf.pseudo_header_order = [
     ":method",
     ":authority",
     ":scheme",
     ":path",
 ]
-tls.tls_extensions.cert_compression_algo = ["brotli"]
-tls.tls_extensions.supported_signature_algorithms = [
+conf.tls_extensions.cert_compression_algo = ["brotli"]
+conf.tls_extensions.supported_signature_algorithms = [
     "ecdsa_secp256r1_sha256",
     "rsa_pss_rsae_sha256",
     "rsa_pkcs1_sha256",
@@ -39,114 +74,379 @@ tls.tls_extensions.supported_signature_algorithms = [
     "rsa_pss_rsae_sha512",
     "rsa_pkcs1_sha512"
 ]
-tls.tls_extensions.supported_versions = [
+conf.tls_extensions.supported_versions = [
     "GREASE",
     "1.3",
     "1.2"
 ]
-tls.tls_extensions.psk_key_exchange_modes = [
+conf.tls_extensions.psk_key_exchange_modes = [
     "PskModeDHE"
 ]
-tls.tls_extensions.key_share_curves = [
+conf.tls_extensions.key_share_curves = [
     "GREASE",
     "X25519"
 ]
-tls.http2_settings.settings = {
+conf.http2_settings.settings = {
     "HEADER_TABLE_SIZE": 65536,
     "ENABLE_PUSH": 0,
     "MAX_CONCURRENT_STREAMS": 1000,
     "INITIAL_WINDOW_SIZE": 6291456,
     "MAX_HEADER_LIST_SIZE": 262144
 }
-tls.http2_settings.settings_order = [
+conf.http2_settings.settings_order = [
     "HEADER_TABLE_SIZE",
     "ENABLE_PUSH",
     "MAX_CONCURRENT_STREAMS",
     "INITIAL_WINDOW_SIZE",
     "MAX_HEADER_LIST_SIZE"
 ]
-tls.http2_settings.connection_flow = 15663105
-response = requests_go.get(url=url, headers=headers, tls_config=tls)
-print(response.url)
-print(response.text)
-print(response.headers)
-print(response.cookies)
+conf.http2_settings.connection_flow = 15663105
 
+# 在请求中应用配置
+url = "https://tls.peet.ws/api/all"
+response = requests_go.get(url, tls_config=conf)
 ```
 
-## 常见错误
-1. `单独设置ja3报404错误`的解决方法：默认使用http2，必须搭配pseudo_header_order伪标题顺序去使用，否则会访问失败404，或force_http1强制使用http1（0.3版本会更新）。
-2. `挂上VPN后报EOF错误`的解决方法：默认requests-go跟requests一样会去读取系统环境变量中的代理，默认代理会使用https协议，需手动修改proxies的代理为http协议即可。
 
-`兼容requests:`
+## TLS指纹模拟 (JA3 & JA4)
+
+
+### 使用内置浏览器指纹
+
+这是最简单、最推荐的方式。`requests-go`已经为您预设了多种浏览器的完整TLS和HTTP/2配置。
 
 ```python
-import requests_go as requests	# 想要兼容requests改变requests_go的包名为requests即可
+import requests_go as requests
+from requests_go.tls_config import TLS_CHROME_LATEST
+
+# 使用内置的最新版Chrome浏览器指纹
+response = requests.get(
+    "https://tls.peet.ws/api/all",
+    tls_config=TLS_CHROME_LATEST
+)
+
+print(response.json()['tls']['ja3'])
+
+# session使用内置的最新版Chrome浏览器指纹
+session = requests.Session()
+session.tls_config = TLS_CHROME_LATEST
+response = session.get(
+    "https://tls.peet.ws/api/all"
+)
+
+print(response.json()['tls']['ja3'])
+```
+
+**可用的内置指纹包括：**
+
+  - `TLS_CHROME_LATEST`, `TLS_CHROME_131_LATEST`, `TLS_CHROME_131`, `TLS_CHROME_130_SAFE`, `TLS_CHROME_130`, `TLS_CHROME_111_129_SAFE`, `TLS_CHROME_111_129`, `TLS_CHROME_122`, `TLS_CHROME_110`, `TLS_CHROME_110_LATEST`, `TLS_CHROME_103`, `TLS_CHROME_101`
+  - `TLS_EDGE_LATEST`, `TLS_EDGE_131_LATEST`, `TLS_EDGE_131`
+  - `TLS_FIREFOX_LATEST`, `TLS_FIREFOX_135_LATEST`, `TLS_FIREFOX_135`, `TLS_FIREFOX_134`, `TLS_FIREFOX_126`, `TLS_FIREFOX_105`
+  - `TLS_SAFARI_MAC_OS_18_3`, `TLS_SAFARI_IOS_18_3_1`
+
+
+### 自定义JA3指纹
+
+你可以手动创建一个`TLSConfig`实例并设置其JA3指纹字符串。
+
+```python
+import requests_go as requests
+from requests_go.tls_config import TLSConfig
+
+# 创建自定义配置
+custom_tls = TLSConfig()
+custom_tls.ja3 = "771,4865-4866-4867-49195-49199-49196-49200-52393-52392-49171-49172-156-157-47-53,16-18-5-27-0-13-11-43-45-35-51-23-10-65281-17513-21,29-23-24,0"
+
+# 重要：当自定义JA3时，通常需要一并设置伪标头顺序以确保HTTP/2请求成功
+custom_tls.pseudo_header_order = [
+    ":method",
+    ":authority",
+    ":scheme",
+    ":path",
+]
+
+response = requests.get(url, tls_config=custom_tls)
+```
+
+> **常见问题**：单独设置`ja3`后请求返回404错误？
+> **解答**：这是因为默认使用HTTP/2协议，它要求正确的伪标头(`:method`, `:authority`等)顺序。请务必设置`pseudo_header_order`。如果目标网站不支持HTTP/2或你想强制使用HTTP/1.1，可以设置 `custom_tls.force_http1 = True`。
+
+> **常见问题**: 设置content-length发生错误
+> **解答**: 不能自行设置content-length，否则会出现未知错误！
+
+
+### JA3指纹随机化
+
+现代浏览器会随机化TLS扩展（Extensions）的顺序来避免被指纹追踪。`requests-go`完美支持此功能。
+
+设置`random_ja3`为`True`后，每次生成的JA3字符串中第三部分（extensions）的顺序都会改变，但构成元素不变。
+
+```python
+import requests_go as requests
+from requests_go.tls_config import TLS_CHROME_LATEST
+
+# 开启JA3随机化
+TLS_CHROME_LATEST.random_ja3 = True
+
+# 连续发起请求，你会发现每次的JA3指纹都不同
+for _ in range(3):
+    resp = requests.get("https://tls.peet.ws/api/all", tls_config=TLS_CHROME_LATEST)
+    print(resp.json()['tls']['ja3'])
 ```
 
 
+### 从浏览器生成配置
 
-### tls_config指纹信息
-
-`tls_config`指纹信息每项指纹的作用可以参考[config.py](https://github.com/wangluozhe/requests-go/blob/main/requests_go/tls_config/config.py)的源码。
-
-如若不知，可直接使用`to_tls_config`函数将访问[https://tls.peet.ws/api/all](https://tls.peet.ws/api/all)后的json结果转换为`TLSConfig`即可。
+你可以通过浏览器访问[`https://tls.peet.ws/api/all`](https://tls.peet.ws/api/all)，将返回的JSON结果直接转换为`TLSConfig`对象。
 
 ```python
 import requests_go as requests
 from requests_go import tls_config
 
+
+# 假设这是你从浏览器访问https://tls.peet.ws/api/all获取的JSON数据
+browser_fingerprint_json = {
+    "tls": {
+        "ja3": "771,4865-4866-4867-49195-49199-49196-49200-52393-52392-49171-49172-156-157-47-53,0-23-65281-10-11-35-16-5-13-18-51-45-43-27-17513-21,29-23-24,0",
+        # ... 其他TLS字段
+    },
+    "http2": {
+        # ... HTTP/2相关字段
+    }
+    # ...
+}
+
+# 使用to_tls_config函数自动转换
+tls_conf = tls_config.to_tls_config(browser_fingerprint_json)
 url = "https://tls.peet.ws/api/all"
-tc = {
-    ...
-}   # tc is browser access https://tls.peet.ws/api/all json result
-tls_conf = tls_config.to_tls_config(tc)
 response = requests.get(url, tls_config=tls_conf)
 print(response.text)
-
-# or
-
-tc = {
-	"Ja3": "771,4865-4866-4867-49195-49199-49196-49200-52393-52392-49171-49172-156-157-47-53,0-23-65281-10-11-35-16-5-13-18-51-45-43-27-17513-21,29-23-24,0",
-}
-response = requests.get(url, tls_config=tc)  # default tls_config is dict class the convert TLSConfig class
-# response = requests.get(url, tls_config=tls_config.TLSConfig(config=tc))  # default tls_config is dict class the convert TLSConfig class
-print(response.text)
-
 ```
 
-`注意：不能自行设置content-length，否则会出现未知错误！`
+
+## HTTP/2 精细化控制
+
+`TLSConfig`对象包含一个`http2_settings`属性，它是一个`HTTP2Settings`类的实例，允许你深入定制HTTP/2行为。
 
 
-### 异步使用
+### `settings` 和 `settings_order`
 
-`requests-go`支持异步调用，异步调用需要加上`async_`，如`requests_go.async_get`，其他同理。
+控制HTTP/2 `SETTINGS`帧的内容和发送顺序。
 
-注意：`Session`变成了`AsyncSession`，`AsyncSession`中的`request`是同步方法，如想使用异步则使用`async_request`，其他`get`、`post`、`put`等还是异步方法。
+```python
+from requests_go.tls_config import TLSConfig
+
+conf = TLSConfig()
+
+# 设置SETTINGS帧的具体值
+conf.http2_settings.settings = {
+    "HEADER_TABLE_SIZE": 65536,
+    "MAX_CONCURRENT_STREAMS": 1000,
+    "INITIAL_WINDOW_SIZE": 6291456,
+    "MAX_HEADER_LIST_SIZE": 262144
+}
+
+# 设定这些参数在SETTINGS帧中的出现顺序
+conf.http2_settings.settings_order = [
+    "HEADER_TABLE_SIZE",
+    "MAX_CONCURRENT_STREAMS",
+    "INITIAL_WINDOW_SIZE",
+    "MAX_HEADER_LIST_SIZE"
+]
+```
+
+
+### `connection_flow`
+
+控制`WINDOW_UPDATE`帧的窗口大小增量，这是一个非常细微但重要的指纹特征。
+
+```python
+conf.http2_settings.connection_flow = 15663105  # 设置窗口更新增量
+```
+
+
+### `header_priority` 和 `priority_frames`
+
+定义`HEADERS`帧和`PRIORITY`帧中的流依赖关系和权重，模拟浏览器复杂的资源加载优先级策略。
+
+```python
+# 设置默认的头部优先级
+conf.http2_settings.header_priority = {
+    "streamDep": 0,
+    "exclusive": True,
+    "weight": 256
+}
+
+# 定义一系列具体的PRIORITY帧（如果需要）
+conf.http2_settings.priority_frames = [
+  {
+    "streamID": 3,
+    "priorityParam": {
+      "weight": 201,
+      "streamDep": 0,
+      "exclusive": False
+    }
+  },
+  # ...更多PRIORITY帧
+]
+```
+
+
+## TLS 扩展（Extensions）自定义
+
+`TLSConfig`对象还包含一个`tls_extensions`属性，其实例为`TLSExtensions`类，用于配置TLS Client Hello包中的各项扩展。
+
+### `supported_signature_algorithms`
+
+  * **作用**: 定义客户端支持的签名算法列表。服务器会根据此列表选择合适的算法来验证证书链。
+  * **可选值**:
+      * 字符串形式的标准名称，例如：
+          * `"ecdsa_secp256r1_sha256"`
+          * `"rsa_pss_rsae_sha256"`
+          * `"rsa_pkcs1_sha256"`
+          * `"ecdsa_secp384r1_sha384"`
+          * `"rsa_pss_rsae_sha384"`
+          * `"rsa_pkcs1_sha384"`
+          * `"ecdsa_secp521r1_sha512"`
+          * `"rsa_pss_rsae_sha512"`
+          * `"rsa_pkcs1_sha512"`
+          * `"ed25519"`
+      * 也可以使用十六进制值，例如：`"0x402"`。
+  * **示例**:
+    ```python
+    conf.tls_extensions.supported_signature_algorithms = [
+        "ecdsa_secp256r1_sha256",
+        "rsa_pss_rsae_sha256",
+        "rsa_pkcs1_sha256"
+    ]
+    ```
+
+### `cert_compression_algo`
+
+  * **作用**: 定义客户端支持的证书压缩算法。
+  * **可选值**:
+      * `"zlib"`
+      * `"brotli"`
+      * `"zstd"`
+  * **示例**:
+    ```python
+    conf.tls_extensions.cert_compression_algo = ["brotli"]
+    ```
+
+### `record_size_limit`
+
+  * **作用**: 定义TLS记录大小限制扩展的值。这是一个整数值。
+  * **示例**:
+    ```python
+    conf.tls_extensions.record_size_limit = 4001
+    ```
+
+### `supported_delegated_credentials_algorithms`
+
+  * **作用**: 定义支持的委托凭证算法。
+  * **可选值**: 与`supported_signature_algorithms`类似，支持多种标准名称和十六进制值。
+  * **示例**:
+    ```python
+    conf.tls_extensions.supported_delegated_credentials_algorithms = [
+        "ECDSAWithP256AndSHA256",
+        "ECDSAWithP384AndSHA384"
+    ]
+    ```
+
+### `supported_versions`
+
+  * **作用**: 定义客户端支持的TLS协议版本列表。
+  * **可选值**:
+      * `"GREASE"` (用于防止服务器对未知值的错误处理)
+      * `"1.3"`
+      * `"1.2"`
+      * `"1.1"`
+      * `"1.0"`
+  * **示例**:
+    ```python
+    conf.tls_extensions.supported_versions = ["GREASE", "1.3", "1.2"]
+    ```
+
+### `psk_key_exchange_modes`
+
+  * **作用**: 定义PSK（预共享密钥）的密钥交换模式。
+  * **可选值**:
+      * `"PskModeDHE"`
+      * `"PskModePlain"`
+  * **示例**:
+    ```python
+    conf.tls_extensions.psk_key_exchange_modes = ["PskModeDHE"]
+    ```
+
+### `signature_algorithms_cert`
+
+  * **作用**: 定义证书签名所支持的算法。
+  * **可选值**: 与`supported_signature_algorithms`类似，支持多种标准名称和十六进制值。
+  * **示例**:
+    ```python
+    conf.tls_extensions.signature_algorithms_cert = [
+        "ECDSAWithP256AndSHA256",
+        "PSSWithSHA256"
+    ]
+    ```
+
+### `key_share_curves`
+
+  * **作用**: 定义客户端支持的密钥共享曲线（用于密钥交换）。
+  * **可选值**:
+      * `"GREASE"`
+      * `"P256"`
+      * `"P384"`
+      * `"P521"`
+      * `"X25519"`
+  * **示例**:
+    ```python
+    conf.tls_extensions.key_share_curves = ["GREASE", "X25519"]
+    ```
+
+### `not_used_grease`
+
+  * **作用**: 一个布尔值，如果设置为`True`，则不使用GREASE机制。
+  * **示例**:
+    ```python
+    conf.tls_extensions.not_used_grease = True
+    ```
+
+### `client_hello_hex_stream`
+
+  * **作用**: 可直接使用`WireShark`工具抓包后复制其ClientHello包的十六进制值作为TLS指纹。**注意：使用这个功能后其他TLS参数均失效**
+  * **可选值**: 与`supported_signature_algorithms`类似，支持多种标准名称和十六进制值。
+  * **示例**:
+    ```python
+    conf.tls_extensions.client_hello_hex_stream = "16030107b4010007b00303297a9f99030f1f6f963..."
+    ```
+
+## 异步 (`async`/`await`) 用法
+
+`requests-go`提供了功能完备的异步API，只需在同步方法名前加上`async_`前缀即可。
+
+  - `requests_go.get` -\> `requests_go.async_get`
+  - `requests_go.post` -\> `requests_go.async_post`
+  - `requests_go.Session` -\> `requests_go.AsyncSession`
+
+<!-- end list -->
 
 ```python
 import asyncio
-
 import requests_go
 
+async def main():
+    # 使用API函数
+    response_api = await requests_go.async_get(url="https://www.baidu.com", tls_config=requests_go.tls_config.TLS_CHROME_LATEST)
+    print("API call:", response_api.status_code)
 
-async def session_main():
-    session = requests_go.async_session()
-    response = await session.get(url="https://www.baidu.com")
-    print("session_main:", response.text)
-
-
-async def api_main():
-    response = await requests_go.async_get(url="https://www.baidu.com")
-    print("api_main:", response.text)
-
-
-async def run():
-    await asyncio.gather(session_main(), api_main())
-
+    # 使用异步Session
+    async with requests_go.AsyncSession() as session:
+        response_session = await session.get(url="https://httpbin.org/get", tls_config=requests_go.tls_config.TLS_CHROME_LATEST)
+        print("Session call:", response_session.status_code)
 
 if __name__ == '__main__':
-    asyncio.run(run())
+    asyncio.run(main())
 ```
 
 
@@ -213,34 +513,6 @@ cipher_suites = ciphers.decimals_to_cipher_suites(decimals)  # 十进制列表�
 print(cipher_suites)
 # 输出结果: ['TLS_AES_128_GCM_SHA256', 'TLS_AES_256_GCM_SHA384', 'TLS_CHACHA20_POLY1305_SHA256', 'TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256', 'TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256', 'TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384', 'TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384', 'TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256', 'TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256', 'TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA', 'TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA', 'TLS_RSA_WITH_AES_128_GCM_SHA256', 'TLS_RSA_WITH_AES_256_GCM_SHA384', 'TLS_RSA_WITH_AES_128_CBC_SHA', 'TLS_RSA_WITH_AES_256_CBC_SHA']
 
-```
-
-
-### JA3指纹随机化
-现在高版本浏览器都会将ja3的指纹随机化，但是其随机化原理仅仅是对extensions部分进行随机化。
-
-```python
-import requests_go
-
-config = {
-    ...
-}
-tls_config = requests_go.tls_config.to_tls_config(config)
-tls_config.random_ja3 = True
-for i in range(10):
-    print(tls_config.ja3)
-
-# 输出结果:
-# 771,4865-4866-4867-49195-49199-49196-49200-52393-52392-49171-49172-156-157-47-53,18-13-21-17513-43-11-0-10-45-27-51-5-65281-35-23-16,29-23-24,0
-# 771,4865-4866-4867-49195-49199-49196-49200-52393-52392-49171-49172-156-157-47-53,13-23-18-51-10-11-17513-65281-45-43-16-35-0-5-27-21,29-23-24,0
-# 771,4865-4866-4867-49195-49199-49196-49200-52393-52392-49171-49172-156-157-47-53,23-16-17513-18-0-43-10-35-21-5-51-65281-13-45-11-27,29-23-24,0
-# 771,4865-4866-4867-49195-49199-49196-49200-52393-52392-49171-49172-156-157-47-53,18-51-43-35-27-23-0-21-17513-13-45-5-11-10-65281-16,29-23-24,0
-# 771,4865-4866-4867-49195-49199-49196-49200-52393-52392-49171-49172-156-157-47-53,0-11-21-10-65281-35-16-18-51-23-13-17513-45-27-43-5,29-23-24,0
-# 771,4865-4866-4867-49195-49199-49196-49200-52393-52392-49171-49172-156-157-47-53,43-65281-17513-13-35-16-0-51-27-18-21-5-11-23-45-10,29-23-24,0
-# 771,4865-4866-4867-49195-49199-49196-49200-52393-52392-49171-49172-156-157-47-53,16-27-11-21-10-5-18-0-35-65281-45-51-13-43-23-17513,29-23-24,0
-# 771,4865-4866-4867-49195-49199-49196-49200-52393-52392-49171-49172-156-157-47-53,43-23-21-17513-35-27-0-18-11-5-65281-45-10-16-13-51,29-23-24,0
-# 771,4865-4866-4867-49195-49199-49196-49200-52393-52392-49171-49172-156-157-47-53,5-45-65281-43-17513-11-0-10-27-21-13-35-16-51-18-23,29-23-24,0
-# 771,4865-4866-4867-49195-49199-49196-49200-52393-52392-49171-49172-156-157-47-53,45-23-27-43-18-21-13-5-65281-11-10-16-35-17513-51-0,29-23-24,0
 ```
 
 
