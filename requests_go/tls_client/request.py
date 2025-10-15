@@ -2,6 +2,8 @@ import base64
 import collections
 from json import dumps, loads
 
+from urllib3.util.request import body_to_chunks
+
 from .client import request, freeMemory
 from .response import build_response
 from ..tls_config import TLSConfig
@@ -35,12 +37,12 @@ class Session:
         if self.tls_config.get("http2_settings", None):
             http2_settings = self.tls_config["http2_settings"]
         if self.tls_config.get("headers_order", None):
-            headers_order = self.tls_config["headers_order"]
+            headers_order = [headers_order.lower() for headers_order in self.tls_config["headers_order"]]
         if self.tls_config.get("un_changed_header_key", None):
-            un_changed_header_key = self.tls_config["un_changed_header_key"]
+            un_changed_header_key = [un_changed_header_key.lower() for un_changed_header_key in self.tls_config["un_changed_header_key"]]
         if self.tls_config.get("force_http1", None):
             force_http1 = self.tls_config["force_http1"]
-        if not method and not url and ja3:
+        if not method or not url or not ja3:
             raise Exception("method and url and ja3 must exist")
         request_params = {
             "Id": id,
@@ -88,7 +90,23 @@ class Session:
         if cert:
             request_params["Cert"] = cert
         if body:
-            request_params["Body"] = body_to_base64(body)
+            if type(body) in [str, bytes]:
+                request_params["Body"] = body_to_base64(body)
+            else:
+                chunks_and_cl = body_to_chunks(body, method=method, blocksize=16384)
+                chunks = chunks_and_cl.chunks
+                chunk_bytes = b''
+                # If we're given a body we start sending that in chunks.
+                if chunks is not None:
+                    for chunk in chunks:
+                        # Sending empty chunks isn't allowed for TE: chunked
+                        # as it indicates the end of the body.
+                        if not chunk:
+                            continue
+                        if isinstance(chunk, str):
+                            chunk = chunk.encode("utf-8")
+                        chunk_bytes += chunk
+                request_params["Body"] = body_to_base64(chunk_bytes)
         elif data:
             request_params["Data"] = data
         elif json:
