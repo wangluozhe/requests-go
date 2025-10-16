@@ -168,12 +168,19 @@ custom_tls.pseudo_header_order = [
 response = requests.get(url, tls_config=custom_tls)
 ```
 
-> **常见问题**：单独设置`ja3`后请求返回404错误？
+### 常见问题
+
+> **常见问题一**：单独设置`ja3`后请求返回404错误？
+> 
 > **解答**：这是因为默认使用HTTP/2协议，它要求正确的伪标头(`:method`, `:authority`等)顺序。请务必设置`pseudo_header_order`。如果目标网站不支持HTTP/2或你想强制使用HTTP/1.1，可以设置 `custom_tls.force_http1 = True`。
 
-> **常见问题**: 设置content-length发生错误
+> **常见问题二**: 设置content-length发生错误？
+> 
 > **解答**: 不能自行设置content-length，否则会出现未知错误！
 
+> **常见问题三**: 使用代理池为啥没更换IP？
+> 
+> **解答**: 因为连接复用默认是开启的，所以不会更换IP，想要更换IP就得关闭连接复用，在headers中添加`Connection: close`或者每次在代理中添加#号，比如：`http://127.0.0.1:7890#123`即可。
 
 ### JA3指纹随机化
 
