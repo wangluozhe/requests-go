@@ -1,3 +1,4 @@
+import uuid
 import asyncio
 from collections import OrderedDict
 
@@ -106,6 +107,9 @@ class Session(requests.Session):
         #: This default to random_tls_config.
         self._tls_config = TLSConfig()
 
+        # session id
+        self.__id = str(uuid.uuid4())
+
         # Default connection adapters.
         self.adapters = OrderedDict()
         if self._tls_config.ja3:
@@ -116,6 +120,7 @@ class Session(requests.Session):
 
     @property
     def tls_config(self):
+        self._tls_config.id = self.__id
         return self._tls_config
 
     @tls_config.setter
