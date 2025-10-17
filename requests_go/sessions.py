@@ -1,4 +1,5 @@
 import uuid
+import ctypes
 import asyncio
 from collections import OrderedDict
 
@@ -12,6 +13,7 @@ from requests.adapters import HTTPAdapter
 
 from .adapters import TLSAdapter
 from .tls_config.config import TLSConfig
+from .tls_client.client import freeSession
 
 
 class Session(requests.Session):
@@ -237,6 +239,14 @@ class Session(requests.Session):
 
         return resp
 
+    async def __aenter__(self):
+        await asyncio.sleep(0)
+        return self
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        loop = asyncio.get_running_loop()
+        await loop.run_in_executor(None, self.close)
+
 
 class AsyncSession(Session):
     """A Requests async session.
@@ -379,7 +389,7 @@ class AsyncSession(Session):
             "json": json,
             "tls_config": tls_config,
         }
-        loop = asyncio.get_event_loop()
+        loop = asyncio.get_running_loop()
         response = await loop.run_in_executor(None, self.loop_request, kwargs)
         return response
 
