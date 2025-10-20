@@ -112,6 +112,9 @@ class Session(requests.Session):
         # session id
         self.__id = str(uuid.uuid4())
 
+        # session is freed
+        self.__freed = False
+
         # Default connection adapters.
         self.adapters = OrderedDict()
         if self._tls_config.ja3:
@@ -239,6 +242,18 @@ class Session(requests.Session):
 
         return resp
 
+    def __free_session(self):
+        if not self.__freed:
+            freeSession(ctypes.c_char_p(self.__id.encode()))
+            self.__freed = True  # <--- 执行后立即更新标志位
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close()
+        self.__free_session()
+
+    def __del__(self):
+        self.__free_session()
+
     async def __aenter__(self):
         await asyncio.sleep(0)
         return self
@@ -246,6 +261,7 @@ class Session(requests.Session):
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         loop = asyncio.get_running_loop()
         await loop.run_in_executor(None, self.close)
+        await loop.run_in_executor(None, self.__free_session)
 
 
 class AsyncSession(Session):
