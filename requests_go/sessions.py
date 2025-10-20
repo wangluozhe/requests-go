@@ -12,7 +12,11 @@ from requests.cookies import cookiejar_from_dict
 from requests.adapters import HTTPAdapter
 
 from .adapters import TLSAdapter
-from .tls_config.config import TLSConfig
+# import private tls_config
+try:
+    from tls_config import TLSConfig
+except ImportError:
+    from .tls_config.config import TLSConfig
 from .tls_client.client import freeSession
 
 

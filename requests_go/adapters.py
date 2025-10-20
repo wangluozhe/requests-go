@@ -27,7 +27,11 @@ from urllib3.util import parse_url
 from urllib3.util.retry import Retry
 from urllib3.response import HTTPResponse, HTTPHeaderDict
 
-from .tls_config import TLSConfig
+# import private tls_config
+try:
+    from tls_config import TLSConfig
+except ImportError:
+    from .tls_config.config import TLSConfig
 from .auth import basestring, _basic_auth_str
 from .tls_client.exceptions import TLSClientExeption
 from .pool import TLSHandlerPool
