@@ -49,6 +49,7 @@ setup(
     install_requires=[
         "requests>=2.28.1",
         "six>=1.16.0",
-        "PySocks>=1.7.1"
+        "PySocks>=1.7.1",
+        "urllib3>=2.2.3"
     ]
 )
