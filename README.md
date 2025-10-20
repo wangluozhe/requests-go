@@ -27,6 +27,11 @@ pip install requests-go
 ![微信群聊](./wechat.jpg)
 
 
+## 获取私有tls_config包
+私有的tls_config包里面有上百款tls指纹，安装后无缝衔接requests-go，不需要任何操作，获取方式添加上方微信号（注意：不是免费开放的）。
+![私有tls_config包](./tls_config.png)
+
+
 ## 快速上手
 
 `requests-go`的使用体验与`requests`几乎完全相同。
