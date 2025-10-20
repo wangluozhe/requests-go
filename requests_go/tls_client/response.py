@@ -33,6 +33,8 @@ class Response:
 
         self._content = False
 
+        self.raw = b''
+
     def __enter__(self):
         return self
 
@@ -95,4 +97,6 @@ def build_response(res: Union[dict, list]) -> Response:
             response.cookies.set(name=name, value=value, path=path, domain=domain, expires=expires, secure=secure, rest=rest, port=None)
     # Add response content (bytes)
     response._content = base64.b64decode(res["content"])
+    raw = base64.b64decode(res["raw"])
+    response.raw = raw.replace(b"HTTP/2.0", b"HTTP/1.1", 1)
     return response

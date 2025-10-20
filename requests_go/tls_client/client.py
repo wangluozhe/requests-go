@@ -26,3 +26,6 @@ request.restype = ctypes.c_char_p
 
 freeMemory = library.freeMemory
 request.argtypes = [ctypes.c_char_p]
+
+freeSession = library.freeSession
+request.argtypes = [ctypes.c_char_p]

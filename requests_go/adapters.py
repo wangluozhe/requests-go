@@ -5,9 +5,10 @@ requests.adapters
 This module contains the transport adapters that Requests uses to define
 and maintain connections.
 """
-
+import io
 import os.path
 import socket  # noqa: F401
+from http.client import HTTPResponse as HTTPResponseClient
 
 from urllib3.exceptions import ClosedPoolError, ConnectTimeoutError
 from urllib3.exceptions import HTTPError as _HTTPError
@@ -24,6 +25,7 @@ from urllib3.exceptions import SSLError as _SSLError
 from urllib3.poolmanager import PoolManager, proxy_from_url
 from urllib3.util import parse_url
 from urllib3.util.retry import Retry
+from urllib3.response import HTTPResponse, HTTPHeaderDict
 
 from .tls_config import TLSConfig
 from .auth import basestring, _basic_auth_str
@@ -68,6 +70,11 @@ DEFAULT_POOLSIZE = 10
 DEFAULT_RETRIES = 0
 DEFAULT_POOL_TIMEOUT = None
 DEFAULT_TLS_CONFIG = TLSConfig()
+
+
+class MockSocket(io.BytesIO):
+    def makefile(self, *args, **kwargs):
+        return self
 
 
 class TLSAdapter(BaseAdapter):
@@ -319,6 +326,20 @@ class TLSAdapter(BaseAdapter):
         # Give the Response some context.
         response.request = req
         response.connection = self
+
+        mock_socket = MockSocket(resp.raw)
+        httplib_resp = HTTPResponseClient(mock_socket)
+        httplib_resp.begin()
+        response.raw = HTTPResponse(
+            body=httplib_resp,
+            headers=HTTPHeaderDict(httplib_resp.getheaders()),
+            status=httplib_resp.status,
+            reason=httplib_resp.reason,
+            original_response=httplib_resp,
+            decode_content=False,
+            preload_content=False,
+            version=httplib_resp.version,
+        )
 
         return response
 
