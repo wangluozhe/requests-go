@@ -18,6 +18,7 @@ class TLSConfig:
             "pseudo_header_order",
             "tls_extensions",
             "http2_settings",
+            "user_agent",
         ]
         self.id: str = str(uuid.uuid4())  # session id, Used to maintain session
         self.__ja3: JA3 = None  # tls ja3 value
@@ -44,6 +45,7 @@ class TLSConfig:
         ]  # HTTP2 Pseudo header order
         self.tls_extensions: TLSExtensions = TLSExtensions()  # tls extensions
         self.http2_settings: HTTP2Settings = HTTP2Settings()  # http2 extensions
+        self.user_agent: str = "" # headers user-agent
 
     def __str__(self):
         name = self.name + ": " if self.name else ""

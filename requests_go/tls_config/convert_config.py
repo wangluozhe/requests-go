@@ -35,6 +35,7 @@ def to_tls_config(config: dict) -> TLSConfig:
     tls_config.headers_order = get_header_order(config)
     tls_config.force_http1 = get_force_http1(config)
     tls_config.pseudo_header_order = get_pseudo_header_order(config)
+    tls_config.user_agent = get_user_agent(config)
 
     tls_config.tls_extensions.supported_signature_algorithms = get_supported_signature_algorithms(config)
     tls_config.tls_extensions.cert_compression_algo = get_cert_compression_algo(config)
@@ -290,3 +291,7 @@ def get_priority_frames(config):
     if priority_frames:
         return priority_frames
     return None
+
+
+def get_user_agent(config):
+    return config["user_agent"]
