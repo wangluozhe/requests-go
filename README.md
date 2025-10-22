@@ -24,11 +24,13 @@ pip install requests-go
 
 ## 加入微信群聊
 如果你想跟更多志同道合的人一起学习，那么加入群聊来吧！(备注：加群)
+
 ![微信群聊](./wechat.jpg)
 
 
-## 获取私有tls_config包
-私有的tls_config包里面有上百款tls指纹，安装后无缝衔接requests-go，不需要任何操作，获取方式添加上方微信号（注意：不是免费开放的）。
+## 获取付费版tls_config包
+付费版的tls_config包内置300个指纹（后续会一直更新），各种浏览器和手机指纹（chrome，edge，firefox，safari，opera，ie，okhttp，reqable，各种第三方浏览器百度，小米，华为，vivo等），安装后无缝衔接requests-go，不需要任何操作，获取方式添加上方微信号。
+
 ![私有tls_config包](./tls_config.png)
 
 
