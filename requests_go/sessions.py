@@ -204,7 +204,7 @@ class Session(requests.Session):
         if url.startswith("https://") and tls_config:
             if type(tls_config) == dict and tls_config.get("ja3"):
                 _tls_config = TLSConfig().fromJSON(tls_config)
-            elif isinstance(tls_config, TLSConfig):
+            elif hasattr(tls_config, "toJSON"):
                 _tls_config = tls_config
             else:
                 raise Exception("tls_config must be of type dict or TLSConfig.")
