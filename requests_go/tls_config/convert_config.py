@@ -1,3 +1,5 @@
+from functools import wraps
+
 from .config import TLSConfig
 
 # X.509证书数字签名算法英文形式标识符
@@ -56,11 +58,24 @@ def to_tls_config(config: dict) -> TLSConfig:
     return tls_config
 
 
+def fix_exception(func):
+    @wraps(func)
+    def inner(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except:  # noqa
+            return None
+
+    return inner
+
+
+@fix_exception
 def get_ja3_string(config):
     ja3_string = config["tls"]["ja3"]
     return ja3_string
 
 
+@fix_exception
 def get_header_order(config):
     headers = {}
     headers_list = []
@@ -79,6 +94,7 @@ def get_header_order(config):
     return list(headers.keys())
 
 
+@fix_exception
 def get_force_http1(config):
     force_http1 = False
     if config["http_version"] != "h2":
@@ -86,6 +102,7 @@ def get_force_http1(config):
     return force_http1
 
 
+@fix_exception
 def get_pseudo_header_order(config):
     headers = {}
     headers_list = []
@@ -103,6 +120,7 @@ def get_pseudo_header_order(config):
     return list(headers.keys())
 
 
+@fix_exception
 def get_supported_signature_algorithms(config):
     supported_signature_algorithms = []
     extensions = config["tls"]["extensions"]
@@ -116,6 +134,7 @@ def get_supported_signature_algorithms(config):
     return None
 
 
+@fix_exception
 def get_cert_compression_algo(config):
     cert_compression_algo = None
     extensions = config["tls"]["extensions"]
@@ -128,6 +147,7 @@ def get_cert_compression_algo(config):
     return cert_compression_algo
 
 
+@fix_exception
 def get_record_size_limit(config):
     record_size_limit = None
     extensions = config["tls"]["extensions"]
@@ -140,6 +160,7 @@ def get_record_size_limit(config):
     return record_size_limit
 
 
+@fix_exception
 def get_supported_delegated_credentials_algorithms(config):
     supported_delegated_credentials_algorithms = []
     extensions = config["tls"]["extensions"]
@@ -153,6 +174,7 @@ def get_supported_delegated_credentials_algorithms(config):
     return None
 
 
+@fix_exception
 def get_supported_versions(config):
     supported_versions = []
     extensions = config["tls"]["extensions"]
@@ -173,6 +195,7 @@ def get_supported_versions(config):
     return None
 
 
+@fix_exception
 def get_psk_key_exchange_modes(config):
     psk_key_exchange_modes = None
     extensions = config["tls"]["extensions"]
@@ -193,6 +216,7 @@ def get_signature_algorithms_cert(config):
     pass
 
 
+@fix_exception
 def get_key_share_curves(config):
     key_share_curves = []
     extensions = config["tls"]["extensions"]
@@ -218,6 +242,7 @@ def get_key_share_curves(config):
     return None
 
 
+@fix_exception
 def get_not_used_grease(config):
     not_used_grease = False
     if "TLS_GREASE" not in config["tls"]["extensions"][0]["name"]:
@@ -225,6 +250,7 @@ def get_not_used_grease(config):
     return not_used_grease
 
 
+@fix_exception
 def get_h2_settings(config):
     settings = {}
     setting_list = []
@@ -242,11 +268,13 @@ def get_h2_settings(config):
     return None
 
 
+@fix_exception
 def get_h2_settings_order(config):
     settings = get_h2_settings(config)
     return list(settings.keys())
 
 
+@fix_exception
 def get_connection_flow(config):
     connection_flow = None
     sent_frames = config["http2"]["sent_frames"]
@@ -257,6 +285,7 @@ def get_connection_flow(config):
     return connection_flow
 
 
+@fix_exception
 def get_header_priority(config):
     header_priority = None
     sent_frames = config["http2"]["sent_frames"]
@@ -273,6 +302,7 @@ def get_header_priority(config):
     return header_priority
 
 
+@fix_exception
 def get_priority_frames(config):
     priority_frames = []
     sent_frames = config["http2"]["sent_frames"]
