@@ -1,0 +1,159 @@
+{
+  "donate": "123xiao TLS指纹获取工具！ https://tls.123408.xyz",
+  "ip": "40.77.178.155:3463",
+  "http_version": "h2",
+  "method": "GET",
+  "user_agent": "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm) Chrome/100.0.4896.127 Safari/537.36",
+  "tls": {
+    "ciphers": [
+      "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256",
+      "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384",
+      "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256",
+      "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384",
+      "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256",
+      "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384",
+      "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256",
+      "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384",
+      "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA",
+      "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA",
+      "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA",
+      "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA",
+      "TLS_RSA_WITH_AES_256_GCM_SHA384",
+      "TLS_RSA_WITH_AES_128_GCM_SHA256",
+      "TLS_RSA_WITH_AES_256_CBC_SHA256",
+      "TLS_RSA_WITH_AES_128_CBC_SHA256",
+      "TLS_RSA_WITH_AES_256_CBC_SHA",
+      "TLS_RSA_WITH_AES_128_CBC_SHA"
+    ],
+    "extensions": [
+      {
+        "name": "server_name (0)",
+        "server_name": "tls.123408.xyz"
+      },
+      {
+        "name": "status_request (5)",
+        "status_request": {
+          "certificate_status_type": "OSCP (1)",
+          "responder_id_list_length": 0,
+          "request_extensions_length": 0
+        }
+      },
+      {
+        "name": "supported_groups (10)",
+        "supported_groups": [
+          "X25519 (29)",
+          "P-256 (23)",
+          "P-384 (24)"
+        ]
+      },
+      {
+        "name": "ec_point_formats (11)",
+        "elliptic_curves_point_formats": [
+          "0x00"
+        ]
+      },
+      {
+        "name": "signature_algorithms (13)",
+        "signature_algorithms": [
+          "rsa_pkcs1_sha256",
+          "rsa_pkcs1_sha384",
+          "rsa_pkcs1_sha1",
+          "ecdsa_secp256r1_sha256",
+          "ecdsa_secp384r1_sha384",
+          "ecdsa_sha1",
+          "0x202",
+          "rsa_pkcs1_sha512",
+          "ecdsa_secp521r1_sha512"
+        ]
+      },
+      {
+        "name": "session_ticket (35)",
+        "data": ""
+      },
+      {
+        "name": "application_layer_protocol_negotiation (16)",
+        "protocols": [
+          "h2",
+          "http/1.1"
+        ]
+      },
+      {
+        "name": "extended_master_secret (23)",
+        "master_secret_data": "",
+        "extended_master_secret_data": ""
+      },
+      {
+        "name": "extensionRenegotiationInfo (boringssl) (65281)",
+        "data": "00"
+      }
+    ],
+    "tls_version_record": "771",
+    "tls_version_negotiated": "771",
+    "ja3": "771,49195-49196-49199-49200-49187-49188-49191-49192-49162-49161-49172-49171-157-156-61-60-53-47,0-5-10-11-13-35-16-23-65281,29-23-24,0",
+    "ja3_hash": "a70aa749ac6268eb2243b4ce8c83042d",
+    "ja4": "t12d189h2_4b22cbed5bed_16bbda4055b2",
+    "ja4_r": "t12d189h2_002f,0035,003c,003d,009c,009d,c009,c00a,c013,c014,c023,c024,c027,c028,c02b,c02c,c02f,c030_0005,000a,000b,000d,0017,0023,ff01_0401,0501,0201,0403,0503,0203,0202,0601,0603",
+    "peetprint": "|2-1.1|29-23-24|1025-1281-513-1027-1283-515-514-1537-1539|0||49195-49196-49199-49200-49187-49188-49191-49192-49162-49161-49172-49171-157-156-61-60-53-47|0-10-11-13-16-23-35-5-65281",
+    "peetprint_hash": "cc8d522984f58d1c859f74b965a69b4c",
+    "client_random": "690218cf3fbeea1ec5002a207fd16e20e1d3804539c03ec8ac64c8723cbe4f2a",
+    "session_id": ""
+  },
+  "http2": {
+    "akamai_fingerprint": "2:0;4:10485760|10420225|0|m,p,a,s",
+    "akamai_fingerprint_hash": "c979bed25ac022422cd587e5119b85e3",
+    "sent_frames": [
+      {
+        "frame_type": "SETTINGS",
+        "length": 12,
+        "settings": [
+          "ENABLE_PUSH = 0",
+          "INITIAL_WINDOW_SIZE = 10485760"
+        ]
+      },
+      {
+        "frame_type": "WINDOW_UPDATE",
+        "length": 4,
+        "increment": 10420225
+      },
+      {
+        "frame_type": "HEADERS",
+        "stream_id": 1,
+        "length": 182,
+        "headers": [
+          ":method: GET",
+          ":path: /api/ip",
+          ":authority: tls.123408.xyz",
+          ":scheme: https",
+          "cache-control: no-cache",
+          "pragma: no-cache",
+          "accept: */*",
+          "accept-encoding\": ",
+          "from: bingbot(at)microsoft.com",
+          "user-agent: Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm) Chrome/100.0.4896.127 Safari/537.36"
+        ],
+        "flags": [
+          "EndStream (0x1)",
+          "EndHeaders (0x4)"
+        ]
+      }
+    ]
+  },
+  "tcpip": {
+    "cap_length": 147,
+    "dst_port": 443,
+    "src_port": 3463,
+    "ip": {
+      "id": 902,
+      "ttl": 111,
+      "ip_version": 4,
+      "dst_ip": "172.18.0.2",
+      "src_ip": "40.77.178.155"
+    },
+    "tcp": {
+      "ack": 3923421291,
+      "checksum": 39054,
+      "seq": 244981130,
+      "window": 6147
+    }
+  }
+}
