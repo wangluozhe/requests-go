@@ -255,5 +255,7 @@ tc = {
 	}
 }   # tc is browser access https://tls.peet.ws/api/all json result
 tls_conf = tls_config.to_tls_config(tc)
+tls_conf.http2_settings.settings_ack = True
+tls_conf.http2_settings.headers_id = 3
 response = requests.get(url, tls_config=tls_conf)
 print(response.text)

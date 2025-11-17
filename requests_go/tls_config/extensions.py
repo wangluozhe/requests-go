@@ -349,8 +349,10 @@ class HTTP2Settings:
         super(HTTP2Settings, self).__init__()
         self.__keys = [
             "settings",
+            "settings_ack",
             "settings_order",
             "connection_flow",
+            "headers_id",
             "header_priority",
             "priority_frames",
         ]
@@ -373,6 +375,7 @@ class HTTP2Settings:
             "INITIAL_WINDOW_SIZE": 6291456,
             "MAX_HEADER_LIST_SIZE": 262144
         }  # HTTP2 Header Frame Settings
+        self.settings_ack: bool = False # HTTP2 Settings Ack
         # HEADER_TABLE_SIZE
         # ENABLE_PUSH
         # MAX_CONCURRENT_STREAMS
@@ -393,6 +396,7 @@ class HTTP2Settings:
             "MAX_HEADER_LIST_SIZE"
         ]  # HTTP2 Header Frame Setting Order
         self.connection_flow: int = 15663105  # HTTP2 Window Update increment
+        self.headers_id: int = 1    # HTTP2 Headers ID
         # Header Priority
         # Example:
         # {
@@ -479,6 +483,9 @@ class HTTP2Settings:
             go_keys = key.split("_")
             go_key = ""
             for k in go_keys:
-                go_key += k.title()
+                if k == "id":
+                    go_key += k.upper()
+                else:
+                    go_key += k.title()
             result[go_key] = getattr(self, key)
         return result

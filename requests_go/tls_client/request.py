@@ -148,7 +148,7 @@ class Session:
                     headers.pop(key)
             request_params["Headers"] = headers
         if headers_order:
-            request_params["HeadersOrder"] = headers_order
+            request_params["HeadersOrder"] = [header_order.lower() for header_order in headers_order]
         if headers_order:
             request_params["UnChangedHeaderKey"] = un_changed_header_key
         if cookies:

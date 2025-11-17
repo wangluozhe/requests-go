@@ -48,8 +48,10 @@ def to_tls_config(config: dict) -> TLSConfig:
     tls_config.tls_extensions.not_used_grease = get_not_used_grease(config)
 
     tls_config.http2_settings.settings = get_h2_settings(config)
+    tls_config.http2_settings.settings_ack = get_h2_settings_ack(config)
     tls_config.http2_settings.settings_order = get_h2_settings_order(config)
     tls_config.http2_settings.connection_flow = get_connection_flow(config)
+    tls_config.http2_settings.headers_id = get_headers_id(config)
     tls_config.http2_settings.header_priority = get_header_priority(config)
     tls_config.http2_settings.priority_frames = get_priority_frames(config)
 
@@ -232,6 +234,7 @@ def get_h2_settings(config):
     for sent_frame in sent_frames:
         if sent_frame["frame_type"] == "SETTINGS":
             setting_list = sent_frame["settings"]
+            break
     for setting in setting_list:
         key, value = setting.split("=", 1)
         key = key.strip()
@@ -240,6 +243,16 @@ def get_h2_settings(config):
     if settings:
         return settings
     return None
+
+
+def get_h2_settings_ack(config):
+    sent_frames = config["http2"]["sent_frames"]
+    for sent_frame in sent_frames:
+        if sent_frame["frame_type"] == "SETTINGS" and sent_frame.get("flags"):
+            for flag in sent_frame["flags"]:
+                if "ACK" in flag.upper():
+                    return True
+    return False
 
 
 def get_h2_settings_order(config):
@@ -255,6 +268,16 @@ def get_connection_flow(config):
             connection_flow = sent_frame["increment"]
             break
     return connection_flow
+
+
+def get_headers_id(config):
+    headers_id = 1
+    sent_frames = config["http2"]["sent_frames"]
+    for sent_frame in sent_frames:
+        if sent_frame["frame_type"] == "HEADERS":
+            headers_id = sent_frame["stream_id"]
+            return headers_id
+    return headers_id
 
 
 def get_header_priority(config):
