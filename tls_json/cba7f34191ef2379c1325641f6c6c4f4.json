@@ -1,0 +1,101 @@
+{
+  "donate": "123xiao TLS指纹获取工具！ https://tls.123408.xyz",
+  "ip": "134.122.58.138:37254",
+  "http_version": "HTTP/1.1",
+  "method": "GET",
+  "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36",
+  "tls": {
+    "ciphers": [
+      "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256",
+      "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256",
+      "TLS_ECDHE_RSA_WITH_RC4_128_SHA",
+      "TLS_ECDHE_ECDSA_WITH_RC4_128_SHA",
+      "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA",
+      "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA",
+      "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA",
+      "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA",
+      "TLS_RSA_WITH_RC4_128_SHA",
+      "TLS_RSA_WITH_AES_128_CBC_SHA",
+      "TLS_RSA_WITH_AES_256_CBC_SHA",
+      "TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA",
+      "TLS_RSA_WITH_3DES_EDE_CBC_SHA"
+    ],
+    "extensions": [
+      {
+        "name": "status_request (5)",
+        "status_request": {
+          "certificate_status_type": "OSCP (1)",
+          "responder_id_list_length": 0,
+          "request_extensions_length": 0
+        }
+      },
+      {
+        "name": "supported_groups (10)",
+        "supported_groups": [
+          "P-256 (23)",
+          "P-384 (24)",
+          "P-521 (25)"
+        ]
+      },
+      {
+        "name": "ec_point_formats (11)",
+        "elliptic_curves_point_formats": [
+          "0x00"
+        ]
+      },
+      {
+        "name": "signature_algorithms (13)",
+        "signature_algorithms": [
+          "rsa_pkcs1_sha256",
+          "ecdsa_secp256r1_sha256",
+          "rsa_pkcs1_sha1",
+          "ecdsa_sha1",
+          "rsa_pkcs1_sha256",
+          "rsa_pkcs1_sha384",
+          "rsa_pkcs1_sha512"
+        ]
+      },
+      {
+        "name": "extensionRenegotiationInfo (boringssl) (65281)",
+        "data": "00"
+      }
+    ],
+    "tls_version_record": "771",
+    "tls_version_negotiated": "771",
+    "ja3": "771,49199-49195-49169-49159-49171-49161-49172-49162-5-47-53-49170-10,5-10-11-13-65281,23-24-25,0",
+    "ja3_hash": "cba7f34191ef2379c1325641f6c6c4f4",
+    "ja4": "t12d135_2d7513195f68_e51b7354d87f",
+    "ja4_r": "t12d135_0005,000a,002f,0035,c007,c009,c00a,c011,c012,c013,c014,c02b,c02f_0005,000a,000b,000d,ff01_0401,0403,0201,0203,0401,0501,0601",
+    "peetprint": "||23-24-25|1025-1027-513-515-1025-1281-1537|0||49199-49195-49169-49159-49171-49161-49172-49162-5-47-53-49170-10|10-11-13-5-65281",
+    "peetprint_hash": "65b941760698904578e85a4ab5d942f0",
+    "client_random": "2c6cb94313aadc3a43c3004d6a4d79c4408e308373730c87c4f3df303069223c",
+    "session_id": ""
+  },
+  "http1": {
+    "headers": [
+      "Host: 38.134.43.198",
+      "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36",
+      "Accept: */*",
+      "Accept-Encoding: gzip"
+    ]
+  },
+  "tcpip": {
+    "cap_length": 66,
+    "dst_port": 443,
+    "src_port": 37254,
+    "ip": {
+      "id": 57839,
+      "tos": 40,
+      "ttl": 47,
+      "ip_version": 4,
+      "dst_ip": "172.18.0.2",
+      "src_ip": "134.122.58.138"
+    },
+    "tcp": {
+      "ack": 1317101271,
+      "checksum": 26570,
+      "seq": 3440987099,
+      "window": 501
+    }
+  }
+}

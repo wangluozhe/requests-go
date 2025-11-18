@@ -1,0 +1,186 @@
+{
+  "donate": "123xiao TLS指纹获取工具！ https://tls.123408.xyz",
+  "ip": "40.77.167.108:33933",
+  "http_version": "h2",
+  "method": "GET",
+  "user_agent": "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm) Chrome/116.0.1938.76 Safari/537.36",
+  "tls": {
+    "ciphers": [
+      "TLS_AES_256_GCM_SHA384",
+      "TLS_AES_128_GCM_SHA256",
+      "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384",
+      "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256",
+      "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384",
+      "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256",
+      "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384",
+      "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256",
+      "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384",
+      "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256",
+      "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA",
+      "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA",
+      "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA",
+      "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA",
+      "TLS_RSA_WITH_AES_256_GCM_SHA384",
+      "TLS_RSA_WITH_AES_128_GCM_SHA256",
+      "TLS_RSA_WITH_AES_256_CBC_SHA256",
+      "TLS_RSA_WITH_AES_128_CBC_SHA256",
+      "TLS_RSA_WITH_AES_256_CBC_SHA",
+      "TLS_RSA_WITH_AES_128_CBC_SHA"
+    ],
+    "extensions": [
+      {
+        "name": "server_name (0)",
+        "server_name": "tls.123408.xyz"
+      },
+      {
+        "name": "status_request (5)",
+        "status_request": {
+          "certificate_status_type": "OSCP (1)",
+          "responder_id_list_length": 0,
+          "request_extensions_length": 0
+        }
+      },
+      {
+        "name": "supported_versions (43)",
+        "versions": [
+          "TLS 1.3",
+          "TLS 1.2"
+        ]
+      },
+      {
+        "name": "signature_algorithms (13)",
+        "signature_algorithms": [
+          "rsa_pss_rsae_sha256",
+          "rsa_pss_rsae_sha384",
+          "rsa_pss_rsae_sha512",
+          "rsa_pkcs1_sha256",
+          "rsa_pkcs1_sha384",
+          "rsa_pkcs1_sha1",
+          "ecdsa_secp256r1_sha256",
+          "ecdsa_secp384r1_sha384",
+          "ecdsa_sha1",
+          "0x202",
+          "rsa_pkcs1_sha512",
+          "ecdsa_secp521r1_sha512"
+        ]
+      },
+      {
+        "name": "session_ticket (35)",
+        "data": ""
+      },
+      {
+        "name": "supported_groups (10)",
+        "supported_groups": [
+          "P-384 (24)",
+          "P-256 (23)"
+        ]
+      },
+      {
+        "name": "ec_point_formats (11)",
+        "elliptic_curves_point_formats": [
+          "0x00"
+        ]
+      },
+      {
+        "name": "application_layer_protocol_negotiation (16)",
+        "protocols": [
+          "h2",
+          "http/1.1"
+        ]
+      },
+      {
+        "name": "key_share (51)",
+        "shared_keys": [
+          {
+            "P-384 (24)": "04a58bedb34987d317668a0951aace3560d0458ebce780059c23fd56c9eb88cd7119ab05ae35f6d8f261794ae990a63d51436ee674e7713c9dc59021cf1dc444c9203803bff23b8b4712a4c2cdc138183f834712373b6afc33fc11b64964a5d0f7"
+          }
+        ]
+      },
+      {
+        "name": "post_handshake_auth (49)",
+        "data": ""
+      },
+      {
+        "name": "extended_master_secret (23)",
+        "master_secret_data": "",
+        "extended_master_secret_data": ""
+      },
+      {
+        "name": "extensionRenegotiationInfo (boringssl) (65281)",
+        "data": "00"
+      },
+      {
+        "name": "psk_key_exchange_modes (45)",
+        "PSK_Key_Exchange_Mode": "PSK with (EC)DHE key establishment (psk_dhe_ke) (1)"
+      }
+    ],
+    "tls_version_record": "771",
+    "tls_version_negotiated": "772",
+    "ja3": "771,4866-4865-49196-49195-49200-49199-49188-49187-49192-49191-49162-49161-49172-49171-157-156-61-60-53-47,0-5-43-13-35-10-11-16-51-49-23-65281-45,24-23,0",
+    "ja3_hash": "d4ed3e50e6fccfcd0b8f2635bcec55ff",
+    "ja4": "t13d2013h2_2b729b4bf6f3_e24568c0d440",
+    "ja4_r": "t13d2013h2_002f,0035,003c,003d,009c,009d,1301,1302,c009,c00a,c013,c014,c023,c024,c027,c028,c02b,c02c,c02f,c030_0005,000a,000b,000d,0017,0023,002b,002d,0031,0033,ff01_0804,0805,0806,0401,0501,0201,0403,0503,0203,0202,0601,0603",
+    "peetprint": "772-771|2-1.1|24-23|2052-2053-2054-1025-1281-513-1027-1283-515-514-1537-1539|1||4866-4865-49196-49195-49200-49199-49188-49187-49192-49191-49162-49161-49172-49171-157-156-61-60-53-47|0-10-11-13-16-23-35-43-45-49-5-51-65281",
+    "peetprint_hash": "3740e0647d28b0782892b98d9aa29aac",
+    "client_random": "68c13497fb81db0fc22874b8f59c01ae4c39de849a7f5c0ec62637633f6e801d",
+    "session_id": "9e0937c5b486b910a7d600cea66b7869c7f745a643eae1fdfbc9ae7e62d44f7b"
+  },
+  "http2": {
+    "akamai_fingerprint": "2:0;4:10485760|10420225|0|m,p,a,s",
+    "akamai_fingerprint_hash": "c979bed25ac022422cd587e5119b85e3",
+    "sent_frames": [
+      {
+        "frame_type": "SETTINGS",
+        "length": 12,
+        "settings": [
+          "ENABLE_PUSH = 0",
+          "INITIAL_WINDOW_SIZE = 10485760"
+        ]
+      },
+      {
+        "frame_type": "WINDOW_UPDATE",
+        "length": 4,
+        "increment": 10420225
+      },
+      {
+        "frame_type": "HEADERS",
+        "stream_id": 1,
+        "length": 197,
+        "headers": [
+          ":method: GET",
+          ":path: /robots.txt",
+          ":authority: tls.123408.xyz",
+          ":scheme: https",
+          "cache-control: no-cache",
+          "pragma: no-cache",
+          "accept: */*",
+          "accept-encoding: gzip, deflate, br",
+          "from: bingbot(at)microsoft.com",
+          "user-agent: Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm) Chrome/116.0.1938.76 Safari/537.36"
+        ],
+        "flags": [
+          "EndStream (0x1)",
+          "EndHeaders (0x4)"
+        ]
+      }
+    ]
+  },
+  "tcpip": {
+    "cap_length": 411,
+    "dst_port": 443,
+    "src_port": 33933,
+    "ip": {
+      "id": 16196,
+      "ttl": 111,
+      "ip_version": 4,
+      "dst_ip": "172.18.0.2",
+      "src_ip": "40.77.167.108"
+    },
+    "tcp": {
+      "ack": 3946262234,
+      "checksum": 28744,
+      "seq": 3491614790,
+      "window": 64240
+    }
+  }
+}

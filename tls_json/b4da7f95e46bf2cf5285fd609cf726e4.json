@@ -1,0 +1,164 @@
+{
+  "donate": "123xiao TLS指纹获取工具！ https://tls.123408.xyz",
+  "ip": "66.249.66.3:43101",
+  "http_version": "HTTP/1.1",
+  "method": "GET",
+  "user_agent": "Mozilla/5.0 (Linux; Android 6.0.1; Nexus 5X Build/MMB29P) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.7390.122 Mobile Safari/537.36 (compatible; Googlebot/2.1; +http",
+  "tls": {
+    "ciphers": [
+      "TLS_GREASE (0x2A2A)",
+      "TLS_AES_128_GCM_SHA256",
+      "TLS_AES_256_GCM_SHA384",
+      "TLS_CHACHA20_POLY1305_SHA256",
+      "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256",
+      "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256",
+      "TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256",
+      "TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256",
+      "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384",
+      "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384",
+      "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA",
+      "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA",
+      "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA",
+      "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA",
+      "TLS_RSA_WITH_AES_128_GCM_SHA256",
+      "TLS_RSA_WITH_AES_256_GCM_SHA384",
+      "TLS_RSA_WITH_AES_128_CBC_SHA",
+      "TLS_RSA_WITH_AES_256_CBC_SHA",
+      "TLS_RSA_WITH_3DES_EDE_CBC_SHA"
+    ],
+    "extensions": [
+      {
+        "name": "TLS_GREASE (0x3a3a)"
+      },
+      {
+        "name": "server_name (0)",
+        "server_name": "walmfdd.digitalwealthprotection.com"
+      },
+      {
+        "name": "extended_master_secret (23)",
+        "master_secret_data": "",
+        "extended_master_secret_data": ""
+      },
+      {
+        "name": "extensionRenegotiationInfo (boringssl) (65281)",
+        "data": "00"
+      },
+      {
+        "name": "supported_groups (10)",
+        "supported_groups": [
+          "TLS_GREASE (0x9a9a)",
+          "X25519 (29)",
+          "P-256 (23)",
+          "P-384 (24)"
+        ]
+      },
+      {
+        "name": "ec_point_formats (11)",
+        "elliptic_curves_point_formats": [
+          "0x00"
+        ]
+      },
+      {
+        "name": "session_ticket (35)",
+        "data": ""
+      },
+      {
+        "name": "status_request (5)",
+        "status_request": {
+          "certificate_status_type": "OSCP (1)",
+          "responder_id_list_length": 0,
+          "request_extensions_length": 0
+        }
+      },
+      {
+        "name": "signature_algorithms (13)",
+        "signature_algorithms": [
+          "ecdsa_secp256r1_sha256",
+          "rsa_pss_rsae_sha256",
+          "rsa_pkcs1_sha256",
+          "ecdsa_secp384r1_sha384",
+          "rsa_pss_rsae_sha384",
+          "rsa_pkcs1_sha384",
+          "rsa_pss_rsae_sha512",
+          "rsa_pkcs1_sha512",
+          "rsa_pkcs1_sha1"
+        ]
+      },
+      {
+        "name": "signed_certificate_timestamp (18)"
+      },
+      {
+        "name": "key_share (51)",
+        "shared_keys": [
+          {
+            "TLS_GREASE (0x9a9a)": "00"
+          },
+          {
+            "X25519 (29)": "0470226eee12d5be0a2b8ebb96789e2ebb87240ec57ef10fde3f4ea981b9d56b"
+          }
+        ]
+      },
+      {
+        "name": "psk_key_exchange_modes (45)",
+        "PSK_Key_Exchange_Mode": "PSK with (EC)DHE key establishment (psk_dhe_ke) (1)"
+      },
+      {
+        "name": "supported_versions (43)",
+        "versions": [
+          "TLS_GREASE (0x8a8a)",
+          "TLS 1.3",
+          "TLS 1.2",
+          "TLS 1.1",
+          "TLS 1.0"
+        ]
+      },
+      {
+        "name": "TLS_GREASE (0x4a4a)"
+      },
+      {
+        "name": "padding (21)",
+        "padding_data_length": 404
+      }
+    ],
+    "tls_version_record": "771",
+    "tls_version_negotiated": "772",
+    "ja3": "771,4865-4866-4867-49195-49199-52393-52392-49196-49200-49161-49171-49162-49172-156-157-47-53-10,0-23-65281-10-11-35-5-13-18-51-45-43-21,29-23-24,0",
+    "ja3_hash": "b4da7f95e46bf2cf5285fd609cf726e4",
+    "ja4": "t13d1813_e8a523a41297_6a3d802a7139",
+    "ja4_r": "t13d1813_000a,002f,0035,009c,009d,1301,1302,1303,c009,c00a,c013,c014,c02b,c02c,c02f,c030,cca8,cca9_0005,000a,000b,000d,0012,0017,0023,002b,002d,0033,ff01_0403,0804,0401,0503,0805,0501,0806,0601,0201",
+    "peetprint": "GREASE-772-771-770-769||GREASE-29-23-24|1027-2052-1025-1283-2053-1281-2054-1537-513|1||GREASE-4865-4866-4867-49195-49199-52393-52392-49196-49200-49161-49171-49162-49172-156-157-47-53-10|0-10-11-13-18-21-23-35-43-45-5-51-65281-GREASE-GREASE",
+    "peetprint_hash": "5cbbbebee48ac8a031e5753fe53bf37f",
+    "client_random": "01abdc3a72e61a77defe015102759f97a067e72fd448df69049938a889219969",
+    "session_id": "59bc3255455c8808c3bc38d8e9c5fd4065838f10a574017fb9d6d755ae271994"
+  },
+  "http1": {
+    "headers": [
+      "Host: walmfdd.digitalwealthprotection.com",
+      "AMP-Cache-Transform: google;v=\"1..8\"",
+      "Connection: keep-alive",
+      "Accept: text/html,application/xhtml+xml,application/signed-exchange;v=b3,application/xml;q=0.9,*/*;q=0.8",
+      "From: googlebot(at)googlebot.com",
+      "User-Agent: Mozilla/5.0 (Linux; Android 6.0.1; Nexus 5X Build/MMB29P) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.7390.122 Mobile Safari/537.36 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)",
+      "Accept-Encoding: gzip, deflate, br"
+    ]
+  },
+  "tcpip": {
+    "cap_length": 583,
+    "dst_port": 443,
+    "src_port": 43101,
+    "ip": {
+      "id": 12663,
+      "tos": 64,
+      "ttl": 121,
+      "ip_version": 4,
+      "dst_ip": "172.18.0.2",
+      "src_ip": "66.249.66.3"
+    },
+    "tcp": {
+      "ack": 1930813770,
+      "checksum": 18473,
+      "seq": 2228571156,
+      "window": 1054
+    }
+  }
+}

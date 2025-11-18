@@ -1,0 +1,145 @@
+{
+  "donate": "123xiao TLS指纹获取工具！ https://tls.123408.xyz",
+  "ip": "54.198.55.229:39224",
+  "http_version": "HTTP/1.1",
+  "method": "GET",
+  "user_agent": "Mozilla/5.0 (compatible)",
+  "tls": {
+    "ciphers": [
+      "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384",
+      "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256",
+      "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256",
+      "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384",
+      "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA",
+      "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA",
+      "TLS_RSA_WITH_AES_128_GCM_SHA256",
+      "TLS_RSA_WITH_AES_128_CBC_SHA",
+      "TLS_RSA_WITH_AES_256_CBC_SHA"
+    ],
+    "extensions": [
+      {
+        "name": "server_name (0)",
+        "server_name": "tls.123408.xyz"
+      },
+      {
+        "name": "status_request (5)",
+        "status_request": {
+          "certificate_status_type": "OSCP (1)",
+          "responder_id_list_length": 0,
+          "request_extensions_length": 0
+        }
+      },
+      {
+        "name": "supported_groups (10)",
+        "supported_groups": [
+          "X25519 (29)",
+          "P-256 (23)",
+          "P-384 (24)",
+          "P-521 (25)",
+          "X448 (30)"
+        ]
+      },
+      {
+        "name": "ec_point_formats (11)",
+        "elliptic_curves_point_formats": [
+          "0x00"
+        ]
+      },
+      {
+        "name": "status_request_v2 (17)",
+        "status_request": {
+          "certificate_status_type": "OSCP (0)",
+          "responder_id_list_length": 7,
+          "request_extensions_length": 2
+        }
+      },
+      {
+        "name": "extended_master_secret (23)",
+        "master_secret_data": "",
+        "extended_master_secret_data": ""
+      },
+      {
+        "name": "session_ticket (35)",
+        "data": ""
+      },
+      {
+        "name": "signature_algorithms (13)",
+        "signature_algorithms": [
+          "ecdsa_secp256r1_sha256",
+          "ecdsa_secp384r1_sha384",
+          "ecdsa_secp521r1_sha512",
+          "ed25519",
+          "ed25519",
+          "rsa_pss_rsae_sha256",
+          "rsa_pss_rsae_sha384",
+          "rsa_pss_rsae_sha512",
+          "rsa_pss_pss_sha256",
+          "rsa_pss_pss_sha384",
+          "rsa_pss_pss_sha512",
+          "rsa_pkcs1_sha256",
+          "rsa_pkcs1_sha384",
+          "rsa_pkcs1_sha512",
+          "0x402",
+          "0x303",
+          "0x301",
+          "0x302",
+          "ecdsa_sha1",
+          "rsa_pkcs1_sha1",
+          "0x202"
+        ]
+      },
+      {
+        "name": "supported_versions (43)",
+        "versions": [
+          "TLS 1.2"
+        ]
+      },
+      {
+        "name": "signature_algorithms_cert (50)",
+        "data": "002a040305030603080708080804080508060809080a080b0401050106010402030303010302020302010202"
+      },
+      {
+        "name": "extensionRenegotiationInfo (boringssl) (65281)",
+        "data": "00"
+      }
+    ],
+    "tls_version_record": "771",
+    "tls_version_negotiated": "771",
+    "ja3": "771,49196-49195-49199-49200-49171-49172-156-47-53,0-5-10-11-17-23-35-13-43-50-65281,29-23-24-25-30,0",
+    "ja3_hash": "d1c0b5083ee9cb276bbecdf814a63d0d",
+    "ja4": "t12d911_08d6d9b33cd7_6d6c278f61f2",
+    "ja4_r": "t12d911_002f,0035,009c,c013,c014,c02b,c02c,c02f,c030_0005,000a,000b,000d,0011,0017,0023,002b,0032,ff01_0403,0503,0603,0807,0808,0804,0805,0806,0809,080a,080b,0401,0501,0601,0402,0303,0301,0302,0203,0201,0202",
+    "peetprint": "771||29-23-24-25-30|1027-1283-1539-2055-2056-2052-2053-2054-2057-2058-2059-1025-1281-1537-1026-771-769-770-515-513-514|0||49196-49195-49199-49200-49171-49172-156-47-53|0-10-11-13-17-23-35-43-5-50-65281",
+    "peetprint_hash": "71f24916436ee1dd0f2d4d4dea3fbdb6",
+    "client_random": "a7adc9c889340555f79a2cf413f8624122bb0c4852727b303e990a61472fa68d",
+    "session_id": ""
+  },
+  "http1": {
+    "headers": [
+      "Range: bytes: 0-22",
+      "traceparent: 00-7b6c3b385c2ca60a76f8cda0a58d9abf-49968054ddfc9e2e-00",
+      "baggage: sentry-environment=production,sentry-public_key=e6210d6b5d3246c29d5667b356d11c63,sentry-release=ha_telegram_api_group_c2@442798,sentry-trace_id=c78406a521104e6698fa2e052539b3d0",
+      "host: tls.123408.xyz",
+      "accept: */*",
+      "user-agent: Mozilla/5.0 (compatible)"
+    ]
+  },
+  "tcpip": {
+    "cap_length": 159,
+    "dst_port": 443,
+    "src_port": 39224,
+    "ip": {
+      "id": 10884,
+      "ttl": 52,
+      "ip_version": 4,
+      "dst_ip": "172.18.0.2",
+      "src_ip": "54.198.55.229"
+    },
+    "tcp": {
+      "ack": 277181008,
+      "checksum": 51780,
+      "seq": 4184272094,
+      "window": 579
+    }
+  }
+}
