@@ -125,7 +125,7 @@ class Session:
         if self.tls_config.get("headers_order", None):
             headers_order = [headers_order.lower() for headers_order in self.tls_config["headers_order"]]
         if self.tls_config.get("un_changed_header_key", None):
-            un_changed_header_key = [un_changed_header_key.lower() for un_changed_header_key in self.tls_config["un_changed_header_key"]]
+            un_changed_header_key = self.tls_config["un_changed_header_key"]
         if self.tls_config.get("force_http1", None):
             force_http1 = self.tls_config["force_http1"]
         if not method or not url:

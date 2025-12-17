@@ -47,13 +47,14 @@ def to_tls_config(config: dict) -> TLSConfig:
     tls_config.tls_extensions.key_share_curves = get_key_share_curves(config)
     tls_config.tls_extensions.not_used_grease = get_not_used_grease(config)
 
-    tls_config.http2_settings.settings = get_h2_settings(config)
-    tls_config.http2_settings.settings_ack = get_h2_settings_ack(config)
-    tls_config.http2_settings.settings_order = get_h2_settings_order(config)
-    tls_config.http2_settings.connection_flow = get_connection_flow(config)
-    tls_config.http2_settings.headers_id = get_headers_id(config)
-    tls_config.http2_settings.header_priority = get_header_priority(config)
-    tls_config.http2_settings.priority_frames = get_priority_frames(config)
+    if not tls_config.force_http1:
+        tls_config.http2_settings.settings = get_h2_settings(config)
+        tls_config.http2_settings.settings_ack = get_h2_settings_ack(config)
+        tls_config.http2_settings.settings_order = get_h2_settings_order(config)
+        tls_config.http2_settings.connection_flow = get_connection_flow(config)
+        tls_config.http2_settings.headers_id = get_headers_id(config)
+        tls_config.http2_settings.header_priority = get_header_priority(config)
+        tls_config.http2_settings.priority_frames = get_priority_frames(config)
 
     return tls_config
 
