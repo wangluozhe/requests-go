@@ -60,8 +60,6 @@ class TLSHandlerPool(object):
 
 		try:
 			tls_handler = self._pool.get(block=self._block)
-			tls_handler.reset()
-
 			return tls_handler
 
 		except queue.Empty:
