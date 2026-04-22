@@ -151,6 +151,7 @@ class Session:
         if headers:
             if type(headers) == collections.OrderedDict:
                 headers = dict(headers)
+            headers = dict(headers)
             headers_tmp = loads(dumps(headers))
             for key, value in headers_tmp.items():
                 if key.lower() == "content-length":
@@ -158,13 +159,14 @@ class Session:
             request_params["Headers"] = headers
         if headers_order:
             request_params["HeadersOrder"] = [header_order.lower() for header_order in headers_order]
-        if headers_order:
+        if un_changed_header_key:
             request_params["UnChangedHeaderKey"] = un_changed_header_key
         if cookies:
             request_params["Cookies"] = cookies
-        if timeout:
+        if timeout is not None:
             if type(timeout) in [list, tuple]:
-                request_params["Timeout"] = timeout[0]
+                if timeout:
+                    request_params["Timeout"] = timeout[0]
             elif type(timeout) in [int, float]:
                 request_params["Timeout"] = int(timeout)
         request_params["AllowRedirects"] = allow_redirects
@@ -180,7 +182,7 @@ class Session:
                     request_params["Proxies"] = proxies["all"]
             else:
                 request_params["Proxies"] = proxies
-        if verify:
+        if verify is not None:
             request_params["Verify"] = verify
         if cert:
             request_params["Cert"] = cert
@@ -236,11 +238,19 @@ class Session:
 
         # ---- Normal (non-stream) mode ----
         rs = request(dumps(request_params).encode("utf-8")).decode("utf-8")
+        res = None
         try:
             res = loads(rs)
             if res.get("err", ""):
                 raise TLSClientExeption(res["err"])
-            freeMemory(res["id"].encode("utf-8"))
             return build_response(res)
+        except TLSClientExeption:
+            raise
         except Exception as e:
-            raise TLSClientExeption("requests_go error:", rs)
+            raise TLSClientExeption(f"requests_go error: {rs}") from e
+        finally:
+            if res is not None and "id" in res:
+                try:
+                    freeMemory(res["id"].encode("utf-8"))
+                except Exception:
+                    pass

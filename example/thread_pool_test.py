@@ -6,7 +6,7 @@ import requests_go
 
 def main(num):
     response = requests_go.get(url="https://www.baidu.com", tls_config=requests_go.tls_config.TLS_CHROME_110_LATEST)
-    print(num, response.text)
+    return num, response.text
 
 
 if __name__ == '__main__':
@@ -17,5 +17,6 @@ if __name__ == '__main__':
         task = thread_pool.submit(main, i)
         tasklist.append(task)
     for mission in as_completed(tasklist):
-        pass
+        num, content = mission.result()
+        print(num, content)
     print("1000个线程耗时为：", time.time() - start_time)

@@ -1,6 +1,8 @@
 import uuid
+import copy
 import ctypes
 import asyncio
+import threading
 from collections import OrderedDict
 
 import requests
@@ -271,36 +273,33 @@ class Session(requests.Session):
         self.__free_session()
 
     def __del__(self):
-        self.__free_session()
+        try:
+            self.__free_session()
+        except Exception:
+            pass
 
     async def __aenter__(self):
-        await asyncio.sleep(0)
         return self
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
+        def _cleanup():
+            self.close()
+            self.__free_session()
         loop = asyncio.get_running_loop()
-        await loop.run_in_executor(None, self.close)
-        await loop.run_in_executor(None, self.__free_session)
+        await loop.run_in_executor(None, _cleanup)
 
 
 class AsyncSession(Session):
     """A Requests async session.
 
-    Provides cookie persistence, connection-pooling, and configuration.
-
-    Basic Usage::
-
-      >>> import requests
-      >>> s = requests.AsyncSession()
-      >>> s.get('https://httpbin.org/get')
-      <Response [200]>
-
-    Or as a context manager::
-
-      >>> with requests.AsyncSession() as s:
-      ...     s.get('https://httpbin.org/get')
-      <Response [200]>
+    Thread safety: each async_request creates an independent temporary Session
+    that owns its own adapters and cookies, avoiding shared mutable state
+    during the request. Response cookies are merged back under a lock.
     """
+
+    def __init__(self):
+        super().__init__()
+        self._cookie_lock = threading.Lock()
 
     async def get(self, url, **kwargs):
         r"""Sends a GET request. Returns :class:`Response` object.
@@ -382,8 +381,53 @@ class AsyncSession(Session):
 
         return await self.async_request("DELETE", url, **kwargs)
 
+    def _create_temp_session(self, tls_config_override=None):
+        """Create a temporary Session that inherits settings from this AsyncSession.
+
+        The temp session has its OWN adapters dict and its own copy of cookies,
+        so concurrent threads do not race on shared state.
+        """
+        tmp = Session()
+        tmp.headers = self.headers.copy()
+        tmp.auth = self.auth
+        tmp.proxies = self.proxies.copy() if self.proxies else {}
+        tmp.params = self.params.copy() if self.params else {}
+        tmp.hooks = {k: list(v) for k, v in self.hooks.items()}
+        tmp.verify = self.verify
+        tmp.cert = self.cert
+        tmp.stream = self.stream
+        tmp.trust_env = self.trust_env
+        tmp.max_redirects = self.max_redirects
+
+        with self._cookie_lock:
+            tmp.cookies = copy.copy(self.cookies)
+
+        if tls_config_override:
+            tmp._tls_config = self._clone_tls_config(tls_config_override)
+        elif hasattr(self._tls_config, 'toJSON'):
+            tmp._tls_config = self._clone_tls_config(self._tls_config)
+        else:
+            tmp._tls_config = TLSConfig()
+
+        return tmp
+
     def loop_request(self, arguments):
-        return self.request(**arguments)
+        """Run a request on a temporary session to avoid shared mutable state."""
+        tls_config = arguments.pop("tls_config", None)
+        tmp = self._create_temp_session(tls_config_override=tls_config)
+        try:
+            if tls_config:
+                arguments["tls_config"] = tls_config
+            resp = tmp.request(**arguments)
+            if resp.cookies:
+                with self._cookie_lock:
+                    self.cookies.update(resp.cookies)
+            return resp
+        finally:
+            try:
+                tmp.close()
+            except Exception:
+                pass
 
     async def async_request(
         self,

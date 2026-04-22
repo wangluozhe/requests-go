@@ -41,10 +41,10 @@ class TLSHandlerPool(object):
 		"""
 
 		tls_handler = self.get_handler_from_pool()
-
-		response = tls_handler.send(options)
-
-		self.put_handler_back(tls_handler)
+		try:
+			response = tls_handler.send(options)
+		finally:
+			self.put_handler_back(tls_handler)
 
 		return response
 

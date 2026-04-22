@@ -2,6 +2,7 @@ import json
 import re
 import time
 import base64
+import calendar
 from typing import Union
 from datetime import datetime
 from urllib.parse import urlparse
@@ -33,6 +34,7 @@ class Response:
         self.cookies = RequestsCookieJar()
 
         self._content = False
+        self._content_consumed = False
 
         self.raw = b''
 
@@ -145,6 +147,31 @@ def _convert_h2_raw_to_h1(raw: bytes, status_code: int) -> bytes:
     return status_line + raw
 
 
+def _parse_cookies(cookie_list, parsed_url, cookie_jar):
+    if not cookie_list:
+        return
+    for cookies in cookie_list:
+        name = cookies["Name"]
+        value = cookies["Value"]
+        path = cookies["Path"]
+        domain = cookies["Domain"].lstrip(".") if cookies["Domain"] else parsed_url.hostname
+        expires = None
+        expires_str = cookies.get("Expires", "")
+        if expires_str:
+            try:
+                dt = datetime.strptime(expires_str, "%Y-%m-%dT%H:%M:%SZ")
+                expires = calendar.timegm(dt.timetuple())
+            except (ValueError, OverflowError):
+                expires = None
+        secure = cookies["Secure"]
+        http_only = cookies["HttpOnly"]
+        rest = {"HttpOnly": http_only}
+        cookie_jar.set(
+            name=name, value=value, path=path, domain=domain,
+            expires=expires, secure=secure, rest=rest, port=None
+        )
+
+
 def build_response(res: Union[dict, list]) -> Response:
     """Builds a Response object """
     response = Response()
@@ -160,19 +187,7 @@ def build_response(res: Union[dict, list]) -> Response:
     response.headers = response_headers
     # Add cookies
     parsed_url = urlparse(response.url)
-    if res["cookies"]:
-        for cookies in res["cookies"]:
-            name = cookies["Name"]
-            value = cookies["Value"]
-            path = cookies["Path"]
-            domain = cookies["Domain"].lstrip(".") if cookies["Domain"] else parsed_url.hostname
-            expires = int(time.time()) + (datetime.strptime(cookies["Expires"], "%Y-%m-%dT%H:%M:%SZ") - datetime.now()).seconds
-            secure = cookies["Secure"]
-            http_only = cookies["HttpOnly"]
-            rest = {
-                "HttpOnly": http_only
-            }
-            response.cookies.set(name=name, value=value, path=path, domain=domain, expires=expires, secure=secure, rest=rest, port=None)
+    _parse_cookies(res.get("cookies"), parsed_url, response.cookies)
     # Add response content (bytes)
     response._content = base64.b64decode(res["content"])
     raw = base64.b64decode(res["raw"])
@@ -212,19 +227,7 @@ def build_stream_response(meta: dict, stream_body) -> Response:
 
     # Cookies
     parsed_url = urlparse(response.url)
-    if meta.get("cookies"):
-        for cookies in meta["cookies"]:
-            name = cookies["Name"]
-            value = cookies["Value"]
-            path = cookies["Path"]
-            domain = cookies["Domain"].lstrip(".") if cookies["Domain"] else parsed_url.hostname
-            expires = int(time.time()) + (datetime.strptime(cookies["Expires"], "%Y-%m-%dT%H:%M:%SZ") - datetime.now()).seconds
-            secure = cookies["Secure"]
-            http_only = cookies["HttpOnly"]
-            rest = {
-                "HttpOnly": http_only
-            }
-            response.cookies.set(name=name, value=value, path=path, domain=domain, expires=expires, secure=secure, rest=rest, port=None)
+    _parse_cookies(meta.get("cookies"), parsed_url, response.cookies)
 
     # Stream ID (useful for diagnostics / manual close)
     response.stream_id = meta.get("stream_id", "")

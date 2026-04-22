@@ -526,9 +526,9 @@ class TLSAdapter(BaseAdapter):
                 "body": request.body,
                 "headers": dict(request.headers),
                 "verify": verify,
-                "proxies": dict(proxies),
+                "proxies": dict(proxies) if proxies else {},
                 "allow_redirects": False,
-                "timeout": timeout if timeout else 15,
+                "timeout": timeout if timeout is not None else 15,
                 "stream": stream,
             }
             resp = conn.send(tls_request)
