@@ -315,7 +315,42 @@ class TLSAdapter(BaseAdapter):
 
         # Set encoding.
         response.encoding = get_encoding_from_headers(response.headers)
-        # response.raw = resp.content
+
+        # Check if this is a stream response
+        stream_body = getattr(resp, "_stream_body", None)
+        if stream_body is not None:
+            # Streaming mode: do NOT eagerly read the content.
+            # _content stays as False so requests' iter_content will use raw.
+            response.reason = resp.reason
+
+            if isinstance(req.url, bytes):
+                response.url = req.url.decode("utf-8")
+            else:
+                response.url = getattr(resp, "url", None) or req.url
+
+            response.cookies.update(resp.cookies)
+            response.request = req
+            response.connection = self
+
+            # Propagate stream metadata
+            response.stream_id = getattr(resp, "stream_id", "")
+            response._stream_body = stream_body
+
+            # Build the raw HTTPResponse with the StreamBody as the body
+            # source so iter_content / iter_lines work transparently.
+            resp_headers = HTTPHeaderDict(response.headers)
+            response.raw = HTTPResponse(
+                body=stream_body,
+                headers=resp_headers,
+                status=response.status_code,
+                reason=response.reason,
+                decode_content=False,
+                preload_content=False,
+            )
+
+            return response
+
+        # Normal (non-stream) response
         response._content = resp.content
         response.reason = resp.reason
 
@@ -494,6 +529,7 @@ class TLSAdapter(BaseAdapter):
                 "proxies": dict(proxies),
                 "allow_redirects": False,
                 "timeout": timeout if timeout else 15,
+                "stream": stream,
             }
             resp = conn.send(tls_request)
 

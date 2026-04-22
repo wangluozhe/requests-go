@@ -25,7 +25,19 @@ request.argtypes = [ctypes.c_char_p]
 request.restype = ctypes.c_char_p
 
 freeMemory = library.freeMemory
-request.argtypes = [ctypes.c_char_p]
+freeMemory.argtypes = [ctypes.c_char_p]
 
 freeSession = library.freeSession
-request.argtypes = [ctypes.c_char_p]
+freeSession.argtypes = [ctypes.c_char_p]
+
+# Stream API
+stream_request = library.stream_request
+stream_request.argtypes = [ctypes.c_char_p]
+stream_request.restype = ctypes.c_char_p
+
+stream_read = library.stream_read
+stream_read.argtypes = [ctypes.c_char_p, ctypes.c_int]
+stream_read.restype = ctypes.c_char_p
+
+stream_close = library.stream_close
+stream_close.argtypes = [ctypes.c_char_p]

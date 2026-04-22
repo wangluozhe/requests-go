@@ -5,9 +5,10 @@ import collections
 from json import dumps, loads
 
 from .client import request, freeMemory
-from .response import build_response
+from .response import build_response, build_stream_response
 from ..tls_config import TLSConfig
 from .exceptions import TLSClientExeption
+from .stream import open_stream
 
 
 def to_bytes(x, encoding=None, errors=None):
@@ -108,9 +109,17 @@ class Session:
         super(Session, self).__init__()
         self.tls_config = tls_config
 
-    def request(self, method, url, params=None, data=None, headers=None, headers_order=None, un_changed_header_key=None, cookies=None, timeout=None,
-                allow_redirects=False, proxies=None, verify=None, cert=None, json=None, body=None, ja3=None, pseudo_header_order=None, tls_extensions=None,
-                http2_settings=None, force_http1=False, random_ja3=False):
+    def _build_request_params(self, method, url, params=None, data=None, headers=None,
+                              headers_order=None, un_changed_header_key=None, cookies=None,
+                              timeout=None, allow_redirects=False, proxies=None, verify=None,
+                              cert=None, json=None, body=None, ja3=None,
+                              pseudo_header_order=None, tls_extensions=None,
+                              http2_settings=None, force_http1=False, random_ja3=False):
+        """Build the request params dict for the DLL call.
+
+        This is shared between the normal ``request()`` and the streaming
+        ``stream_request()`` code paths.
+        """
         id = self.tls_config.get("id", "")
         if self.tls_config.get("ja3", None):
             ja3 = str(self.tls_config["ja3"])
@@ -205,6 +214,27 @@ class Session:
             request_params["TLSExtensions"] = dumps(tls_extensions.toMap(), separators=(",", ":"))
         if http2_settings:
             request_params["HTTP2Settings"] = dumps(http2_settings.toMap(), separators=(",", ":"))
+        return request_params
+
+    def request(self, method, url, params=None, data=None, headers=None, headers_order=None, un_changed_header_key=None, cookies=None, timeout=None,
+                allow_redirects=False, proxies=None, verify=None, cert=None, json=None, body=None, ja3=None, pseudo_header_order=None, tls_extensions=None,
+                http2_settings=None, force_http1=False, random_ja3=False, stream=False):
+        request_params = self._build_request_params(
+            method=method, url=url, params=params, data=data, headers=headers,
+            headers_order=headers_order, un_changed_header_key=un_changed_header_key,
+            cookies=cookies, timeout=timeout, allow_redirects=allow_redirects,
+            proxies=proxies, verify=verify, cert=cert, json=json, body=body,
+            ja3=ja3, pseudo_header_order=pseudo_header_order,
+            tls_extensions=tls_extensions, http2_settings=http2_settings,
+            force_http1=force_http1, random_ja3=random_ja3,
+        )
+
+        # ---- Stream mode: use stream_request / stream_read / stream_close ----
+        if stream:
+            meta, stream_body = open_stream(request_params)
+            return build_stream_response(meta, stream_body)
+
+        # ---- Normal (non-stream) mode ----
         rs = request(dumps(request_params).encode("utf-8")).decode("utf-8")
         try:
             res = loads(rs)
