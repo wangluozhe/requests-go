@@ -139,6 +139,13 @@ class Session(requests.Session):
             return
         raise Exception("tls_config must is TLSConfig class or dict class")
 
+    def _clone_tls_config(self, value):
+        if type(value) == dict:
+            return TLSConfig().fromJSON(value)
+        if hasattr(value, "toJSON"):
+            return TLSConfig().fromJSON(value.toJSON())
+        raise Exception("tls_config must be of type dict or TLSConfig.")
+
     def request(
             self,
             method,
@@ -201,18 +208,26 @@ class Session(requests.Session):
         :param tls_config: (optional) Dictionary, tls-client config params. If None, random tls. Default None.
         :rtype: requests.Response
         """
+        def _ensure_https_adapter(adapter):
+            current = self.adapters.get("https://")
+            if type(current) is type(adapter):
+                if isinstance(adapter, TLSAdapter):
+                    current_cfg = getattr(current, "_tls_config", None)
+                    target_cfg = getattr(adapter, "_tls_config", None)
+                    if current_cfg == target_cfg:
+                        return
+                else:
+                    return
+            self.mount("https://", adapter)
+
         if url.startswith("https://") and tls_config:
-            if type(tls_config) == dict and tls_config.get("ja3"):
-                _tls_config = TLSConfig().fromJSON(tls_config)
-            elif hasattr(tls_config, "toJSON"):
-                _tls_config = tls_config
-            else:
-                raise Exception("tls_config must be of type dict or TLSConfig.")
-            self.mount("https://", TLSAdapter(tls_config=_tls_config))
+            _tls_config = self._clone_tls_config(tls_config)
+            _ensure_https_adapter(TLSAdapter(tls_config=_tls_config))
         elif url.startswith("https://") and str(self.tls_config.ja3) != "None":
-            self.mount("https://", TLSAdapter(tls_config=self.tls_config))
+            _tls_config = self._clone_tls_config(self.tls_config)
+            _ensure_https_adapter(TLSAdapter(tls_config=_tls_config))
         else:
-            self.mount("https://", HTTPAdapter())
+            _ensure_https_adapter(HTTPAdapter())
         # Create the Request.
         req = Request(
             method=method.upper(),
