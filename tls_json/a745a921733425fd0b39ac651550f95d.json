@@ -1,0 +1,225 @@
+{
+  "donate": "123xiao TLS指纹获取工具！ https://tls.123408.xyz",
+  "ip": "104.28.211.105:36510",
+  "http_version": "h2",
+  "method": "GET",
+  "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+  "tls": {
+    "ciphers": [
+      "TLS_GREASE (0xEAEA)",
+      "TLS_AES_128_GCM_SHA256",
+      "TLS_AES_256_GCM_SHA384",
+      "TLS_CHACHA20_POLY1305_SHA256",
+      "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256",
+      "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256",
+      "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384",
+      "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384",
+      "TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256",
+      "TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256",
+      "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA",
+      "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA",
+      "TLS_RSA_WITH_AES_128_GCM_SHA256",
+      "TLS_RSA_WITH_AES_256_GCM_SHA384",
+      "TLS_RSA_WITH_AES_128_CBC_SHA",
+      "TLS_RSA_WITH_AES_256_CBC_SHA"
+    ],
+    "extensions": [
+      {
+        "name": "TLS_GREASE (0x5a5a)"
+      },
+      {
+        "name": "extensionRenegotiationInfo (boringssl) (65281)",
+        "data": "00"
+      },
+      {
+        "name": "supported_groups (10)",
+        "supported_groups": [
+          "TLS_GREASE (0x2a2a)",
+          "X25519MLKEM768 (4588)",
+          "X25519 (29)",
+          "P-256 (23)",
+          "P-384 (24)"
+        ]
+      },
+      {
+        "name": "compress_certificate (27)",
+        "algorithms": [
+          "brotli (2)"
+        ]
+      },
+      {
+        "name": "status_request (5)",
+        "status_request": {
+          "certificate_status_type": "OSCP (1)",
+          "responder_id_list_length": 0,
+          "request_extensions_length": 0
+        }
+      },
+      {
+        "name": "application_settings (17613)",
+        "protocols": [
+          "h2"
+        ]
+      },
+      {
+        "name": "supported_versions (43)",
+        "versions": [
+          "TLS_GREASE (0x1a1a)",
+          "TLS 1.3",
+          "TLS 1.2"
+        ]
+      },
+      {
+        "name": "ec_point_formats (11)",
+        "elliptic_curves_point_formats": [
+          "0x00"
+        ]
+      },
+      {
+        "name": "application_layer_protocol_negotiation (16)",
+        "protocols": [
+          "h2",
+          "http/1.1"
+        ]
+      },
+      {
+        "name": "psk_key_exchange_modes (45)",
+        "PSK_Key_Exchange_Mode": "PSK with (EC)DHE key establishment (psk_dhe_ke) (1)"
+      },
+      {
+        "name": "signature_algorithms (13)",
+        "signature_algorithms": [
+          "ecdsa_secp256r1_sha256",
+          "rsa_pss_rsae_sha256",
+          "rsa_pkcs1_sha256",
+          "ecdsa_secp384r1_sha384",
+          "rsa_pss_rsae_sha384",
+          "rsa_pkcs1_sha384",
+          "rsa_pss_rsae_sha512",
+          "rsa_pkcs1_sha512"
+        ]
+      },
+      {
+        "name": "server_name (0)",
+        "server_name": "tls.123408.xyz"
+      },
+      {
+        "name": "extensionEncryptedClientHello (boringssl) (65037)",
+        "data": "00000100013d00205b46f0afdd22682e0ef81634f10596755ef2a4099cf1d94a856d00fd8e5eb62700f0554d7e4675a550f1398a3be0debaec6c3f5d8a05e6a8776d19f270deb1ba48fc616ca89f44f7495e5c1ca8ed0fe25d87c64218c0826649130cf7eacec0f47f631cc7445bd3f728a52eb4b609fbfb8f07bdaf08cfa255689c4ee628f3472cf71311395fbffd4e6ed081ef00fdb150ca597e2b3ec7fca30a66be48288c1471e4b6e5ab4316935509a3e9b6584689929d703e81b89b5993b5cb9f8cac090073c9ef561c95069fee42978b94792bc44a7be53e7e2fc8510c1672eb44d033ce89070e4bd333f8c226edb1e887024c08d99045f4c32f276bdf60a8f0db7588f384abaace7d0e08bd10d24136ca33a016f2d223"
+      },
+      {
+        "name": "session_ticket (35)",
+        "data": ""
+      },
+      {
+        "name": "signed_certificate_timestamp (18)"
+      },
+      {
+        "name": "extended_master_secret (23)",
+        "master_secret_data": "",
+        "extended_master_secret_data": ""
+      },
+      {
+        "name": "key_share (51)",
+        "shared_keys": [
+          {
+            "TLS_GREASE (0x2a2a)": "00"
+          },
+          {
+            "X25519MLKEM768 (4588)": "f7cbb2bca18a6519477ce69666e9a4e68a6dd8e97ca8b31e4c518d1ecc3c7e9ab4c753333ea7a935d32763a9ab32e42f013cad6ccc59a0a8c4eef69a0b67bfa1a6782eb7ced336ac357c149947a7d4f28cc957570e4314bdb341aec2cadd1b24faaab23b951134f1ae1a51b7be690c4df80e6c655dca60951fd8c3e1f6cf37807917b882ad95a432249ea8b307f770197a92a90a1369c614cb1ea89910363f14242a4f94b92227b682dc67202a280e804eb11520d8a73e57a05652162026b949f6112239b83061b9cea813c1275a3ac6543bd7e514893449e99178e7e673de8a57a1fa550b253beb419231290f03437936c78d2532683583b489b68a1e4821c18970744770148309812430697213bdf742bfb48294c77357750d6cd9379343b462b99f5eacb17110014d453ccc1c2e67b63a7dfba6f108766cb9a358d096e6e868a96288c6f891a06b0b5c542cc1087a60a5810db49a0e436a3d89b260ea042fe4261dd327b475278d1583d490cb75a59902d37ec811982c87ad68950f80a9c20604266b0cc0474334796868ec5998fdf1b381e618311b9d7b93b4d9cc5e080c2451ec8511436c706332201392fd04ab764042df3a8de107aa591778ec7b33d09731db34544a38c23af6a28658662df5a8b66c551303016b689700fc325420c8fec11d5053999fa96f8ba28368463e77f920d3e3ca10157d7faaa15c441c2d679320032b54425c21b85feaa85588ec1d31f79a7af84e5d524d2d27c40f63710b8b4da6578fb8d5a5f9062da3f624d7d151896c39bfac2db2da70427c8980847d04d9a61a0736a1dcc08f672dacdb798d6c4f86d7a05f85cb5b71ab758043fbf96ceafc4347756a3ea8658cd18cadeb9c710c2e9f2665407601816caf5f8b6da538036e6428682c08a4112b9b70918c21bad5b1400a26706c1b57ce41b1cdec7881d8451be9ac0158522f18b4e19bbaa1b4b1c44963b811bb5ca56d2a5343a1c85b26b8651a49a05fea45f2b4bd11c6393b8012cd56554c019d2e8980c82751cff6077b06bd04a7c820322ea590978af82b1dcbbd47fb14b8308cbbf73181e9037fd7104f1740fdd4b3f74169278017e7746e3da210f23c6c10b4b8d89c5a345b92d1d96f78aa728e339c5428bfc82965fe029d23f5518dc03712a23cc18497785bb4a79153716a3ae78bb4f68b4c29ba3ed7f53609454981784546692f52f6bad7b8b39088548a1594c4ecc1df8ca9f669a309815326b31f296b70e021143593b34aebb60b2708e488a307634596536e07814d846896ab6899fb05c219fb583a28b351694ad33534f40a1f1300171ec19c63d44c10f17b1a701cf6c85c97ea63e3eba6107ab1022b58c903c539eb8c3b24169316ac0383c2daa373b1f9c868f9bf2a4bbed235bb4c4010dc6a80b0d058e3e730fdf7a6315127785964c8307540cc19a3e2a4c194baa692cf5f57bafb684f0bda7ee794355198bbe4a8bcc36a5ff2254f3b8a2a58e40ae1db7fc7a042b320bba688556c385a8648671df97bb7a6a6ce51c928a0145336b1dd76073ec3991bd63e5c7a1fc9e1b4c2c061c7138d0977923a71b261115dd7bb0116b75d2ab897a6843de89b893219bc70232b5b88354c10c2fea010e3854f8d0383a66ab613385224d546fa34773c1403aa2852f94c7654abf08607620b27bdc62dbd29c7ccc04b43c4cea88a2233686749d8369d00"
+          },
+          {
+            "X25519 (29)": "fdb5db3b8af96f77afd6dd2426b99ab3c34267906bf6dca24af5d8b359e18f07"
+          }
+        ]
+      },
+      {
+        "name": "TLS_GREASE (0x4a4a)"
+      }
+    ],
+    "tls_version_record": "771",
+    "tls_version_negotiated": "772",
+    "ja3": "771,4865-4866-4867-49195-49199-49196-49200-52393-52392-49171-49172-156-157-47-53,65281-10-27-5-17613-43-11-16-45-13-0-65037-35-18-23-51,4588-29-23-24,0",
+    "ja3_hash": "a745a921733425fd0b39ac651550f95d",
+    "ja4": "t13d1516h2_8daaf6152771_d8a2da3f94cd",
+    "ja4_r": "t13d1516h2_002f,0035,009c,009d,1301,1302,1303,c013,c014,c02b,c02c,c02f,c030,cca8,cca9_0005,000a,000b,000d,0012,0017,001b,0023,002b,002d,0033,44cd,fe0d,ff01_0403,0804,0401,0503,0805,0501,0806,0601",
+    "peetprint": "GREASE-772-771|2-1.1|GREASE-4588-29-23-24|1027-2052-1025-1283-2053-1281-2054-1537|1|2|GREASE-4865-4866-4867-49195-49199-49196-49200-52393-52392-49171-49172-156-157-47-53|0-10-11-13-16-17613-18-23-27-35-43-45-5-51-65037-65281-GREASE-GREASE",
+    "peetprint_hash": "1d4ffe9b0e34acac0bd883fa7f79d7b5",
+    "client_random": "b2b6265932aa2f6990f72f69a5fb7b0b6405207691275dbd9f46c403e94bcbe3",
+    "session_id": "fb2d8a2b976900585ab52dc2a4f2abf6159c5a0838dc8c3c784eef2b9a2a73f1"
+  },
+  "http2": {
+    "akamai_fingerprint": "1:65536;2:0;4:6291456;6:262144|15663105|0|m,a,s,p",
+    "akamai_fingerprint_hash": "52d84b11737d980aef856699f885ca86",
+    "sent_frames": [
+      {
+        "frame_type": "SETTINGS",
+        "length": 24,
+        "settings": [
+          "HEADER_TABLE_SIZE = 65536",
+          "ENABLE_PUSH = 0",
+          "INITIAL_WINDOW_SIZE = 6291456",
+          "MAX_HEADER_LIST_SIZE = 262144"
+        ]
+      },
+      {
+        "frame_type": "WINDOW_UPDATE",
+        "length": 4,
+        "increment": 15663105
+      },
+      {
+        "frame_type": "HEADERS",
+        "stream_id": 1,
+        "length": 378,
+        "headers": [
+          ":method: GET",
+          ":authority: tls.123408.xyz",
+          ":scheme: https",
+          ":path: /api/ip",
+          "sec-ch-ua-platform: \\\"macOS\\",
+          "user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+          "sec-ch-ua: \\\"Google Chrome\\\";v=\\\"143\\\", \\\"Chromium\\\";v=\\\"143\\\", \\\"Not A(Brand\\\";v=\\\"24\\",
+          "sec-ch-ua-mobile: ?0",
+          "accept: */*",
+          "origin: https://ip.123408.xyz",
+          "sec-fetch-site: same-site",
+          "sec-fetch-mode: cors",
+          "sec-fetch-dest: empty",
+          "referer: https://ip.123408.xyz/",
+          "accept-encoding: gzip, deflate, br, zstd",
+          "accept-language: zh-CN,zh;q=0.9,en;q=0.8",
+          "priority: u=1, i"
+        ],
+        "flags": [
+          "EndStream (0x1)",
+          "EndHeaders (0x4)",
+          "Priority (0x20)"
+        ],
+        "priority": {
+          "weight": 220,
+          "depends_on": 0,
+          "exclusive": 1
+        }
+      }
+    ]
+  },
+  "tcpip": {
+    "cap_length": 222,
+    "dst_port": 443,
+    "src_port": 36510,
+    "ip": {
+      "id": 6549,
+      "tos": 72,
+      "ttl": 47,
+      "ip_version": 4,
+      "dst_ip": "172.18.0.2",
+      "src_ip": "104.28.211.105"
+    },
+    "tcp": {
+      "ack": 4247454253,
+      "checksum": 52046,
+      "seq": 3503145074,
+      "window": 17
+    }
+  }
+}

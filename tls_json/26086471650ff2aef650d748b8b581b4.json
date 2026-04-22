@@ -1,0 +1,154 @@
+{
+  "donate": "123xiao TLS指纹获取工具！ https://tls.123408.xyz",
+  "ip": "87.236.176.4:56399",
+  "http_version": "HTTP/1.1",
+  "method": "GET",
+  "user_agent": "Mozilla/5.0 (compatible; InternetMeasurement/1.0; +https",
+  "tls": {
+    "ciphers": [
+      "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256",
+      "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256",
+      "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384",
+      "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384",
+      "TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256",
+      "TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256",
+      "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA",
+      "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA",
+      "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA",
+      "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA",
+      "TLS_RSA_WITH_AES_128_GCM_SHA256",
+      "TLS_RSA_WITH_AES_256_GCM_SHA384",
+      "TLS_RSA_WITH_AES_128_CBC_SHA",
+      "TLS_RSA_WITH_AES_256_CBC_SHA",
+      "TLS_ECDHE_ECDSA_WITH_3DES_EDE_CBC_SHA",
+      "TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA",
+      "TLS_RSA_WITH_3DES_EDE_CBC_SHA",
+      "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384",
+      "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384",
+      "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256",
+      "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256",
+      "TLS_RSA_WITH_AES_128_CBC_SHA256",
+      "TLS_RSA_WITH_AES_256_CBC_SHA256",
+      "TLS_ECDHE_ECDSA_WITH_RC4_128_SHA",
+      "TLS_ECDHE_RSA_WITH_RC4_128_SHA",
+      "TLS_RSA_WITH_RC4_128_SHA",
+      "TLS_RSA_WITH_RC4_128_MD5",
+      "TLS_AES_128_GCM_SHA256",
+      "TLS_AES_256_GCM_SHA384",
+      "TLS_CHACHA20_POLY1305_SHA256"
+    ],
+    "extensions": [
+      {
+        "name": "server_name (0)",
+        "server_name": "tls.123408.xyz"
+      },
+      {
+        "name": "status_request (5)",
+        "status_request": {
+          "certificate_status_type": "OSCP (1)",
+          "responder_id_list_length": 0,
+          "request_extensions_length": 0
+        }
+      },
+      {
+        "name": "supported_groups (10)",
+        "supported_groups": [
+          "X25519 (29)",
+          "P-256 (23)",
+          "P-384 (24)",
+          "P-521 (25)"
+        ]
+      },
+      {
+        "name": "ec_point_formats (11)",
+        "elliptic_curves_point_formats": [
+          "0x00"
+        ]
+      },
+      {
+        "name": "signature_algorithms (13)",
+        "signature_algorithms": [
+          "rsa_pss_rsae_sha256",
+          "ecdsa_secp256r1_sha256",
+          "ed25519",
+          "rsa_pss_rsae_sha384",
+          "rsa_pss_rsae_sha512",
+          "rsa_pkcs1_sha256",
+          "rsa_pkcs1_sha384",
+          "rsa_pkcs1_sha512",
+          "ecdsa_secp384r1_sha384",
+          "ecdsa_secp521r1_sha512",
+          "rsa_pkcs1_sha1",
+          "ecdsa_sha1"
+        ]
+      },
+      {
+        "name": "extensionRenegotiationInfo (boringssl) (65281)",
+        "data": "00"
+      },
+      {
+        "name": "extended_master_secret (23)",
+        "master_secret_data": "",
+        "extended_master_secret_data": ""
+      },
+      {
+        "name": "signed_certificate_timestamp (18)"
+      },
+      {
+        "name": "supported_versions (43)",
+        "versions": [
+          "TLS 1.3",
+          "TLS 1.2",
+          "TLS 1.1",
+          "TLS 1.0",
+          "0300"
+        ]
+      },
+      {
+        "name": "key_share (51)",
+        "shared_keys": [
+          {
+            "X25519 (29)": "c1c3a58cd1ad248351e8ccd55c72bc81ed0c30e6b0f1330354678fe40b95d76c"
+          }
+        ]
+      }
+    ],
+    "tls_version_record": "771",
+    "tls_version_negotiated": "772",
+    "ja3": "771,49195-49199-49196-49200-52393-52392-49161-49171-49162-49172-156-157-47-53-49160-49170-10-49188-49192-49187-49191-60-61-49159-49169-5-4-4865-4866-4867,0-5-10-11-13-65281-23-18-43-51,29-23-24-25,0",
+    "ja3_hash": "26086471650ff2aef650d748b8b581b4",
+    "ja4": "t13d3010_3c43a67630b3_e7c285222651",
+    "ja4_r": "t13d3010_0004,0005,000a,002f,0035,003c,003d,009c,009d,1301,1302,1303,c007,c008,c009,c00a,c011,c012,c013,c014,c023,c024,c027,c028,c02b,c02c,c02f,c030,cca8,cca9_0005,000a,000b,000d,0012,0017,002b,0033,ff01_0804,0403,0807,0805,0806,0401,0501,0601,0503,0603,0201,0203",
+    "peetprint": "772-771-770-769-768||29-23-24-25|2052-1027-2055-2053-2054-1025-1281-1537-1283-1539-513-515|0||49195-49199-49196-49200-52393-52392-49161-49171-49162-49172-156-157-47-53-49160-49170-10-49188-49192-49187-49191-60-61-49159-49169-5-4-4865-4866-4867|0-10-11-13-18-23-43-5-51-65281",
+    "peetprint_hash": "7eb84cbded10a394859351960e0e7f82",
+    "client_random": "06cf819839cc434d6142f3a0f9048c43a959d03653b946f5bde4d7966cc93c07",
+    "session_id": "8cd36f5cb1038d45a5b53338e80206b247a4ccd9fad2cdc78585881f3fa78c7d"
+  },
+  "http1": {
+    "headers": [
+      "Host: tls.123408.xyz",
+      "User-Agent: Mozilla/5.0 (compatible; InternetMeasurement/1.0; +https://internet-measurement.com/)",
+      "Connection: close",
+      "Accept: */*",
+      "Accept-Encoding: gzip"
+    ]
+  },
+  "tcpip": {
+    "cap_length": 130,
+    "dst_port": 443,
+    "src_port": 56399,
+    "ip": {
+      "id": 59578,
+      "ttl": 46,
+      "ip_version": 4,
+      "dst_ip": "172.18.0.2",
+      "src_ip": "87.236.176.4"
+    },
+    "tcp": {
+      "ack": 1321242134,
+      "checksum": 38730,
+      "seq": 4110540477,
+      "window": 501
+    }
+  }
+}

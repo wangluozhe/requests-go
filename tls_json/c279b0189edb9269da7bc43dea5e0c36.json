@@ -1,0 +1,269 @@
+{
+  "donate": "123xiao TLS指纹获取工具！ https://tls.123408.xyz",
+  "ip": "27.159.75.50:55290",
+  "http_version": "h2",
+  "method": "GET",
+  "user_agent": "Mozilla/5.0 (Android 10; Mobile; rv:89.0) Gecko/89.0 Firefox/89.0",
+  "tls": {
+    "ciphers": [
+      "TLS_AES_128_GCM_SHA256",
+      "TLS_CHACHA20_POLY1305_SHA256",
+      "TLS_AES_256_GCM_SHA384",
+      "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256",
+      "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256",
+      "TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256",
+      "TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256",
+      "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384",
+      "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384",
+      "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA",
+      "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA",
+      "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA",
+      "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA",
+      "TLS_RSA_WITH_AES_128_GCM_SHA256",
+      "TLS_RSA_WITH_AES_256_GCM_SHA384",
+      "TLS_RSA_WITH_AES_128_CBC_SHA",
+      "TLS_RSA_WITH_AES_256_CBC_SHA"
+    ],
+    "extensions": [
+      {
+        "name": "server_name (0)",
+        "server_name": "tls.123408.xyz"
+      },
+      {
+        "name": "extended_master_secret (23)",
+        "master_secret_data": "",
+        "extended_master_secret_data": ""
+      },
+      {
+        "name": "extensionRenegotiationInfo (boringssl) (65281)",
+        "data": "00"
+      },
+      {
+        "name": "supported_groups (10)",
+        "supported_groups": [
+          "X25519 (29)",
+          "P-256 (23)",
+          "P-384 (24)",
+          "P-521 (25)",
+          "ffdhe2048 (256)",
+          "ffdhe3072 (257)"
+        ]
+      },
+      {
+        "name": "ec_point_formats (11)",
+        "elliptic_curves_point_formats": [
+          "0x00"
+        ]
+      },
+      {
+        "name": "application_layer_protocol_negotiation (16)",
+        "protocols": [
+          "h2",
+          "http/1.1"
+        ]
+      },
+      {
+        "name": "status_request (5)",
+        "status_request": {
+          "certificate_status_type": "OSCP (1)",
+          "responder_id_list_length": 0,
+          "request_extensions_length": 0
+        }
+      },
+      {
+        "name": "delegated_credentials (34)",
+        "signature_hash_algorithms": [
+          "ecdsa_secp256r1_sha256",
+          "ecdsa_secp384r1_sha384",
+          "ecdsa_secp521r1_sha512",
+          "ecdsa_sha1"
+        ]
+      },
+      {
+        "name": "key_share (51)",
+        "shared_keys": [
+          {
+            "X25519 (29)": "d64409551265d0c3121c9d73eccfa2033c710847f9d66830d5b2dd6897b04943"
+          },
+          {
+            "P-256 (23)": "041cac3dd2dfae79cc93a26a805043509b6d5bc673fe05cf5d8b1e87e3f27f9aa640967e272bb601bcab81b148faebf7d303fdaa0566dce2e0d66469eddf6faeb9"
+          }
+        ]
+      },
+      {
+        "name": "supported_versions (43)",
+        "versions": [
+          "TLS 1.3",
+          "TLS 1.2"
+        ]
+      },
+      {
+        "name": "signature_algorithms (13)",
+        "signature_algorithms": [
+          "ecdsa_secp256r1_sha256",
+          "ecdsa_secp384r1_sha384",
+          "ecdsa_secp521r1_sha512",
+          "rsa_pss_rsae_sha256",
+          "rsa_pss_rsae_sha384",
+          "rsa_pss_rsae_sha512",
+          "rsa_pkcs1_sha256",
+          "rsa_pkcs1_sha384",
+          "rsa_pkcs1_sha512",
+          "ecdsa_sha1",
+          "rsa_pkcs1_sha1"
+        ]
+      },
+      {
+        "name": "psk_key_exchange_modes (45)",
+        "PSK_Key_Exchange_Mode": "PSK with (EC)DHE key establishment (psk_dhe_ke) (1)"
+      },
+      {
+        "name": "record_size_limit (28)",
+        "data": "4001"
+      },
+      {
+        "name": "pre_shared_key (41)",
+        "data": "00770071fea8cef7a09ef92a1dfae53c7fefba83575a50ee4938f40d1c10c3d97b1cb8cc1e230485adf55f66daa1d86eea6b8647980f0bda4c8327f7a994edcc80ba25853cbde9a76ab85032c839452522b5cfcc93604e74ea2e18ef57041160770700dc306d1f90ec4a804a65267dfd3b38a30cc613c767f7002120b12c915ad4b282d9a4d5af24e0f1a1b122f6d0e085aa80a57417bbf2f31695ba"
+      }
+    ],
+    "tls_version_record": "771",
+    "tls_version_negotiated": "772",
+    "ja3": "771,4865-4867-4866-49195-49199-52393-52392-49196-49200-49162-49161-49171-49172-156-157-47-53,0-23-65281-10-11-16-5-34-51-43-13-45-28-41,29-23-24-25-256-257,0",
+    "ja3_hash": "c279b0189edb9269da7bc43dea5e0c36",
+    "ja4": "t13d1714h2_5b57614c22b0_8f66f9ee9c6c",
+    "ja4_r": "t13d1714h2_002f,0035,009c,009d,1301,1302,1303,c009,c00a,c013,c014,c02b,c02c,c02f,c030,cca8,cca9_0005,000a,000b,000d,0017,001c,0022,0029,002b,002d,0033,ff01_0403,0503,0603,0804,0805,0806,0401,0501,0601,0203,0201",
+    "peetprint": "772-771|2-1.1|29-23-24-25-256-257|1027-1283-1539-2052-2053-2054-1025-1281-1537-515-513|1||4865-4867-4866-49195-49199-52393-52392-49196-49200-49162-49161-49171-49172-156-157-47-53|0-10-11-13-16-23-28-34-41-43-45-5-51-65281",
+    "peetprint_hash": "fea33d3783ae74d495240377b44baa68",
+    "client_random": "a629cf8f974cf6a6d4ae022922d31d9fa4f65c777f8e158ea0273fc798ecc373",
+    "session_id": "0029f8871e6a6006da888ab3d5a8c56408fe5ad150def3812148874ee6d29508"
+  },
+  "http2": {
+    "akamai_fingerprint": "1:65536;4:131072;5:16384|12517377|3:0:0:201,5:0:0:101,7:0:0:1,9:0:7:1,11:0:3:1,13:0:0:241|m,p,a,s",
+    "akamai_fingerprint_hash": "3d9132023bf26a71d40fe766e5c24c9d",
+    "sent_frames": [
+      {
+        "frame_type": "SETTINGS",
+        "length": 18,
+        "settings": [
+          "HEADER_TABLE_SIZE = 65536",
+          "INITIAL_WINDOW_SIZE = 131072",
+          "MAX_FRAME_SIZE = 16384"
+        ]
+      },
+      {
+        "frame_type": "WINDOW_UPDATE",
+        "length": 4,
+        "increment": 12517377
+      },
+      {
+        "frame_type": "PRIORITY",
+        "stream_id": 3,
+        "length": 5,
+        "priority": {
+          "weight": 201,
+          "depends_on": 0,
+          "exclusive": 0
+        }
+      },
+      {
+        "frame_type": "PRIORITY",
+        "stream_id": 5,
+        "length": 5,
+        "priority": {
+          "weight": 101,
+          "depends_on": 0,
+          "exclusive": 0
+        }
+      },
+      {
+        "frame_type": "PRIORITY",
+        "stream_id": 7,
+        "length": 5,
+        "priority": {
+          "weight": 1,
+          "depends_on": 0,
+          "exclusive": 0
+        }
+      },
+      {
+        "frame_type": "PRIORITY",
+        "stream_id": 9,
+        "length": 5,
+        "priority": {
+          "weight": 1,
+          "depends_on": 7,
+          "exclusive": 0
+        }
+      },
+      {
+        "frame_type": "PRIORITY",
+        "stream_id": 11,
+        "length": 5,
+        "priority": {
+          "weight": 1,
+          "depends_on": 3,
+          "exclusive": 0
+        }
+      },
+      {
+        "frame_type": "PRIORITY",
+        "stream_id": 13,
+        "length": 5,
+        "priority": {
+          "weight": 241,
+          "depends_on": 0,
+          "exclusive": 0
+        }
+      },
+      {
+        "frame_type": "HEADERS",
+        "stream_id": 15,
+        "length": 195,
+        "headers": [
+          ":method: GET",
+          ":path: /api/ip",
+          ":authority: tls.123408.xyz",
+          ":scheme: https",
+          "user-agent: Mozilla/5.0 (Android 10; Mobile; rv:89.0) Gecko/89.0 Firefox/89.0",
+          "accept: */*",
+          "accept-language: en-US,en;q=0.5",
+          "accept-encoding: gzip, deflate, br",
+          "referer: https://tls.123408.xyz/",
+          "sec-fetch-dest: empty",
+          "sec-fetch-mode: cors",
+          "sec-fetch-site: same-origin",
+          "te: trailers"
+        ],
+        "flags": [
+          "EndStream (0x1)",
+          "EndHeaders (0x4)",
+          "Priority (0x20)"
+        ],
+        "priority": {
+          "weight": 22,
+          "depends_on": 7,
+          "exclusive": 0
+        }
+      }
+    ]
+  },
+  "tcpip": {
+    "cap_length": 66,
+    "dst_port": 443,
+    "src_port": 55290,
+    "ip": {
+      "id": 31902,
+      "tos": 40,
+      "ttl": 42,
+      "ip_version": 4,
+      "dst_ip": "172.18.0.2",
+      "src_ip": "27.159.75.50"
+    },
+    "tcp": {
+      "ack": 3902747162,
+      "checksum": 26354,
+      "seq": 4003533263,
+      "window": 501
+    }
+  }
+}
