@@ -12,6 +12,7 @@ class TLSExtensions:
             "key_share_curves",
             "not_used_grease",
             "client_hello_hex_stream",
+            "trust_anchors",
         ]
         # PKCS1WithSHA256
         # PKCS1WithSHA384
@@ -277,6 +278,7 @@ class TLSExtensions:
         ]  # Key Shared Curve
         self.not_used_grease: bool = False  # not Used Grease
         self.client_hello_hex_stream = ""  # ClientHello hex code
+        self.trust_anchors: list = None  # Base64-encoded IDs for TLS extension 51764
 
     def __str__(self):
         return str(self.toJSON())
@@ -315,6 +317,10 @@ class TLSExtensions:
         if self.key_share_curves != other.key_share_curves:
             return False
         if self.not_used_grease != other.not_used_grease:
+            return False
+        if self.client_hello_hex_stream != other.client_hello_hex_stream:
+            return False
+        if self.trust_anchors != other.trust_anchors:
             return False
         return True
 

@@ -161,8 +161,4 @@ logging.getLogger(__name__).addHandler(NullHandler())
 # FileModeWarnings go off per the default.
 warnings.simplefilter("default", FileModeWarning, append=True)
 
-# import private tls_config
-try:
-    import tls_config
-except ImportError:
-    from . import tls_config
+from . import tls_config

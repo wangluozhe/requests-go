@@ -1,3 +1,4 @@
+import copy
 import uuid
 import random
 
@@ -11,6 +12,8 @@ class TLSConfig:
         self.__keys = [
             "id",
             "ja3",
+            "client_hello_id",
+            "client_hello_hex_stream",
             "random_ja3",
             "headers_order",
             "un_changed_header_key",
@@ -22,6 +25,8 @@ class TLSConfig:
         ]
         self.id: str = str(uuid.uuid4())  # session id, Used to maintain session
         self.__ja3: JA3 = None  # tls ja3 value
+        self.client_hello_id: dict = None
+        self.client_hello_hex_stream: str = ""
         self.__random_ja3: bool = False  # ja3 is it random
         self.headers_order: list[str] = None  # http headers order
         self.un_changed_header_key: list[str] = None  # http un changed header key
@@ -72,6 +77,10 @@ class TLSConfig:
             raise TypeError("Cannot compare {} to {}".format(type(self), type(other)))
         if self.ja3 != other.ja3:
             return False
+        if self.client_hello_id != other.client_hello_id:
+            return False
+        if self.client_hello_hex_stream != other.client_hello_hex_stream:
+            return False
         if self.pseudo_header_order != other.pseudo_header_order:
             return False
         if self.tls_extensions != other.tls_extensions:
@@ -83,13 +92,47 @@ class TLSConfig:
     def get(self, key, default=None):
         return getattr(self, key, default)
 
+    def has_tls_profile(self):
+        return bool(
+            self.ja3
+            or self.client_hello_id is not None
+            or self.client_hello_hex_stream
+            or getattr(self.tls_extensions, "client_hello_hex_stream", "")
+            or getattr(self.tls_extensions, "trust_anchors", None) is not None
+        )
+
+    @classmethod
+    def from_config(cls, value):
+        """Copy a config dictionary or a preset from the optional tls_config package."""
+        if isinstance(value, cls):
+            return copy.deepcopy(value)
+        if isinstance(value, dict):
+            return cls().fromJSON(copy.deepcopy(value))
+        if not hasattr(value, "toJSON"):
+            raise TypeError("tls_config must be of type dict or TLSConfig.")
+
+        data = copy.deepcopy(value.toJSON())
+        # Older private packages omit these attributes from toJSON().
+        for key in ("client_hello_id", "client_hello_hex_stream"):
+            if hasattr(value, key):
+                data[key] = copy.deepcopy(getattr(value, key))
+        extensions = getattr(value, "tls_extensions", None)
+        if hasattr(extensions, "trust_anchors"):
+            data["tls_extensions"]["trust_anchors"] = copy.deepcopy(extensions.trust_anchors)
+        config = cls(getattr(value, "name", "")).fromJSON(data)
+        config.id = data.get("id", config.id)
+        return config
+
     @property
     def ja3(self):
         return self.__ja3
 
     @ja3.setter
     def ja3(self, ja3):
-        if type(ja3) in [str, JA3]:
+        if ja3 is None or (isinstance(ja3, str) and ja3 in ("", "None")):
+            # Older toJSON() output used the literal string "None".
+            self.__ja3 = None
+        elif type(ja3) in [str, JA3]:
             if type(ja3) == str:
                 self.__ja3 = JA3(ja3, random=self.random_ja3)
             else:
@@ -130,7 +173,7 @@ class TLSConfig:
             if key in ["tls_extensions", "http2_settings"]:
                 result[key] = getattr(self, key).toJSON()
             elif key == "ja3":
-                result[key] = str(getattr(self, key))
+                result[key] = str(self.ja3) if self.ja3 is not None else None
             else:
                 result[key] = getattr(self, key)
         return result
@@ -165,6 +208,8 @@ class JA3:
         return self.__ja3
 
     def __eq__(self, other):
+        if other is None:
+            return False
         if type(self) is not type(other):
             raise TypeError("Cannot compare {} to {}".format(type(self), type(other)))
         if self.random != other.random:

@@ -152,6 +152,18 @@ print(response.json()['tls']['ja3'])
   - `TLS_SAFARI_MAC_OS_18_3`, `TLS_SAFARI_IOS_18_3_1`
 
 
+### 按 ClientHello ID 选择预设
+
+使用 v1.6.0 原生库时，可以只设置客户端名称和版本。也可以将同一份配置通过单次请求的 `tls_config` 参数传入。
+
+```python
+import requests_go
+
+with requests_go.Session() as session:
+    session.tls_config.client_hello_id = {"Client": "Firefox", "Version": "148"}
+    response = session.get("https://example.com")
+```
+
 ### 自定义JA3指纹
 
 你可以手动创建一个`TLSConfig`实例并设置其JA3指纹字符串。
@@ -428,12 +440,22 @@ conf.http2_settings.priority_frames = [
 
 ### `client_hello_hex_stream`
 
-  * **作用**: 可直接使用`WireShark`工具抓包后复制其ClientHello包的十六进制值作为TLS指纹。**注意：使用这个功能后其他TLS参数均失效**
-  * **可选值**: 与`supported_signature_algorithms`类似，支持多种标准名称和十六进制值。
-  * **示例**:
-    ```python
-    conf.tls_extensions.client_hello_hex_stream = "16030107b4010007b00303297a9f99030f1f6f963..."
-    ```
+将完整 ClientHello 记录的十六进制字符串赋给 `conf.client_hello_hex_stream`。旧写法 `conf.tls_extensions.client_hello_hex_stream` 仍可使用。同时配置多项时，v1.6.0 按以下顺序选择 ClientHello 来源。
+
+1. `conf.tls_extensions.client_hello_hex_stream`
+2. `conf.client_hello_hex_stream`
+3. `conf.client_hello_id`
+4. `conf.ja3`
+
+### `trust_anchors`
+
+当 JA3 的扩展列表包含 `51764` 时，可以用 Base64 字符串配置该扩展携带的 ID。如果同时使用扩展 `41`（`pre_shared_key`），它必须排在最后。
+
+```python
+conf.tls_extensions.trust_anchors = ["AQI="]  # ID 字节为 0x01 0x02
+```
+
+`None` 使用原生库的默认值，`[]` 显式发送空列表。证书校验由请求的 `verify` 参数控制。
 
 ## 异步 (`async`/`await`) 用法
 

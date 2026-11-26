@@ -143,9 +143,22 @@ class Session:
             "Id": id,
             "Method": method,
             "Url": url,
-            "Ja3": ja3,
             "RandomJA3": random_ja3
         }
+        client_hello_id = self.tls_config.get("client_hello_id")
+        if client_hello_id is not None:
+            request_params["ClientHelloID"] = client_hello_id
+        client_hello_hex_stream = self.tls_config.get("client_hello_hex_stream")
+        if client_hello_hex_stream:
+            request_params["ClientHelloHexStream"] = client_hello_hex_stream
+        if ja3:
+            legacy_hex_stream = getattr(tls_extensions, "client_hello_hex_stream", "")
+            if client_hello_id is None and not (client_hello_hex_stream or legacy_hex_stream):
+                # uTLS panics if a JA3 puts another extension after pre_shared_key.
+                fields = ja3.split(",")
+                if len(fields) == 5 and "41" in fields[2].split("-")[:-1]:
+                    raise ValueError("JA3 extension 41 (pre_shared_key) must be last")
+            request_params["Ja3"] = ja3
         if params:
             request_params["Params"] = params
         if headers:

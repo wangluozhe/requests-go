@@ -12,11 +12,7 @@ from requests.cookies import cookiejar_from_dict
 from requests.adapters import HTTPAdapter
 
 from .adapters import TLSAdapter
-# import private tls_config
-try:
-    from tls_config import TLSConfig
-except ImportError:
-    from .tls_config.config import TLSConfig
+from .tls_config import TLSConfig
 from .tls_client.client import freeSession
 
 
@@ -146,7 +142,7 @@ class Session(requests.Session):
 
         # Default connection adapters.
         self.adapters = OrderedDict()
-        if self._tls_config.ja3:
+        if self._tls_config.has_tls_profile():
             config = self._clone_tls_config(self.tls_config)
             self.mount("https://", TLSAdapter(tls_config=config, native_session=self._native_session))
         else:
@@ -162,14 +158,7 @@ class Session(requests.Session):
         self._tls_config = self._clone_tls_config(value)
 
     def _clone_tls_config(self, value):
-        if isinstance(value, TLSConfig):
-            config = copy.deepcopy(value)
-        else:
-            if hasattr(value, "toJSON"):
-                value = value.toJSON()
-            if not isinstance(value, dict):
-                raise TypeError("tls_config must be of type dict or TLSConfig.")
-            config = TLSConfig().fromJSON(copy.deepcopy(value))
+        config = TLSConfig.from_config(value)
         config.id = self._native_session.id
         return config
 
@@ -247,7 +236,7 @@ class Session(requests.Session):
                     return
             self.mount("https://", adapter)
 
-        if url.startswith("https://") and (tls_config or str(self.tls_config.ja3) != "None"):
+        if tls_config or self.tls_config.has_tls_profile():
             config = self._clone_tls_config(tls_config or self.tls_config)
             _ensure_https_adapter(TLSAdapter(tls_config=config, native_session=self._native_session))
         else:
