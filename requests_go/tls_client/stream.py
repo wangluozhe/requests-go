@@ -10,10 +10,27 @@ import io
 from json import dumps, loads
 from threading import RLock
 
+from .client import freeMemory
 from .client import stream_request as _stream_request
 from .client import stream_read as _stream_read
 from .client import stream_close as _stream_close
 from .exceptions import TLSClientExeption
+
+
+def _parse_stream_result(raw: bytes, operation: str) -> dict:
+    result = loads(raw.decode("utf-8"))
+    if not result.get("err"):
+        return result
+
+    error = TLSClientExeption(f"{operation} error: {result['err']}")
+    # The DLL allocates error results under their own ID, separate from the stream.
+    error_id = result.get("id")
+    if error_id:
+        try:
+            freeMemory(error_id.encode("utf-8"))
+        except Exception as exc:
+            raise error from exc
+    raise error
 
 
 class StreamBody(io.RawIOBase):
@@ -113,9 +130,7 @@ class StreamBody(io.RawIOBase):
                 return b""
             try:
                 raw = _stream_read(self._stream_id.encode("utf-8"), size)
-                result = loads(raw.decode("utf-8"))
-                if result.get("err"):
-                    raise TLSClientExeption(f"stream_read error: {result['err']}")
+                result = _parse_stream_result(raw, "stream_read")
                 data = base64.b64decode(result["data"]) if result.get("data") else b""
             except TLSClientExeption:
                 self.close()
@@ -146,10 +161,7 @@ def open_stream(request_params: dict):
     payload = dumps(request_params).encode("utf-8")
 
     raw = _stream_request(payload)
-    meta = loads(raw.decode("utf-8"))
-
-    if meta.get("err"):
-        raise TLSClientExeption(f"stream_request error: {meta['err']}")
+    meta = _parse_stream_result(raw, "stream_request")
 
     stream_id = meta["stream_id"]
     return meta, StreamBody(stream_id)
