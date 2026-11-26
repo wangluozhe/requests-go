@@ -142,11 +142,7 @@ class Session(requests.Session):
 
         # Default connection adapters.
         self.adapters = OrderedDict()
-        if self._tls_config.has_tls_profile():
-            config = self._clone_tls_config(self.tls_config)
-            self.mount("https://", TLSAdapter(tls_config=config, native_session=self._native_session))
-        else:
-            self.mount("https://", HTTPAdapter())
+        self._ensure_https_adapter(None)
         self.mount("http://", HTTPAdapter())
 
     @property
@@ -161,6 +157,26 @@ class Session(requests.Session):
         config = TLSConfig.from_config(value)
         config.id = self._native_session.id
         return config
+
+    def _ensure_https_adapter(self, tls_config):
+        current = self.adapters.get("https://")
+        if not tls_config and not self.tls_config.has_tls_profile():
+            if type(current) is not HTTPAdapter:
+                self.mount("https://", HTTPAdapter())
+            return
+
+        source = tls_config or self.tls_config
+        # Dictionaries and third-party presets need normalization before comparison.
+        config = source if isinstance(source, TLSConfig) else self._clone_tls_config(source)
+        if (type(current) is TLSAdapter
+                and current._native_session is self._native_session
+                and isinstance(current._tls_config, TLSConfig)
+                and current._tls_config._request_options() == config._request_options()):
+            return
+
+        if config is source:
+            config = self._clone_tls_config(source)
+        self.mount("https://", TLSAdapter(tls_config=config, native_session=self._native_session))
 
     def request(
             self,
@@ -223,23 +239,7 @@ class Session(requests.Session):
         :param tls_config: (optional) Dictionary, tls-client config params. If None, random tls. Default None.
         :rtype: requests.Response
         """
-        def _ensure_https_adapter(adapter):
-            current = self.adapters.get("https://")
-            if type(current) is type(adapter):
-                if isinstance(adapter, TLSAdapter):
-                    current_cfg = getattr(current, "_tls_config", None)
-                    target_cfg = getattr(adapter, "_tls_config", None)
-                    if current._native_session is self._native_session and current_cfg == target_cfg:
-                        return
-                else:
-                    return
-            self.mount("https://", adapter)
-
-        if tls_config or self.tls_config.has_tls_profile():
-            config = self._clone_tls_config(tls_config or self.tls_config)
-            _ensure_https_adapter(TLSAdapter(tls_config=config, native_session=self._native_session))
-        else:
-            _ensure_https_adapter(HTTPAdapter())
+        self._ensure_https_adapter(tls_config)
         # Create the Request.
         req = Request(
             method=method.upper(),

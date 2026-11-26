@@ -101,6 +101,12 @@ class TLSConfig:
             or getattr(self.tls_extensions, "trust_anchors", None) is not None
         )
 
+    def _request_options(self):
+        """Values the adapter reads when building a native request."""
+        options = self.toJSON()
+        del options["id"], options["user_agent"]
+        return options
+
     @classmethod
     def from_config(cls, value):
         """Copy a config dictionary or a preset from the optional tls_config package."""
@@ -170,7 +176,7 @@ class TLSConfig:
     def toJSON(self):
         result = {}
         for key in self.__keys:
-            if key in ["tls_extensions", "http2_settings"]:
+            if key in ("tls_extensions", "http2_settings") and getattr(self, key) is not None:
                 result[key] = getattr(self, key).toJSON()
             elif key == "ja3":
                 result[key] = str(self.ja3) if self.ja3 is not None else None
