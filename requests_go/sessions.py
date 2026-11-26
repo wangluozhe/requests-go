@@ -1,6 +1,4 @@
-import uuid
 import copy
-import ctypes
 import asyncio
 import threading
 from collections import OrderedDict
@@ -20,6 +18,36 @@ try:
 except ImportError:
     from .tls_config.config import TLSConfig
 from .tls_client.client import freeSession
+
+
+class _NativeSession:
+    """Keep the DLL session alive while a request or its response body uses it."""
+
+    def __init__(self, session_id):
+        self.id = session_id
+        self._lock = threading.Lock()
+        self._active = 0
+        self._closed = True
+
+    def acquire(self):
+        with self._lock:
+            self._active += 1
+            self._closed = False
+
+    def release(self):
+        with self._lock:
+            self._active -= 1
+            self._free_if_unused()
+
+    def close(self):
+        with self._lock:
+            if not self._closed:
+                self._closed = True
+                self._free_if_unused()
+
+    def _free_if_unused(self):
+        if self._closed and self._active == 0:
+            freeSession(self.id.encode("utf-8"))
 
 
 class Session(requests.Session):
@@ -114,39 +142,36 @@ class Session(requests.Session):
 
         #: This default to random_tls_config.
         self._tls_config = TLSConfig()
-
-        # session id
-        self.__id = str(uuid.uuid4())
-
-        # session is freed
-        self.__freed = False
+        self._native_session = _NativeSession(self._tls_config.id)
 
         # Default connection adapters.
         self.adapters = OrderedDict()
         if self._tls_config.ja3:
-            self.mount("https://", TLSAdapter(tls_config=self.tls_config))
+            config = self._clone_tls_config(self.tls_config)
+            self.mount("https://", TLSAdapter(tls_config=config, native_session=self._native_session))
         else:
             self.mount("https://", HTTPAdapter())
         self.mount("http://", HTTPAdapter())
 
     @property
     def tls_config(self):
-        self._tls_config.id = self.__id
         return self._tls_config
 
     @tls_config.setter
     def tls_config(self, value):
-        if type(value) == dict or isinstance(value, TLSConfig):
-            self._tls_config = value
-            return
-        raise Exception("tls_config must is TLSConfig class or dict class")
+        self._tls_config = self._clone_tls_config(value)
 
     def _clone_tls_config(self, value):
-        if type(value) == dict:
-            return TLSConfig().fromJSON(value)
-        if hasattr(value, "toJSON"):
-            return TLSConfig().fromJSON(value.toJSON())
-        raise Exception("tls_config must be of type dict or TLSConfig.")
+        if isinstance(value, TLSConfig):
+            config = copy.deepcopy(value)
+        else:
+            if hasattr(value, "toJSON"):
+                value = value.toJSON()
+            if not isinstance(value, dict):
+                raise TypeError("tls_config must be of type dict or TLSConfig.")
+            config = TLSConfig().fromJSON(copy.deepcopy(value))
+        config.id = self._native_session.id
+        return config
 
     def request(
             self,
@@ -216,18 +241,15 @@ class Session(requests.Session):
                 if isinstance(adapter, TLSAdapter):
                     current_cfg = getattr(current, "_tls_config", None)
                     target_cfg = getattr(adapter, "_tls_config", None)
-                    if current_cfg == target_cfg:
+                    if current._native_session is self._native_session and current_cfg == target_cfg:
                         return
                 else:
                     return
             self.mount("https://", adapter)
 
-        if url.startswith("https://") and tls_config:
-            _tls_config = self._clone_tls_config(tls_config)
-            _ensure_https_adapter(TLSAdapter(tls_config=_tls_config))
-        elif url.startswith("https://") and str(self.tls_config.ja3) != "None":
-            _tls_config = self._clone_tls_config(self.tls_config)
-            _ensure_https_adapter(TLSAdapter(tls_config=_tls_config))
+        if url.startswith("https://") and (tls_config or str(self.tls_config.ja3) != "None"):
+            config = self._clone_tls_config(tls_config or self.tls_config)
+            _ensure_https_adapter(TLSAdapter(tls_config=config, native_session=self._native_session))
         else:
             _ensure_https_adapter(HTTPAdapter())
         # Create the Request.
@@ -263,18 +285,15 @@ class Session(requests.Session):
 
         return resp
 
-    def __free_session(self):
-        if not self.__freed:
-            freeSession(ctypes.c_char_p(self.__id.encode()))
-            self.__freed = True  # <--- 执行后立即更新标志位
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self.close()
-        self.__free_session()
+    def close(self):
+        try:
+            super().close()
+        finally:
+            self._native_session.close()
 
     def __del__(self):
         try:
-            self.__free_session()
+            self._native_session.close()
         except Exception:
             pass
 
@@ -282,11 +301,8 @@ class Session(requests.Session):
         return self
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
-        def _cleanup():
-            self.close()
-            self.__free_session()
         loop = asyncio.get_running_loop()
-        await loop.run_in_executor(None, _cleanup)
+        await loop.run_in_executor(None, self.close)
 
 
 class AsyncSession(Session):
@@ -381,7 +397,7 @@ class AsyncSession(Session):
 
         return await self.async_request("DELETE", url, **kwargs)
 
-    def _create_temp_session(self, tls_config_override=None):
+    def _create_temp_session(self):
         """Create a temporary Session that inherits settings from this AsyncSession.
 
         The temp session has its OWN adapters dict and its own copy of cookies,
@@ -402,22 +418,14 @@ class AsyncSession(Session):
         with self._cookie_lock:
             tmp.cookies = copy.copy(self.cookies)
 
-        if tls_config_override:
-            tmp._tls_config = self._clone_tls_config(tls_config_override)
-        elif hasattr(self._tls_config, 'toJSON'):
-            tmp._tls_config = self._clone_tls_config(self._tls_config)
-        else:
-            tmp._tls_config = TLSConfig()
+        tmp.tls_config = self.tls_config
 
         return tmp
 
     def loop_request(self, arguments):
         """Run a request on a temporary session to avoid shared mutable state."""
-        tls_config = arguments.pop("tls_config", None)
-        tmp = self._create_temp_session(tls_config_override=tls_config)
+        tmp = self._create_temp_session()
         try:
-            if tls_config:
-                arguments["tls_config"] = tls_config
             resp = tmp.request(**arguments)
             if resp.cookies:
                 with self._cookie_lock:

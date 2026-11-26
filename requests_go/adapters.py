@@ -125,6 +125,7 @@ class TLSAdapter(BaseAdapter):
         max_retries=DEFAULT_RETRIES,
         pool_block=DEFAULT_POOLBLOCK,
         tls_config: TLSConfig = None,
+        native_session=None,
     ):
         if max_retries == DEFAULT_RETRIES:
             self.max_retries = Retry(0, read=False)
@@ -139,6 +140,7 @@ class TLSAdapter(BaseAdapter):
         self._pool_maxsize = pool_maxsize
         self._pool_block = pool_block
         self._tls_config = tls_config
+        self._native_session = native_session
 
         self.init_poolmanager(pool_connections, pool_maxsize, block=pool_block)
 
@@ -519,6 +521,9 @@ class TLSAdapter(BaseAdapter):
             proxies=proxies,
         )
 
+        native_session = self._native_session
+        if native_session is not None:
+            native_session.acquire()
         try:
             tls_request = {
                 "method": request.method,
@@ -532,6 +537,11 @@ class TLSAdapter(BaseAdapter):
                 "stream": stream,
             }
             resp = conn.send(tls_request)
+            body = getattr(resp, "_stream_body", None)
+            if body is not None and native_session is not None:
+                # The stream now owns this reference, including across redirects and hooks.
+                body._on_close = native_session.release
+                native_session = None
 
         except (ProtocolError, OSError) as err:
             raise ConnectionError(err, request=request)
@@ -573,5 +583,13 @@ class TLSAdapter(BaseAdapter):
 
         except TLSClientExeption as e:
             raise TLSClientExeption(e, request=request)
+        finally:
+            if native_session is not None:
+                native_session.release()
 
-        return self.build_response(request, resp)
+        try:
+            return self.build_response(request, resp)
+        except BaseException:
+            if body is not None:
+                body.close()
+            raise

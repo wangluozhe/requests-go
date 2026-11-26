@@ -8,6 +8,7 @@ and iter_lines to work transparently with streaming responses.
 import base64
 import io
 from json import dumps, loads
+from threading import RLock
 
 from .client import stream_request as _stream_request
 from .client import stream_read as _stream_read
@@ -27,8 +28,9 @@ class StreamBody(io.RawIOBase):
     def __init__(self, stream_id: str):
         super().__init__()
         self._stream_id = stream_id
-        self._eof = False
         self._closed = False
+        self._on_close = None
+        self._lock = RLock()
         # Buffer for leftover data from previous reads
         self._buffer = b""
 
@@ -45,7 +47,7 @@ class StreamBody(io.RawIOBase):
 
     def read(self, size: int = -1) -> bytes:
         """Read up to *size* bytes.  ``-1`` means read until EOF."""
-        if self._closed or self._eof:
+        if self._closed:
             return b""
 
         if size == -1 or size is None:
@@ -54,7 +56,7 @@ class StreamBody(io.RawIOBase):
             if self._buffer:
                 chunks.append(self._buffer)
                 self._buffer = b""
-            while not self._eof:
+            while not self._closed:
                 chunk = self._read_chunk(65536)
                 if chunk:
                     chunks.append(chunk)
@@ -69,7 +71,7 @@ class StreamBody(io.RawIOBase):
         # Otherwise, collect so far and keep reading
         result = self._buffer
         self._buffer = b""
-        while len(result) < size and not self._eof:
+        while len(result) < size and not self._closed:
             chunk = self._read_chunk(size - len(result))
             if chunk:
                 result += chunk
@@ -84,13 +86,19 @@ class StreamBody(io.RawIOBase):
         return n
 
     def close(self):
-        if not self._closed:
+        with self._lock:
+            if self._closed:
+                return
             self._closed = True
             try:
                 _stream_close(self._stream_id.encode("utf-8"))
             except Exception:
                 pass
-            super().close()
+            finally:
+                super().close()
+                if self._on_close is not None:
+                    self._on_close()
+                    self._on_close = None
 
     @property
     def closed(self):
@@ -100,31 +108,25 @@ class StreamBody(io.RawIOBase):
 
     def _read_chunk(self, size: int) -> bytes:
         """Call DLL stream_read once, returns decoded bytes (may be empty)."""
-        if self._eof:
-            return b""
+        with self._lock:
+            if self._closed:
+                return b""
+            try:
+                raw = _stream_read(self._stream_id.encode("utf-8"), size)
+                result = loads(raw.decode("utf-8"))
+                if result.get("err"):
+                    raise TLSClientExeption(f"stream_read error: {result['err']}")
+                data = base64.b64decode(result["data"]) if result.get("data") else b""
+            except TLSClientExeption:
+                self.close()
+                raise
+            except Exception as e:
+                self.close()
+                raise TLSClientExeption(f"stream_read failed: {e}") from e
 
-        try:
-            raw = _stream_read(
-                self._stream_id.encode("utf-8"),
-                size,
-            )
-            result = loads(raw.decode("utf-8"))
-        except Exception as e:
-            self._eof = True
-            raise TLSClientExeption(f"stream_read failed: {e}")
-
-        if result.get("err"):
-            self._eof = True
-            raise TLSClientExeption(f"stream_read error: {result['err']}")
-
-        data = b""
-        if result.get("data"):
-            data = base64.b64decode(result["data"])
-
-        if result.get("eof"):
-            self._eof = True
-
-        return data
+            if result.get("eof"):
+                self.close()
+            return data
 
 
 def open_stream(request_params: dict):
