@@ -2,23 +2,36 @@ import os
 import ctypes
 from sys import platform
 from platform import machine
+from sysconfig import get_platform
 
-if platform == 'darwin':
-    file_ext = '-arm64.dylib' if machine() == "arm64" else '-x86.dylib'
-elif platform in ('win32', 'cygwin'):
-    file_ext = '-win64.dll' if 8 == ctypes.sizeof(ctypes.c_voidp) else '-win32.dll'
-else:
-    if machine() == "aarch64":
-        file_ext = '-arm64.so'
-    elif "x86" in machine():
-        file_ext = '-x86.so'
+
+def _bundled_library_path():
+    if platform == "win32":
+        # Use the Python build architecture, including under Windows emulation.
+        arch = get_platform().lower().split("-")[-1]
     else:
-        file_ext = '-amd64.so'
+        arch = machine().lower()
+    arch = {"x86_64": "amd64", "aarch64": "arm64"}.get(arch, arch)
+    filename = {
+        ("win32", "amd64"): "requests-go-win64.dll",
+        ("cygwin", "amd64"): "requests-go-win64.dll",
+        ("linux", "amd64"): "requests-go-amd64.so",
+        ("linux", "arm64"): "requests-go-arm64.so",
+        ("darwin", "amd64"): "requests-go-x86.dylib",
+        ("darwin", "arm64"): "requests-go-arm64.dylib",
+    }.get((platform, arch))
 
-root_dir = os.path.abspath(os.path.dirname(__file__))
-library = ctypes.cdll.LoadLibrary(f'{root_dir}/dependencies/requests-go{file_ext}')
-if os.environ.get("REQUESTGO_DEPPATH"):
-    library = ctypes.cdll.LoadLibrary(os.environ.get("REQUESTGO_DEPPATH"))
+    bits = ctypes.sizeof(ctypes.c_void_p) * 8
+    if not filename or bits != 64:
+        raise OSError(
+            f"No bundled requests-go library for {platform} ({arch}, {bits}-bit Python). "
+            "Set REQUESTGO_DEPPATH to a compatible shared library."
+        )
+    return os.path.join(os.path.dirname(os.path.abspath(__file__)), "dependencies", filename)
+
+
+library_path = os.environ.get("REQUESTGO_DEPPATH") or _bundled_library_path()
+library = ctypes.cdll.LoadLibrary(library_path)
 
 request = library.request
 request.argtypes = [ctypes.c_char_p]
