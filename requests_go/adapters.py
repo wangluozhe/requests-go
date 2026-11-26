@@ -490,10 +490,9 @@ class TLSAdapter(BaseAdapter):
 
         :param request: The :class:`PreparedRequest <PreparedRequest>` being sent.
         :param stream: (optional) Whether to stream the request content.
-        :param timeout: (optional) How long to wait for the server to send
-            data before giving up, as a float, or a :ref:`(connect timeout,
-            read timeout) <timeouts>` tuple.
-        :type timeout: float or tuple or urllib3 Timeout object
+        :param timeout: Whole seconds for the native request, or an equal
+            (connect, read) pair interpreted as one deadline. None or 0 uses
+            the native session default (30 seconds in v1.6.0).
         :param verify: (optional) Either a boolean, in which case it controls whether
             we verify the server's TLS certificate, or a string, in which case it
             must be a path to a CA bundle to use
@@ -529,7 +528,7 @@ class TLSAdapter(BaseAdapter):
                 "verify": verify,
                 "proxies": dict(proxies) if proxies else {},
                 "allow_redirects": False,
-                "timeout": timeout if timeout is not None else 15,
+                "timeout": timeout,
                 "stream": stream,
             }
             resp = conn.send(tls_request)

@@ -29,10 +29,9 @@ def request(method, url, **kwargs):
         defining the content type of the given file and ``custom_headers`` a dict-like object containing additional headers
         to add for the file.
     :param auth: (optional) Auth tuple to enable Basic/Digest/Custom HTTP Auth.
-    :param timeout: (optional) How many seconds to wait for the server to send data
-        before giving up, as a float, or a :ref:`(connect timeout, read
-        timeout) <timeouts>` tuple.
-    :type timeout: float or tuple
+    :param timeout: With the native TLS adapter, use whole seconds or an equal
+        (connect, read) pair for one request deadline. None or 0 uses the native
+        default (30 seconds in v1.6.0). The standard adapter uses Requests semantics.
     :param allow_redirects: (optional) Boolean. Enable/disable GET/OPTIONS/POST/PUT/PATCH/DELETE/HEAD redirection. Defaults to ``True``.
     :type allow_redirects: bool
     :param proxies: (optional) Dictionary mapping protocol to the URL of the proxy.
@@ -176,10 +175,9 @@ async def async_request(method, url, **kwargs):
         defining the content type of the given file and ``custom_headers`` a dict-like object containing additional headers
         to add for the file.
     :param auth: (optional) Auth tuple to enable Basic/Digest/Custom HTTP Auth.
-    :param timeout: (optional) How many seconds to wait for the server to send data
-        before giving up, as a float, or a :ref:`(connect timeout, read
-        timeout) <timeouts>` tuple.
-    :type timeout: float or tuple
+    :param timeout: With the native TLS adapter, use whole seconds or an equal
+        (connect, read) pair for one request deadline. None or 0 uses the native
+        default (30 seconds in v1.6.0). The standard adapter uses Requests semantics.
     :param allow_redirects: (optional) Boolean. Enable/disable GET/OPTIONS/POST/PUT/PATCH/DELETE/HEAD redirection. Defaults to ``True``.
     :type allow_redirects: bool
     :param proxies: (optional) Dictionary mapping protocol to the URL of the proxy.

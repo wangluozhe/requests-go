@@ -1,5 +1,6 @@
 import io
 import base64
+import sys
 import typing
 import collections
 from json import dumps, loads
@@ -104,6 +105,34 @@ def body_to_base64(body: str or bytes) -> str:
         body = body.encode('utf-8')
     return base64.b64encode(body).decode('utf-8')
 
+
+# The DLL reads a Go int, then converts seconds to a signed 64-bit time.Duration.
+_MAX_TIMEOUT_SECONDS = min(sys.maxsize, (2**63 - 1) // 1_000_000_000)
+
+
+def _timeout_seconds(value):
+    if value is None:
+        return None
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise ValueError("native timeout must be None or a number of whole seconds")
+    if isinstance(value, float) and not value.is_integer():
+        raise ValueError("native timeout must be a finite number of whole seconds")
+    if not 0 <= value <= _MAX_TIMEOUT_SECONDS:
+        raise ValueError(f"native timeout must be between 0 and {_MAX_TIMEOUT_SECONDS} seconds")
+    return int(value)
+
+
+def _native_timeout(timeout):
+    if isinstance(timeout, (list, tuple)):
+        if len(timeout) != 2:
+            raise ValueError("native timeout pair must contain exactly (connect, read)")
+        connect, read = map(_timeout_seconds, timeout)
+        if connect != read:
+            raise ValueError("native timeout uses one deadline; connect and read must be equal")
+        return connect
+    return _timeout_seconds(timeout)
+
+
 class Session:
     def __init__(self, tls_config: TLSConfig = None):
         super(Session, self).__init__()
@@ -176,12 +205,9 @@ class Session:
             request_params["UnChangedHeaderKey"] = un_changed_header_key
         if cookies:
             request_params["Cookies"] = cookies
-        if timeout is not None:
-            if type(timeout) in [list, tuple]:
-                if timeout:
-                    request_params["Timeout"] = timeout[0]
-            elif type(timeout) in [int, float]:
-                request_params["Timeout"] = int(timeout)
+        timeout_seconds = _native_timeout(timeout)
+        if timeout_seconds is not None:
+            request_params["Timeout"] = timeout_seconds
         request_params["AllowRedirects"] = allow_redirects
         if proxies:
             if type(proxies) == collections.OrderedDict:

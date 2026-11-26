@@ -201,10 +201,9 @@ class Session(requests.Session):
             for multipart encoding upload.
         :param auth: (optional) Auth tuple or callable to enable
             Basic/Digest/Custom HTTP Auth.
-        :param timeout: (optional) How long to wait for the server to send
-            data before giving up, as a float, or a :ref:`(connect timeout,
-            read timeout) <timeouts>` tuple.
-        :type timeout: float or tuple
+        :param timeout: With the native TLS adapter, use whole seconds or an equal
+            (connect, read) pair for one request deadline. None or 0 uses the native
+            default (30 seconds in v1.6.0). The standard adapter uses Requests semantics.
         :param allow_redirects: (optional) Set to True by default.
         :type allow_redirects: bool
         :param proxies: (optional) Dictionary mapping protocol or protocol and

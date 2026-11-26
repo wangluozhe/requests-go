@@ -49,6 +49,12 @@ print(response.json())
 仅仅是这样简单的替换，您的HTTP请求就已经拥有了Go语言的TLS指纹，这能帮助您轻松绕过许多仅针对Python默认指纹的防火墙。
 
 
+### 请求超时
+
+使用原生 TLS 适配器时，`timeout` 按整数秒设置一次原生请求的总时限，包括读取响应体。省略该参数、传入 `None` 或 `0`，均使用原生会话的默认值，v1.6.0 为 30 秒。
+
+`timeout=3`、`timeout=3.0` 和 `timeout=(3, 3)` 都设置一个 3 秒的总时限。传入 `0.5` 或 `(2, 5)` 会抛出 `ValueError`。使用标准 Requests 适配器时，`None` 表示不设置超时，也可以分别指定连接和读取超时。
+
 ## 核心概念：`tls_config`
 
 `requests-go`所有高级功能的关键在于`tls_config`参数。这是一个`TLSConfig`对象，它允许你精细地调整TLS握手和HTTP/2通信的每一个细节。
